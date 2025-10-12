@@ -138,6 +138,82 @@ class ApiService {
     return response.json();
   }
 
+
+  async getUsers(): Promise<User[]> {
+    if (MOCK_MODE) {
+      // Mock users data for testing
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return [
+        {
+          id: '1',
+          email: 'admin@test.com',
+          name: 'Admin User',
+          role: 'admin',
+          organization: undefined
+        },
+        {
+          id: '2',
+          email: 'user1@test.com',
+          name: 'John Doe',
+          role: 'user',
+          organization: 'Test Organization'
+        },
+        {
+          id: '3',
+          email: 'user2@test.com',
+          name: 'Jane Smith',
+          role: 'user',
+          organization: 'Another Org'
+        }
+      ];
+    }
+
+    const response = await fetch(`${BASE_URL}/users`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
+    }
+
+    return response.json();
+  }
+
+  async updateUser(id: string, data: Partial<User>): Promise<User> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { id, ...data } as User;
+    }
+
+    const response = await fetch(`${BASE_URL}/users/${id}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update user');
+    }
+
+    return response.json();
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return;
+    }
+
+    const response = await fetch(`${BASE_URL}/users/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete user');
+    }
+  }
+
   async getProjects(): Promise<any[]> {
     const response = await fetch(`${BASE_URL}/projects`, {
       headers: this.getAuthHeaders(),

@@ -1,4 +1,4 @@
-import { Home, Calendar, LogOut } from "lucide-react";
+import { Home, Calendar, Users, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -21,9 +21,13 @@ const items = [
   { title: "Meetings", url: "/meetings", icon: Calendar },
 ];
 
+const adminItems = [
+  { title: "Users", url: "/users", icon: Users },
+];
+
 export function AppSidebar() {
   const { open } = useSidebar();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
 
   const handleLogout = async () => {
     await logout();
@@ -65,6 +69,32 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isAdmin() && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        end
+                        className={({ isActive }) => 
+                          isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""
+                        }
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       
       <SidebarFooter className="border-t border-sidebar-border">
