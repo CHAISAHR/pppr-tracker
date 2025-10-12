@@ -28,13 +28,13 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <SidebarProvider>
-                    <div className="flex min-h-screen w-full">
+                    <div className="flex h-screen w-full overflow-hidden">
                       <AppSidebar />
-                      <div className="flex-1 flex flex-col">
-                        <header className="h-14 flex items-center border-b px-4 sticky top-0 bg-background z-10">
+                      <div className="flex-1 flex flex-col overflow-hidden">
+                        <header className="h-14 flex items-center border-b px-4 bg-background flex-shrink-0">
                           <SidebarTrigger />
                         </header>
-                        <main className="flex-1">
+                        <main className="flex-1 overflow-auto">
                           <Routes>
                             <Route path="/" element={<Index />} />
                             <Route path="/meetings" element={<Meetings />} />
