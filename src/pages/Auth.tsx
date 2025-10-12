@@ -82,15 +82,15 @@ export default function Auth() {
           <CardDescription>Sign in to manage your projects</CardDescription>
         </CardHeader>
         
-        <Tabs value={isLogin ? "login" : "register"} onValueChange={(v) => setIsLogin(v === "login")} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mx-6">
+        <Tabs value={isLogin ? "login" : "register"} onValueChange={(v) => setIsLogin(v === "login")}>
+          <TabsList className="grid w-full grid-cols-2 px-6">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="register">Register</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="login">
+          <TabsContent value="login" className="mt-0">
             <form onSubmit={handleLogin}>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="login-email">Email</Label>
                   <Input
@@ -122,9 +122,9 @@ export default function Auth() {
             </form>
           </TabsContent>
           
-          <TabsContent value="register">
+          <TabsContent value="register" className="mt-0">
             <form onSubmit={handleRegister}>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="register-name">Name</Label>
                   <Input
