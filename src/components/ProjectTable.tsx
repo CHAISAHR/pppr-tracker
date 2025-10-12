@@ -12,6 +12,7 @@ import { Edit2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { EditProjectDialog } from "./EditProjectDialog";
 import { ProjectDetailsDialog } from "./ProjectDetailsDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 export type Status = "Completed" | "In Progress" | "Pending";
 
@@ -37,6 +38,15 @@ interface ProjectTableProps {
 export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [viewingProject, setViewingProject] = useState<Project | null>(null);
+  const { canEditProject } = useAuth();
+
+  const handleEditClick = (project: Project, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
+    if (canEditProject(deliveryPartners)) {
+      setEditingProject(project);
+    }
+  };
 
   return (
     <>
@@ -84,17 +94,22 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
                   <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.comments}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingProject(project);
-                      }}
-                      className="hover:bg-primary/10 hover:text-primary transition-colors"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
+                    {(() => {
+                      const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
+                      const canEdit = canEditProject(deliveryPartners);
+                      
+                      return (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleEditClick(project, e)}
+                          className={canEdit ? "hover:bg-primary/10 hover:text-primary transition-colors" : "opacity-50 cursor-not-allowed"}
+                          disabled={!canEdit}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                      );
+                    })()}
                   </TableCell>
                 </TableRow>
               ))

@@ -1,4 +1,4 @@
-import { Home, Calendar } from "lucide-react";
+import { Home, Calendar, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -9,8 +9,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
 const items = [
@@ -20,13 +23,23 @@ const items = [
 
 export function AppSidebar() {
   const { open } = useSidebar();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
-        <div className="p-4 flex items-center gap-2 border-b">
+        <div className="p-4 flex items-center gap-2 border-b border-sidebar-border">
           <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg" />
-          {open && <span className="font-semibold">Project Manager</span>}
+          {open && (
+            <div className="flex flex-col">
+              <span className="font-semibold text-sidebar-foreground">Project Manager</span>
+              {user && <span className="text-xs text-muted-foreground">{user.name}</span>}
+            </div>
+          )}
         </div>
         
         <SidebarGroup>
@@ -53,6 +66,17 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter className="border-t border-sidebar-border">
+        <Button 
+          variant="ghost" 
+          onClick={handleLogout}
+          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          {open && "Logout"}
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }
