@@ -1,117 +1,191 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Users, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, Users, Building2, Edit, Shield } from "lucide-react";
+import { MeetingDetailsDialog, type Meeting } from "@/components/MeetingDetailsDialog";
+import { EditMeetingDialog } from "@/components/EditMeetingDialog";
+import { MeetingExcelTemplate } from "@/components/MeetingExcelTemplate";
+import { MeetingExcelUpload } from "@/components/MeetingExcelUpload";
+import { toast } from "sonner";
 
-interface Meeting {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  participants: string[];
-  location: string;
-  type: "In-Person" | "Virtual";
-}
-
-const upcomingMeetings: Meeting[] = [
-  {
-    id: "1",
-    title: "Project Kickoff Meeting",
-    date: "2025-10-15",
-    time: "10:00 AM",
-    participants: ["Tech Solutions Inc", "Global Systems", "Project Team"],
-    location: "Conference Room A",
-    type: "In-Person",
-  },
-  {
-    id: "2",
-    title: "Sprint Planning Session",
-    date: "2025-10-18",
-    time: "2:00 PM",
-    participants: ["Digital Innovations", "Development Team"],
-    location: "Zoom Meeting",
-    type: "Virtual",
-  },
-  {
-    id: "3",
-    title: "Quarterly Review",
-    date: "2025-10-22",
-    time: "9:00 AM",
-    participants: ["All Stakeholders", "Management Team"],
-    location: "Main Hall",
-    type: "In-Person",
-  },
-  {
-    id: "4",
-    title: "Security Audit Discussion",
-    date: "2025-10-25",
-    time: "3:00 PM",
-    participants: ["SecureIT", "Audit Associates", "IT Team"],
-    location: "Teams Meeting",
-    type: "Virtual",
-  },
-  {
-    id: "5",
-    title: "Training Workshop",
-    date: "2025-10-28",
-    time: "11:00 AM",
-    participants: ["Learning Corp", "Training Partners", "End Users"],
-    location: "Training Center",
-    type: "In-Person",
-  },
-];
+// Simulated admin check - replace with your Railway backend authentication
+const isAdmin = true;
 
 const Meetings = () => {
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+
+  // Load meetings from localStorage on mount
+  useEffect(() => {
+    const savedMeetings = localStorage.getItem("meetings");
+    if (savedMeetings) {
+      setMeetings(JSON.parse(savedMeetings));
+    } else {
+      // Initialize with sample data
+      const initialMeetings: Meeting[] = [
+        {
+          id: "1",
+          quarter: "Q4 2025",
+          meetingDate: "2025-10-15",
+          focusArea: "Project Kickoff Meeting",
+          implementingEntities: ["Tech Solutions Inc", "Global Systems"],
+          deliveryPartners: ["Consulting Partners", "Implementation Team"],
+          keyObjectives: "Define project scope, deliverables, and timeline for the upcoming quarter",
+          format: "In-Person",
+        },
+        {
+          id: "2",
+          quarter: "Q4 2025",
+          meetingDate: "2025-10-18",
+          focusArea: "Sprint Planning Session",
+          implementingEntities: ["Digital Innovations"],
+          deliveryPartners: ["Development Team"],
+          keyObjectives: "Plan sprint activities and prioritize backlog items",
+          format: "Virtual",
+        },
+        {
+          id: "3",
+          quarter: "Q4 2025",
+          meetingDate: "2025-10-22",
+          focusArea: "Quarterly Review",
+          implementingEntities: ["All Stakeholders", "Management Team"],
+          deliveryPartners: ["Finance", "Operations"],
+          keyObjectives: "Review quarterly performance and plan for next quarter",
+          format: "Hybrid",
+        },
+      ];
+      setMeetings(initialMeetings);
+      localStorage.setItem("meetings", JSON.stringify(initialMeetings));
+    }
+  }, []);
+
+  // Save meetings to localStorage whenever they change
+  useEffect(() => {
+    if (meetings.length > 0) {
+      localStorage.setItem("meetings", JSON.stringify(meetings));
+    }
+  }, [meetings]);
+
+  const handleMeetingClick = (meeting: Meeting) => {
+    setSelectedMeeting(meeting);
+    setDetailsOpen(true);
+  };
+
+  const handleEditClick = (meeting: Meeting, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingMeeting(meeting);
+    setEditOpen(true);
+  };
+
+  const handleSaveMeeting = (updatedMeeting: Meeting) => {
+    setMeetings(meetings.map(m => m.id === updatedMeeting.id ? updatedMeeting : m));
+  };
+
+  const handleUploadMeetings = (uploadedMeetings: Meeting[]) => {
+    setMeetings([...meetings, ...uploadedMeetings]);
+  };
+
+  // Sort meetings by date
+  const sortedMeetings = [...meetings].sort((a, b) => 
+    new Date(a.meetingDate).getTime() - new Date(b.meetingDate).getTime()
+  );
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Upcoming Meetings</h1>
-          <p className="text-muted-foreground">
-            View and manage your scheduled meetings
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Upcoming Meetings</h1>
+            <p className="text-muted-foreground">
+              View and manage your scheduled meetings
+            </p>
+          </div>
+          {isAdmin && (
+            <div className="flex gap-2">
+              <MeetingExcelTemplate />
+              <MeetingExcelUpload onUpload={handleUploadMeetings} />
+            </div>
+          )}
         </div>
 
         <div className="grid gap-4">
-          {upcomingMeetings.map((meeting) => (
-            <Card key={meeting.id} className="hover:shadow-lg transition-shadow">
+          {sortedMeetings.map((meeting) => (
+            <Card 
+              key={meeting.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => handleMeetingClick(meeting)}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-xl">{meeting.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-4 mt-2">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CardTitle className="text-xl">{meeting.focusArea}</CardTitle>
+                      {isAdmin && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleEditClick(meeting, e)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <CardDescription className="flex items-center gap-4">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        {new Date(meeting.date).toLocaleDateString('en-US', {
+                        {new Date(meeting.meetingDate).toLocaleDateString('en-US', {
                           weekday: 'short',
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                         })}
                       </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {meeting.time}
-                      </span>
+                      <span className="font-medium">{meeting.quarter}</span>
                     </CardDescription>
                   </div>
-                  <Badge variant={meeting.type === "Virtual" ? "secondary" : "default"}>
-                    {meeting.type}
+                  <Badge variant={
+                    meeting.format === "Virtual" ? "secondary" : 
+                    meeting.format === "Hybrid" ? "outline" : 
+                    "default"
+                  }>
+                    {meeting.format}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                  <span className="text-sm">{meeting.location}</span>
+                  <Building2 className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                  <div className="flex flex-wrap gap-2">
+                    {meeting.implementingEntities.slice(0, 3).map((entity, idx) => (
+                      <Badge key={idx} variant="outline" className="text-xs">
+                        {entity}
+                      </Badge>
+                    ))}
+                    {meeting.implementingEntities.length > 3 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{meeting.implementingEntities.length - 3} more
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Users className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex flex-wrap gap-2">
-                    {meeting.participants.map((participant, idx) => (
-                      <Badge key={idx} variant="outline" className="text-xs">
-                        {participant}
+                    {meeting.deliveryPartners.slice(0, 3).map((partner, idx) => (
+                      <Badge key={idx} variant="secondary" className="text-xs">
+                        {partner}
                       </Badge>
                     ))}
+                    {meeting.deliveryPartners.length > 3 && (
+                      <Badge variant="secondary" className="text-xs">
+                        +{meeting.deliveryPartners.length - 3} more
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -119,6 +193,19 @@ const Meetings = () => {
           ))}
         </div>
       </div>
+
+      <MeetingDetailsDialog
+        meeting={selectedMeeting}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      />
+
+      <EditMeetingDialog
+        meeting={editingMeeting}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSave={handleSaveMeeting}
+      />
     </div>
   );
 };
