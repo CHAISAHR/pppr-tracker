@@ -1,6 +1,7 @@
 // API service for Railway backend
 // TODO: Update BASE_URL with your Railway backend URL
 const BASE_URL = 'https://your-railway-app.railway.app/api';
+const MOCK_MODE = true; // Set to false when Railway backend is ready
 
 export interface User {
   id: string;
@@ -32,6 +33,24 @@ class ApiService {
   }
 
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
+    if (MOCK_MODE) {
+      // Mock login for testing
+      const mockUser: User = {
+        id: '1',
+        email: credentials.email,
+        name: credentials.email.includes('admin') ? 'Admin User' : 'Regular User',
+        role: credentials.email.includes('admin') ? 'admin' : 'user',
+        organization: credentials.email.includes('admin') ? undefined : 'Test Organization'
+      };
+      const mockToken = 'mock-token-' + Date.now();
+      localStorage.setItem('auth_token', mockToken);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return { user: mockUser, token: mockToken };
+    }
+
     const response = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -49,6 +68,24 @@ class ApiService {
   }
 
   async register(data: RegisterData): Promise<{ user: User; token: string }> {
+    if (MOCK_MODE) {
+      // Mock registration for testing
+      const mockUser: User = {
+        id: '2',
+        email: data.email,
+        name: data.name,
+        role: data.email.includes('admin') ? 'admin' : 'user',
+        organization: data.organization
+      };
+      const mockToken = 'mock-token-' + Date.now();
+      localStorage.setItem('auth_token', mockToken);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return { user: mockUser, token: mockToken };
+    }
+
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -74,6 +111,22 @@ class ApiService {
   }
 
   async getCurrentUser(): Promise<User> {
+    if (MOCK_MODE) {
+      // Mock get current user for testing
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error('No auth token');
+      
+      // Extract email from token for consistent mock data
+      const isAdmin = token.includes('admin');
+      return {
+        id: '1',
+        email: isAdmin ? 'admin@test.com' : 'user@test.com',
+        name: isAdmin ? 'Admin User' : 'Regular User',
+        role: isAdmin ? 'admin' : 'user',
+        organization: isAdmin ? undefined : 'Test Organization'
+      };
+    }
+
     const response = await fetch(`${BASE_URL}/auth/me`, {
       headers: this.getAuthHeaders(),
     });
