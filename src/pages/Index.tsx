@@ -180,9 +180,9 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float" />
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Project Management Dashboard
-              </h1>
+            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Pandemic Fund Activity Tracker
+            </h1>
               <p className="text-muted-foreground">
                 Track and manage all project activities
               </p>
