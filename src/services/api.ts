@@ -103,6 +103,11 @@ class ApiService {
   }
 
   async logout(): Promise<void> {
+    if (MOCK_MODE) {
+      localStorage.removeItem('auth_token');
+      return;
+    }
+
     await fetch(`${BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
