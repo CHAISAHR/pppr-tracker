@@ -15,7 +15,8 @@ export const ExcelTemplate = () => {
         "Implementing Entity": "Example Entity",
         "Delivery Partner": "Example Partner",
         "Status": "Pending",
-        "Timeline": "Q1 2025",
+        "Start Date": "2025-01-01",
+        "End Date": "2025-03-31",
         "Comments": "Example comments",
       },
     ];
@@ -34,7 +35,8 @@ export const ExcelTemplate = () => {
       { wch: 20 }, // Implementing Entity
       { wch: 20 }, // Delivery Partner
       { wch: 15 }, // Status
-      { wch: 15 }, // Timeline
+      { wch: 15 }, // Start Date
+      { wch: 15 }, // End Date
       { wch: 30 }, // Comments
     ];
     worksheet["!cols"] = columnWidths;

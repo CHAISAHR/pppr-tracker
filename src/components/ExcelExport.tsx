@@ -2,20 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
-
-type Status = "Completed" | "In Progress" | "Pending";
-
-interface Project {
-  activityId: string;
-  activityDescription: string;
-  subActivityId: string;
-  subActivityDescription: string;
-  implementingEntity: string;
-  deliveryPartner: string;
-  status: Status;
-  timeline: string;
-  comments: string;
-}
+import type { Project } from "./ProjectTable";
 
 interface ExcelExportProps {
   projects: Project[];
@@ -32,7 +19,8 @@ export const ExcelExport = ({ projects }: ExcelExportProps) => {
       "Implementing Entity": project.implementingEntity,
       "Delivery Partner": project.deliveryPartner,
       "Status": project.status,
-      "Timeline": project.timeline,
+      "Start Date": project.startDate,
+      "End Date": project.endDate,
       "Comments": project.comments,
     }));
 
@@ -50,7 +38,8 @@ export const ExcelExport = ({ projects }: ExcelExportProps) => {
       { wch: 20 }, // Implementing Entity
       { wch: 20 }, // Delivery Partner
       { wch: 15 }, // Status
-      { wch: 15 }, // Timeline
+      { wch: 15 }, // Start Date
+      { wch: 15 }, // End Date
       { wch: 30 }, // Comments
     ];
     worksheet["!cols"] = columnWidths;

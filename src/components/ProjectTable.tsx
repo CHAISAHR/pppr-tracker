@@ -24,7 +24,8 @@ export interface Project {
   implementingEntity: string;
   deliveryPartner: string;
   status: Status;
-  timeline: string;
+  startDate: string;
+  endDate: string;
   comments: string;
 }
 
@@ -50,7 +51,8 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
               <TableHead className="font-semibold">Implementing Entity</TableHead>
               <TableHead className="font-semibold">Delivery Partner</TableHead>
               <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="font-semibold">Timeline</TableHead>
+              <TableHead className="font-semibold">Start Date</TableHead>
+              <TableHead className="font-semibold">End Date</TableHead>
               <TableHead className="font-semibold">Comments</TableHead>
               <TableHead className="font-semibold">Actions</TableHead>
             </TableRow>
@@ -58,7 +60,7 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
           <TableBody>
             {projects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                   No projects found matching your filters
                 </TableCell>
               </TableRow>
@@ -78,7 +80,8 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
                   <TableCell>
                     <StatusBadge status={project.status} />
                   </TableCell>
-                  <TableCell>{project.timeline}</TableCell>
+                  <TableCell>{project.startDate ? new Date(project.startDate).toLocaleDateString() : '-'}</TableCell>
+                  <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.comments}</TableCell>
                   <TableCell>
                     <Button

@@ -50,6 +50,22 @@ export const ExcelUpload = ({ onUpload }: ExcelUploadProps) => {
         const validStatuses: Status[] = ["Completed", "In Progress", "Pending"];
         const finalStatus = validStatuses.includes(status) ? status : "Pending";
 
+        // Parse dates
+        const parseDate = (value: any) => {
+          if (!value) return '';
+          if (typeof value === 'number') {
+            // Excel date serial number
+            const excelDate = new Date((value - 25569) * 86400 * 1000);
+            return excelDate.toISOString().split('T')[0];
+          }
+          // String date
+          const parsedDate = new Date(value);
+          if (!isNaN(parsedDate.getTime())) {
+            return parsedDate.toISOString().split('T')[0];
+          }
+          return '';
+        };
+
         return {
           id: `${Date.now()}-${index}`,
           activityId: String(activityId),
@@ -59,7 +75,8 @@ export const ExcelUpload = ({ onUpload }: ExcelUploadProps) => {
           implementingEntity: String(row["Implementing Entity"] || row["implementing_entity"] || ""),
           deliveryPartner: String(row["Delivery Partner"] || row["delivery_partner"] || ""),
           status: finalStatus,
-          timeline: String(row["Timeline"] || row["timeline"] || ""),
+          startDate: parseDate(row["Start Date"] || row["start_date"]),
+          endDate: parseDate(row["End Date"] || row["end_date"]),
           comments: String(row["Comments"] || row["comments"] || ""),
         };
       });

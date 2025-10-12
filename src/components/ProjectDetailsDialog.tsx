@@ -69,12 +69,36 @@ export const ProjectDetailsDialog = ({ project, open, onOpenChange }: ProjectDet
           <Separator />
 
           {/* Timeline */}
-          <div className="space-y-2 p-4 rounded-lg bg-muted/30 border border-border">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <p className="font-semibold text-sm">Timeline</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2 p-4 rounded-lg bg-muted/30 border border-border">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <p className="font-semibold text-sm">Start Date</p>
+              </div>
+              <p className="text-sm pl-6">
+                {project.startDate ? new Date(project.startDate).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }) : 'Not set'}
+              </p>
             </div>
-            <p className="text-sm pl-6">{project.timeline}</p>
+
+            <div className="space-y-2 p-4 rounded-lg bg-muted/30 border border-border">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <p className="font-semibold text-sm">End Date</p>
+              </div>
+              <p className="text-sm pl-6">
+                {project.endDate ? new Date(project.endDate).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }) : 'Not set'}
+              </p>
+            </div>
           </div>
 
           <Separator />

@@ -19,7 +19,8 @@ const initialProjects: Project[] = [
     implementingEntity: "Tech Solutions Inc",
     deliveryPartner: "Global Systems",
     status: "In Progress",
-    timeline: "Q4 2024",
+    startDate: "2024-10-01",
+    endDate: "2024-12-31",
     comments: "On track, awaiting vendor approval",
   },
   {
@@ -31,7 +32,8 @@ const initialProjects: Project[] = [
     implementingEntity: "Digital Innovations",
     deliveryPartner: "Cloud Services Ltd",
     status: "Completed",
-    timeline: "Q3 2024",
+    startDate: "2024-07-01",
+    endDate: "2024-09-30",
     comments: "Successfully deployed ahead of schedule",
   },
   {
@@ -43,7 +45,8 @@ const initialProjects: Project[] = [
     implementingEntity: "Learning Corp",
     deliveryPartner: "Training Partners",
     status: "Pending",
-    timeline: "Q1 2025",
+    startDate: "2025-01-01",
+    endDate: "2025-03-31",
     comments: "Waiting for resource allocation",
   },
   {
@@ -55,7 +58,8 @@ const initialProjects: Project[] = [
     implementingEntity: "SecureIT",
     deliveryPartner: "Audit Associates",
     status: "In Progress",
-    timeline: "Q4 2024",
+    startDate: "2024-10-15",
+    endDate: "2024-12-15",
     comments: "Phase 1 completed, moving to phase 2",
   },
   {
@@ -67,7 +71,8 @@ const initialProjects: Project[] = [
     implementingEntity: "Tech Solutions Inc",
     deliveryPartner: "Data Systems Co",
     status: "Completed",
-    timeline: "Q2 2024",
+    startDate: "2024-04-01",
+    endDate: "2024-06-30",
     comments: "All data successfully migrated and validated",
   },
 ];
@@ -91,10 +96,18 @@ const Index = () => {
     [projects]
   );
 
-  const periods = useMemo(
-    () => Array.from(new Set(projects.map((p) => p.timeline))).sort(),
-    [projects]
-  );
+  const periods = useMemo(() => {
+    const periodSet = new Set<string>();
+    projects.forEach((p) => {
+      if (p.startDate) {
+        const date = new Date(p.startDate);
+        const quarter = Math.floor(date.getMonth() / 3) + 1;
+        const year = date.getFullYear();
+        periodSet.add(`Q${quarter} ${year}`);
+      }
+    });
+    return Array.from(periodSet).sort();
+  }, [projects]);
 
   // Filter projects
   const filteredProjects = useMemo(() => {
@@ -115,7 +128,13 @@ const Index = () => {
         partnerFilter === "all" || project.deliveryPartner === partnerFilter;
 
       const matchesPeriod =
-        periodFilter === "all" || project.timeline === periodFilter;
+        periodFilter === "all" || (() => {
+          if (!project.startDate) return false;
+          const date = new Date(project.startDate);
+          const quarter = Math.floor(date.getMonth() / 3) + 1;
+          const year = date.getFullYear();
+          return `Q${quarter} ${year}` === periodFilter;
+        })();
 
       return matchesSearch && matchesStatus && matchesEntity && matchesPartner && matchesPeriod;
     });
