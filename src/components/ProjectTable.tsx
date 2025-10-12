@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Edit2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { EditProjectDialog } from "./EditProjectDialog";
+import { ProjectDetailsDialog } from "./ProjectDetailsDialog";
 
 export type Status = "Completed" | "In Progress" | "Pending";
 
@@ -34,6 +35,7 @@ interface ProjectTableProps {
 
 export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [viewingProject, setViewingProject] = useState<Project | null>(null);
 
   return (
     <>
@@ -62,8 +64,12 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
               </TableRow>
             ) : (
               projects.map((project) => (
-                <TableRow key={project.id} className="hover:bg-muted/30">
-                  <TableCell className="font-medium">{project.activityId}</TableCell>
+                <TableRow 
+                  key={project.id} 
+                  className="hover:bg-primary/5 cursor-pointer transition-all duration-200 group"
+                  onClick={() => setViewingProject(project)}
+                >
+                  <TableCell className="font-medium group-hover:text-primary transition-colors">{project.activityId}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.activityDescription}</TableCell>
                   <TableCell>{project.subActivityId}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.subActivityDescription}</TableCell>
@@ -78,8 +84,11 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setEditingProject(project)}
-                      className="hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                      className="hover:bg-primary/10 hover:text-primary transition-colors"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -90,6 +99,12 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
           </TableBody>
         </Table>
       </div>
+
+      <ProjectDetailsDialog
+        project={viewingProject}
+        open={!!viewingProject}
+        onOpenChange={(open) => !open && setViewingProject(null)}
+      />
 
       {editingProject && (
         <EditProjectDialog
