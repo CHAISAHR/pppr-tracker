@@ -4,7 +4,9 @@ import { ProjectFilters } from "@/components/ProjectFilters";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { ExcelTemplate } from "@/components/ExcelTemplate";
 import { ExcelExport } from "@/components/ExcelExport";
-import { ClipboardList } from "lucide-react";
+import { AddProjectDialog } from "@/components/AddProjectDialog";
+import { ClipboardList, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 
@@ -84,6 +86,7 @@ const Index = () => {
   const [entityFilter, setEntityFilter] = useState("all");
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   // Get unique entities and partners for filters
   const implementingEntities = useMemo(
@@ -161,6 +164,14 @@ const Index = () => {
     setPeriodFilter("all");
   };
 
+  const handleAddProject = (projectData: Omit<Project, "id">) => {
+    const newProject: Project = {
+      ...projectData,
+      id: Date.now().toString(),
+    };
+    setProjects((prev) => [...prev, newProject]);
+  };
+
   return (
     <div className="bg-gradient-subtle min-h-screen">
       <div className="container mx-auto py-8 px-4 space-y-6">
@@ -178,6 +189,10 @@ const Index = () => {
             </div>
           </div>
           <div className="flex gap-2">
+            <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Activity
+            </Button>
             <ExcelTemplate />
             <ExcelUpload onUpload={handleExcelUpload} />
             <ExcelExport projects={filteredProjects} />
@@ -234,6 +249,13 @@ const Index = () => {
         <ProjectTable
           projects={filteredProjects}
           onUpdateProject={handleUpdateProject}
+        />
+
+        {/* Add Project Dialog */}
+        <AddProjectDialog
+          open={addDialogOpen}
+          onOpenChange={setAddDialogOpen}
+          onAdd={handleAddProject}
         />
       </div>
     </div>
