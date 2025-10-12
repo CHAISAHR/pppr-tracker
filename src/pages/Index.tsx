@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import { ProjectTable, type Project } from "@/components/ProjectTable";
 import { ProjectFilters } from "@/components/ProjectFilters";
+import { ExcelUpload } from "@/components/ExcelUpload";
+import { ExcelTemplate } from "@/components/ExcelTemplate";
 import { ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 
@@ -117,6 +119,10 @@ const Index = () => {
     toast.success("Project updated successfully");
   };
 
+  const handleExcelUpload = (newProjects: Project[]) => {
+    setProjects((prev) => [...prev, ...newProjects]);
+  };
+
   const handleClearFilters = () => {
     setSearchTerm("");
     setStatusFilter("all");
@@ -128,15 +134,21 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-3 rounded-lg bg-primary/10">
-            <ClipboardList className="h-8 w-8 text-primary" />
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-lg bg-primary/10">
+              <ClipboardList className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">Project Management Dashboard</h1>
+              <p className="text-muted-foreground">
+                Track and manage all project activities
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold">Project Management Dashboard</h1>
-            <p className="text-muted-foreground">
-              Track and manage all project activities
-            </p>
+          <div className="flex gap-2">
+            <ExcelTemplate />
+            <ExcelUpload onUpload={handleExcelUpload} />
           </div>
         </div>
 
