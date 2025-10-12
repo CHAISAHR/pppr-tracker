@@ -133,14 +133,16 @@ const Index = () => {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-gradient-subtle min-h-screen">
       <div className="container mx-auto py-8 px-4 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 animate-fade-in">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg" />
+            <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float" />
             <div>
-              <h1 className="text-3xl font-bold">Project Management Dashboard</h1>
+              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                Project Management Dashboard
+              </h1>
               <p className="text-muted-foreground">
                 Track and manage all project activities
               </p>
@@ -170,25 +172,27 @@ const Index = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="text-sm text-muted-foreground mb-1">Total Projects</div>
-            <div className="text-2xl font-bold">{filteredProjects.length}</div>
+          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-primary/20 p-6 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:scale-105 animate-fade-in">
+            <div className="text-sm font-medium text-primary mb-2">Total Projects</div>
+            <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              {filteredProjects.length}
+            </div>
           </div>
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="text-sm text-muted-foreground mb-1">Completed</div>
-            <div className="text-2xl font-bold text-success">
+          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-success/20 p-6 hover:shadow-lg hover:shadow-success/10 transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '100ms' }}>
+            <div className="text-sm font-medium text-success mb-2">Completed</div>
+            <div className="text-3xl font-bold text-success">
               {filteredProjects.filter((p) => p.status === "Completed").length}
             </div>
           </div>
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="text-sm text-muted-foreground mb-1">In Progress</div>
-            <div className="text-2xl font-bold text-warning">
+          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-warning/20 p-6 hover:shadow-lg hover:shadow-warning/10 transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '200ms' }}>
+            <div className="text-sm font-medium text-warning mb-2">In Progress</div>
+            <div className="text-3xl font-bold text-warning">
               {filteredProjects.filter((p) => p.status === "In Progress").length}
             </div>
           </div>
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="text-sm text-muted-foreground mb-1">Pending</div>
-            <div className="text-2xl font-bold text-muted-foreground">
+          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-border p-6 hover:shadow-lg hover:shadow-muted/10 transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <div className="text-sm font-medium text-muted-foreground mb-2">Pending</div>
+            <div className="text-3xl font-bold text-muted-foreground">
               {filteredProjects.filter((p) => p.status === "Pending").length}
             </div>
           </div>

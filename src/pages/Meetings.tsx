@@ -95,12 +95,14 @@ const Meetings = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-gradient-subtle p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between animate-slide-up">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Upcoming Meetings</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
+              Upcoming Meetings
+            </h1>
+            <p className="text-muted-foreground text-lg">
               View and manage your scheduled meetings
             </p>
           </div>
@@ -113,23 +115,26 @@ const Meetings = () => {
         </div>
 
         <div className="grid gap-4">
-          {sortedMeetings.map((meeting) => (
+          {sortedMeetings.map((meeting, index) => (
             <Card 
               key={meeting.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer"
+              className="group hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 hover:scale-[1.02] animate-fade-in bg-card/80 backdrop-blur-sm"
+              style={{ animationDelay: `${index * 100}ms` }}
               onClick={() => handleMeetingClick(meeting)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <CardTitle className="text-xl">{meeting.focusArea}</CardTitle>
+                      <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
+                        {meeting.focusArea}
+                      </CardTitle>
                       {isAdmin && (
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={(e) => handleEditClick(meeting, e)}
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary/10 hover:text-primary"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -148,11 +153,15 @@ const Meetings = () => {
                       <span className="font-medium">{meeting.quarter}</span>
                     </CardDescription>
                   </div>
-                  <Badge variant={
-                    meeting.format === "Virtual" ? "secondary" : 
-                    meeting.format === "Hybrid" ? "outline" : 
-                    "default"
-                  }>
+                  <Badge 
+                    className={
+                      meeting.format === "Virtual" 
+                        ? "bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20" 
+                        : meeting.format === "Hybrid" 
+                        ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg shadow-secondary/20" 
+                        : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+                    }
+                  >
                     {meeting.format}
                   </Badge>
                 </div>
