@@ -19,9 +19,12 @@ interface ProjectFiltersProps {
   onEntityFilterChange: (value: string) => void;
   partnerFilter: string;
   onPartnerFilterChange: (value: string) => void;
+  periodFilter: string;
+  onPeriodFilterChange: (value: string) => void;
   onClearFilters: () => void;
   implementingEntities: string[];
   deliveryPartners: string[];
+  periods: string[];
 }
 
 export const ProjectFilters = ({
@@ -33,42 +36,44 @@ export const ProjectFilters = ({
   onEntityFilterChange,
   partnerFilter,
   onPartnerFilterChange,
+  periodFilter,
+  onPeriodFilterChange,
   onClearFilters,
   implementingEntities,
   deliveryPartners,
+  periods,
 }: ProjectFiltersProps) => {
-  const hasActiveFilters = searchTerm || statusFilter !== "all" || entityFilter !== "all" || partnerFilter !== "all";
+  const hasActiveFilters = searchTerm || statusFilter !== "all" || entityFilter !== "all" || partnerFilter !== "all" || periodFilter !== "all";
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Filters</h2>
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearFilters}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <X className="h-4 w-4 mr-2" />
-            Clear filters
-          </Button>
-        )}
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="relative">
+    <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-primary/20 p-4 shadow-lg animate-fade-in">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search..."
+            placeholder="Search projects..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
           />
         </div>
 
+        <Select value={periodFilter} onValueChange={onPeriodFilterChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Period" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Periods</SelectItem>
+            {periods.map((period) => (
+              <SelectItem key={period} value={period}>
+                {period}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-          <SelectTrigger>
+          <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -80,7 +85,7 @@ export const ProjectFilters = ({
         </Select>
 
         <Select value={entityFilter} onValueChange={onEntityFilterChange}>
-          <SelectTrigger>
+          <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Implementing Entity" />
           </SelectTrigger>
           <SelectContent>
@@ -94,7 +99,7 @@ export const ProjectFilters = ({
         </Select>
 
         <Select value={partnerFilter} onValueChange={onPartnerFilterChange}>
-          <SelectTrigger>
+          <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Delivery Partner" />
           </SelectTrigger>
           <SelectContent>
@@ -106,6 +111,18 @@ export const ProjectFilters = ({
             ))}
           </SelectContent>
         </Select>
+
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClearFilters}
+            className="text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Clear
+          </Button>
+        )}
       </div>
     </div>
   );

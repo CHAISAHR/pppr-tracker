@@ -78,6 +78,7 @@ const Index = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [entityFilter, setEntityFilter] = useState("all");
   const [partnerFilter, setPartnerFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState("all");
 
   // Get unique entities and partners for filters
   const implementingEntities = useMemo(
@@ -87,6 +88,11 @@ const Index = () => {
 
   const deliveryPartners = useMemo(
     () => Array.from(new Set(projects.map((p) => p.deliveryPartner))),
+    [projects]
+  );
+
+  const periods = useMemo(
+    () => Array.from(new Set(projects.map((p) => p.timeline))).sort(),
     [projects]
   );
 
@@ -108,9 +114,12 @@ const Index = () => {
       const matchesPartner =
         partnerFilter === "all" || project.deliveryPartner === partnerFilter;
 
-      return matchesSearch && matchesStatus && matchesEntity && matchesPartner;
+      const matchesPeriod =
+        periodFilter === "all" || project.timeline === periodFilter;
+
+      return matchesSearch && matchesStatus && matchesEntity && matchesPartner && matchesPeriod;
     });
-  }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter]);
+  }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter]);
 
   const handleUpdateProject = (id: string, updates: Partial<Project>) => {
     setProjects((prev) =>
@@ -130,6 +139,7 @@ const Index = () => {
     setStatusFilter("all");
     setEntityFilter("all");
     setPartnerFilter("all");
+    setPeriodFilter("all");
   };
 
   return (
@@ -165,9 +175,12 @@ const Index = () => {
           onEntityFilterChange={setEntityFilter}
           partnerFilter={partnerFilter}
           onPartnerFilterChange={setPartnerFilter}
+          periodFilter={periodFilter}
+          onPeriodFilterChange={setPeriodFilter}
           onClearFilters={handleClearFilters}
           implementingEntities={implementingEntities}
           deliveryPartners={deliveryPartners}
+          periods={periods}
         />
 
         {/* Stats */}
