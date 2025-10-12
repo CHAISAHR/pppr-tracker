@@ -78,7 +78,7 @@ export default function Auth() {
           <div className="flex justify-center">
             <img src={logo} alt="Logo" className="h-16 w-16 rounded-lg" />
           </div>
-          <CardTitle className="text-2xl">Project Manager</CardTitle>
+          <CardTitle className="text-2xl">Activity Reporting Tool</CardTitle>
           <CardDescription>Sign in to manage your projects</CardDescription>
         </CardHeader>
         
