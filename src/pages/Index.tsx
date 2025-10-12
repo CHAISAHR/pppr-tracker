@@ -3,8 +3,10 @@ import { ProjectTable, type Project } from "@/components/ProjectTable";
 import { ProjectFilters } from "@/components/ProjectFilters";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { ExcelTemplate } from "@/components/ExcelTemplate";
+import { ExcelExport } from "@/components/ExcelExport";
 import { ClipboardList } from "lucide-react";
 import { toast } from "sonner";
+import logo from "@/assets/logo.png";
 
 // Sample data
 const initialProjects: Project[] = [
@@ -136,9 +138,7 @@ const Index = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-primary/10">
-              <ClipboardList className="h-8 w-8 text-primary" />
-            </div>
+            <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg" />
             <div>
               <h1 className="text-3xl font-bold">Project Management Dashboard</h1>
               <p className="text-muted-foreground">
@@ -149,6 +149,7 @@ const Index = () => {
           <div className="flex gap-2">
             <ExcelTemplate />
             <ExcelUpload onUpload={handleExcelUpload} />
+            <ExcelExport projects={filteredProjects} />
           </div>
         </div>
 
