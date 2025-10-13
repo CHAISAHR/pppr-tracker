@@ -39,7 +39,9 @@ export const EditProjectDialog = ({
   onSave,
 }: EditProjectDialogProps) => {
   const [formData, setFormData] = useState({
+    activityId: project.activityId,
     activityDescription: project.activityDescription,
+    subActivityId: project.subActivityId,
     subActivityDescription: project.subActivityDescription,
     implementingEntity: project.implementingEntity,
     deliveryPartner: project.deliveryPartner,
@@ -76,6 +78,32 @@ export const EditProjectDialog = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="activityId">Activity ID</Label>
+              <Input
+                id="activityId"
+                value={formData.activityId}
+                onChange={(e) =>
+                  setFormData({ ...formData, activityId: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subActivityId">Sub-Activity ID</Label>
+              <Input
+                id="subActivityId"
+                value={formData.subActivityId}
+                onChange={(e) =>
+                  setFormData({ ...formData, subActivityId: e.target.value })
+                }
+                required
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="activityDescription">Activity Description</Label>
             <Textarea
