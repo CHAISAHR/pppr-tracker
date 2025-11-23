@@ -23,35 +23,40 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <SidebarProvider>
-                    <div className="flex h-screen w-full overflow-hidden">
-                      <AppSidebar />
-                      <div className="flex-1 flex flex-col overflow-hidden">
-                        <header className="h-14 flex items-center border-b px-4 bg-background flex-shrink-0">
-                          <SidebarTrigger />
-                        </header>
-                        <main className="flex-1 overflow-auto">
-                          <Routes>
-                            <Route path="/" element={<Index />} />
-                            <Route path="/meetings" element={<Meetings />} />
-                            <Route path="/workshops" element={<Workshops />} />
-                            <Route path="/users" element={<Users />} />
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                        </main>
-                      </div>
-                    </div>
-                  </SidebarProvider>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+          <SidebarProvider>
+            <div className="flex h-screen w-full overflow-hidden">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <header className="h-14 flex items-center border-b px-4 bg-background flex-shrink-0">
+                  <SidebarTrigger />
+                </header>
+                <main className="flex-1 overflow-auto">
+                  <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/" element={<Index />} />
+                    <Route path="/workshops" element={<Workshops />} />
+                    <Route
+                      path="/meetings"
+                      element={
+                        <ProtectedRoute>
+                          <Meetings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/users"
+                      element={
+                        <ProtectedRoute>
+                          <Users />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+              </div>
+            </div>
+          </SidebarProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

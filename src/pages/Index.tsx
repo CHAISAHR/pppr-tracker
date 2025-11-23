@@ -9,6 +9,7 @@ import { ClipboardList, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Sample data
 const initialProjects: Project[] = [
@@ -80,6 +81,7 @@ const initialProjects: Project[] = [
 ];
 
 const Index = () => {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -144,6 +146,10 @@ const Index = () => {
   }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter]);
 
   const handleUpdateProject = (id: string, updates: Partial<Project>) => {
+    if (!user) {
+      toast.error("Please log in to update projects");
+      return;
+    }
     setProjects((prev) =>
       prev.map((project) =>
         project.id === id ? { ...project, ...updates } : project
@@ -188,15 +194,17 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Activity
-            </Button>
-            <ExcelTemplate />
-            <ExcelUpload onUpload={handleExcelUpload} />
-            <ExcelExport projects={filteredProjects} />
-          </div>
+          {user && (
+            <div className="flex gap-2">
+              <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Activity
+              </Button>
+              <ExcelTemplate />
+              <ExcelUpload onUpload={handleExcelUpload} />
+              <ExcelExport projects={filteredProjects} />
+            </div>
+          )}
         </div>
 
         {/* Filters */}
@@ -249,14 +257,17 @@ const Index = () => {
         <ProjectTable
           projects={filteredProjects}
           onUpdateProject={handleUpdateProject}
+          readOnly={!user}
         />
 
         {/* Add Project Dialog */}
-        <AddProjectDialog
-          open={addDialogOpen}
-          onOpenChange={setAddDialogOpen}
-          onAdd={handleAddProject}
-        />
+        {user && (
+          <AddProjectDialog
+            open={addDialogOpen}
+            onOpenChange={setAddDialogOpen}
+            onAdd={handleAddProject}
+          />
+        )}
       </div>
     </div>
   );
