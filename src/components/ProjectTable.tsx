@@ -33,15 +33,17 @@ export interface Project {
 interface ProjectTableProps {
   projects: Project[];
   onUpdateProject: (id: string, updates: Partial<Project>) => void;
+  readOnly?: boolean;
 }
 
-export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) => {
+export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [viewingProject, setViewingProject] = useState<Project | null>(null);
   const { canEditProject } = useAuth();
 
   const handleEditClick = (project: Project, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (readOnly) return;
     const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
     if (canEditProject(deliveryPartners)) {
       setEditingProject(project);
@@ -64,7 +66,7 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
               <TableHead className="font-semibold">Start Date</TableHead>
               <TableHead className="font-semibold">End Date</TableHead>
               <TableHead className="font-semibold">Comments</TableHead>
-              <TableHead className="font-semibold">Actions</TableHead>
+              {!readOnly && <TableHead className="font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,7 +96,7 @@ export const ProjectTable = ({ projects, onUpdateProject }: ProjectTableProps) =
                   <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.comments}</TableCell>
                   <TableCell>
-                    {(() => {
+                    {!readOnly && (() => {
                       const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
                       const canEdit = canEditProject(deliveryPartners);
                       

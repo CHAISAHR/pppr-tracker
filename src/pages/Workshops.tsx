@@ -9,7 +9,7 @@ import { AddWorkshopDialog } from "@/components/AddWorkshopDialog";
 import { WorkshopAttendanceForm } from "@/components/WorkshopAttendanceForm";
 
 export default function Workshops() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   return (
@@ -17,7 +17,9 @@ export default function Workshops() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Workshops & Trainings</h1>
-          <p className="text-muted-foreground mt-1">Manage and register for workshops</p>
+          <p className="text-muted-foreground mt-1">
+            {user ? 'Manage and register for workshops' : 'Register for workshops'}
+          </p>
         </div>
         {isAdmin() && (
           <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
