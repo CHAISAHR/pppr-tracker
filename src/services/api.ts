@@ -38,7 +38,7 @@ class ApiService {
       const mockUser: User = {
         id: '1',
         email: credentials.email,
-        name: credentials.email.includes('admin') ? 'Admin User' : 'Regular User',
+        name: credentials.email.includes('admin') ? 'Admin User' : 'User',
         role: credentials.email.includes('admin') ? 'admin' : 'user',
         organization: credentials.email.includes('admin') ? undefined : 'Test Organization'
       };
@@ -126,7 +126,7 @@ class ApiService {
       return {
         id: '1',
         email: isAdmin ? 'admin@test.com' : 'user@test.com',
-        name: isAdmin ? 'Admin User' : 'Regular User',
+        name: isAdmin ? 'Admin User' : 'User',
         role: isAdmin ? 'admin' : 'user',
         organization: isAdmin ? undefined : 'Test Organization'
       };
