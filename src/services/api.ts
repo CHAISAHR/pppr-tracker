@@ -270,6 +270,96 @@ class ApiService {
 
     return response.json();
   }
+
+  async getWorkshops(): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return [
+        {
+          id: '1',
+          name: 'Digital Transformation Workshop',
+          activity: 'Training',
+          date: '2024-02-15',
+          venue: 'Cape Town Convention Centre',
+          numberOfDays: 3,
+          registrations: 45
+        },
+        {
+          id: '2',
+          name: 'Leadership Development Programme',
+          activity: 'Capacity Building',
+          date: '2024-03-10',
+          venue: 'Johannesburg Conference Hall',
+          numberOfDays: 5,
+          registrations: 32
+        }
+      ];
+    }
+
+    const response = await fetch(`${BASE_URL}/workshops`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch workshops');
+    }
+
+    return response.json();
+  }
+
+  async createWorkshop(data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { id: Date.now().toString(), ...data, registrations: 0 };
+    }
+
+    const response = await fetch(`${BASE_URL}/workshops`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create workshop');
+    }
+
+    return response.json();
+  }
+
+  async deleteWorkshop(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return;
+    }
+
+    const response = await fetch(`${BASE_URL}/workshops/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete workshop');
+    }
+  }
+
+  async submitWorkshopAttendance(data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { id: Date.now().toString(), ...data };
+    }
+
+    const response = await fetch(`${BASE_URL}/workshops/attendance`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit attendance');
+    }
+
+    return response.json();
+  }
 }
 
 export const api = new ApiService();
