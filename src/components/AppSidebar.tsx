@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, LogOut } from "lucide-react";
+import { Home, Calendar, Users, LogOut, GraduationCap } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -19,6 +19,7 @@ import logo from "@/assets/logo.png";
 const items = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Meetings", url: "/meetings", icon: Calendar },
+  { title: "Workshops & Trainings", url: "/workshops", icon: GraduationCap },
 ];
 
 const adminItems = [
