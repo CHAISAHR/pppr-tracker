@@ -1,5 +1,5 @@
 import { Home, Calendar, Users, LogOut, GraduationCap } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -29,9 +29,11 @@ const adminItems = [
 export function AppSidebar() {
   const { open } = useSidebar();
   const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
+    navigate('/auth');
   };
 
   return (
