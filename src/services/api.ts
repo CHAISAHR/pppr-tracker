@@ -420,6 +420,44 @@ class ApiService {
 
     return response.json();
   }
+
+  async getOrganisations(): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const mockAttendance = await this.getWorkshopAttendance();
+      
+      // Group by organisation and count attendees
+      const orgMap = new Map<string, Set<string>>();
+      mockAttendance.forEach(attendance => {
+        if (attendance.organization) {
+          if (!orgMap.has(attendance.organization)) {
+            orgMap.set(attendance.organization, new Set());
+          }
+          orgMap.get(attendance.organization)?.add(attendance.name);
+        }
+      });
+      
+      // Convert to array format
+      const organisations = Array.from(orgMap.entries()).map(([name, attendees]) => ({
+        name,
+        count: attendees.size,
+        attendees: Array.from(attendees)
+      }));
+      
+      // Sort by count descending
+      return organisations.sort((a, b) => b.count - a.count);
+    }
+
+    const response = await fetch(`${BASE_URL}/organisations`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch organisations');
+    }
+
+    return response.json();
+  }
 }
 
 export const api = new ApiService();
