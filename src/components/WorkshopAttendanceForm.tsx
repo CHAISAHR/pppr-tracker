@@ -129,7 +129,7 @@ export function WorkshopAttendanceForm() {
                     >
                       {field.value
                         ? workshops.find((workshop) => workshop.id === field.value)
-                            ? `${workshops.find((workshop) => workshop.id === field.value)?.name} - ${workshops.find((workshop) => workshop.id === field.value)?.activity}`
+                            ? `${workshops.find((workshop) => workshop.id === field.value)?.name} - ${workshops.find((workshop) => workshop.id === field.value)?.date}`
                             : "Choose a workshop"
                         : "Choose a workshop"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -145,7 +145,7 @@ export function WorkshopAttendanceForm() {
                         {workshops.map((workshop) => (
                           <CommandItem
                             key={workshop.id}
-                            value={`${workshop.name} - ${workshop.activity}`}
+                            value={`${workshop.name} - ${workshop.date}`}
                             onSelect={() => {
                               handleWorkshopChange(workshop.id);
                             }}
@@ -156,7 +156,7 @@ export function WorkshopAttendanceForm() {
                                 workshop.id === field.value ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            {workshop.name} - {workshop.activity}
+                            {workshop.name} - {workshop.date}
                           </CommandItem>
                         ))}
                       </CommandGroup>
