@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
+import { WorkshopResponsesDialog } from "./WorkshopResponsesDialog";
 
 export function WorkshopTable() {
   const [workshops, setWorkshops] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedWorkshop, setSelectedWorkshop] = useState<{ id: string; name: string } | null>(null);
+  const [responsesDialogOpen, setResponsesDialogOpen] = useState(false);
 
   useEffect(() => {
     loadWorkshops();
@@ -35,6 +38,11 @@ export function WorkshopTable() {
     } catch (error) {
       toast.error("Failed to delete workshop");
     }
+  };
+
+  const handleViewResponses = (workshop: any) => {
+    setSelectedWorkshop({ id: workshop.id, name: workshop.name });
+    setResponsesDialogOpen(true);
   };
 
   if (loading) {
@@ -77,19 +85,37 @@ export function WorkshopTable() {
                 <Badge variant="outline">{workshop.registrations || 0}</Badge>
               </TableCell>
               <TableCell className="text-right">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(workshop.id)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewResponses(workshop)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(workshop.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      {selectedWorkshop && (
+        <WorkshopResponsesDialog
+          open={responsesDialogOpen}
+          onOpenChange={setResponsesDialogOpen}
+          workshopId={selectedWorkshop.id}
+          workshopName={selectedWorkshop.name}
+        />
+      )}
     </div>
   );
 }

@@ -360,6 +360,66 @@ class ApiService {
 
     return response.json();
   }
+
+  async getWorkshopAttendance(workshopId?: string): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const mockAttendance = [
+        {
+          id: '1',
+          workshopId: '1',
+          workshopName: 'Digital Transformation Workshop',
+          workshopDate: '2024-02-15',
+          name: 'John Doe',
+          email: 'john@example.com',
+          organization: 'ABC Corp',
+          phoneNumber: '+27123456789',
+          submittedAt: '2024-02-10T10:30:00Z'
+        },
+        {
+          id: '2',
+          workshopId: '1',
+          workshopName: 'Digital Transformation Workshop',
+          workshopDate: '2024-02-15',
+          name: 'Jane Smith',
+          email: 'jane@example.com',
+          organization: 'XYZ Ltd',
+          phoneNumber: '+27987654321',
+          submittedAt: '2024-02-11T14:20:00Z'
+        },
+        {
+          id: '3',
+          workshopId: '2',
+          workshopName: 'Leadership Development Programme',
+          workshopDate: '2024-03-10',
+          name: 'Mike Johnson',
+          email: 'mike@example.com',
+          organization: 'DEF Inc',
+          phoneNumber: '+27111222333',
+          submittedAt: '2024-03-05T09:15:00Z'
+        }
+      ];
+      
+      if (workshopId) {
+        return mockAttendance.filter(a => a.workshopId === workshopId);
+      }
+      return mockAttendance;
+    }
+
+    const url = workshopId 
+      ? `${BASE_URL}/workshops/${workshopId}/attendance`
+      : `${BASE_URL}/workshops/attendance`;
+
+    const response = await fetch(url, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch workshop attendance');
+    }
+
+    return response.json();
+  }
 }
 
 export const api = new ApiService();
