@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { WorkshopTable } from "@/components/WorkshopTable";
 import { AddWorkshopDialog } from "@/components/AddWorkshopDialog";
 import { WorkshopAttendanceForm } from "@/components/WorkshopAttendanceForm";
+import { WorkshopExportAll } from "@/components/WorkshopExportAll";
 
 export default function Workshops() {
   const { isAdmin, user } = useAuth();
@@ -22,10 +23,13 @@ export default function Workshops() {
           </p>
         </div>
         {isAdmin() && (
-          <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Workshop
-          </Button>
+          <div className="flex gap-2">
+            <WorkshopExportAll />
+            <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Workshop
+            </Button>
+          </div>
         )}
       </div>
 
