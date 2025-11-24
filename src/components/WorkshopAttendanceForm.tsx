@@ -9,6 +9,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 
@@ -63,7 +67,11 @@ export function WorkshopAttendanceForm() {
   const loadWorkshops = async () => {
     try {
       const data = await api.getWorkshops();
-      setWorkshops(data);
+      // Sort workshops chronologically by date
+      const sortedData = [...data].sort((a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      });
+      setWorkshops(sortedData);
     } catch (error) {
       toast.error("Failed to load workshops");
     }
@@ -106,22 +114,56 @@ export function WorkshopAttendanceForm() {
           control={form.control}
           name="workshopId"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>Select Workshop</FormLabel>
-              <Select onValueChange={handleWorkshopChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a workshop" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {workshops.map((workshop) => (
-                    <SelectItem key={workshop.id} value={workshop.id}>
-                      {workshop.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "justify-between font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? workshops.find((workshop) => workshop.id === field.value)
+                            ? `${workshops.find((workshop) => workshop.id === field.value)?.name} - ${workshops.find((workshop) => workshop.id === field.value)?.activity}`
+                            : "Choose a workshop"
+                        : "Choose a workshop"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search workshops..." />
+                    <CommandList>
+                      <CommandEmpty>No workshop found.</CommandEmpty>
+                      <CommandGroup>
+                        {workshops.map((workshop) => (
+                          <CommandItem
+                            key={workshop.id}
+                            value={`${workshop.name} - ${workshop.activity}`}
+                            onSelect={() => {
+                              handleWorkshopChange(workshop.id);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                workshop.id === field.value ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {workshop.name} - {workshop.activity}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
