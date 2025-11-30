@@ -14,7 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      indicator_values: {
+        Row: {
+          actual_value: number | null
+          created_at: string
+          id: string
+          indicator_id: string
+          notes: string | null
+          project_id: string | null
+          recorded_by: string | null
+          reporting_period: string | null
+          sub_activity_id: string | null
+          target_value: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual_value?: number | null
+          created_at?: string
+          id?: string
+          indicator_id: string
+          notes?: string | null
+          project_id?: string | null
+          recorded_by?: string | null
+          reporting_period?: string | null
+          sub_activity_id?: string | null
+          target_value?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual_value?: number | null
+          created_at?: string
+          id?: string
+          indicator_id?: string
+          notes?: string | null
+          project_id?: string | null
+          recorded_by?: string | null
+          reporting_period?: string | null
+          sub_activity_id?: string | null
+          target_value?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicator_values_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicator_values_sub_activity_id_fkey"
+            columns: ["sub_activity_id"]
+            isOneToOne: false
+            referencedRelation: "sub_activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      indicators: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sub_activities: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

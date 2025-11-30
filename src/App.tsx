@@ -20,6 +20,7 @@ import {
 import Index from "./pages/Index";
 import Meetings from "./pages/Meetings";
 import Workshops from "./pages/Workshops";
+import Performance from "./pages/Performance";
 import Users from "./pages/Users";
 import Organisations from "./pages/Organisations";
 import Auth from "./pages/Auth";
@@ -86,6 +87,7 @@ function AppContent() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<Index />} />
               <Route path="/workshops" element={<Workshops />} />
+              <Route path="/performance" element={<Performance />} />
               <Route
                 path="/meetings"
                 element={
