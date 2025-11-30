@@ -53,14 +53,17 @@ export function AddSubActivityDialog({ open, onOpenChange, onSuccess }: AddSubAc
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="project_id">Activity/Project ID *</Label>
+            <Label htmlFor="project_id">Activity ID *</Label>
             <Input
               id="project_id"
               value={formData.project_id}
               onChange={(e) => setFormData({ ...formData, project_id: e.target.value })}
-              placeholder="Enter the main activity/project ID"
+              placeholder="e.g., ACT-001"
               required
             />
+            <p className="text-xs text-muted-foreground">
+              Enter the Activity ID from the Activity Tracker (e.g., ACT-001)
+            </p>
           </div>
 
           <div className="space-y-2">
