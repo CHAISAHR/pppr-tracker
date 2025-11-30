@@ -17,7 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
 const items = [
-  { title: "Dashboard", url: "/", icon: Home },
+  { title: "Activity Tracker", url: "/", icon: Home },
   { title: "Meetings", url: "/meetings", icon: Calendar },
   { title: "Workshops & Trainings", url: "/workshops", icon: GraduationCap },
 ];
