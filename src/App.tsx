@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Index from "./pages/Index";
 import Meetings from "./pages/Meetings";
-import Performance from "./pages/Performance";
+import Performance from "./pages/Performaimport Performance from "./pages/Performance";
 import Users from "./pages/Users";
 import Organisations from "./pages/Organisations";
 import Auth from "./pages/Auth";
@@ -84,8 +84,7 @@ function AppContent() {
           <main className="flex-1 overflow-auto">
             <Routes>
               <Route path="/auth" element={<Auth />} />
-              <Route path="/" element={<Index />} />
-              <Route path="/workshops" element={<Workshoelement={<Performance />} />
+              <Route path="/" element={<performance" Route path="/workshops" element={<Workshoelement={<Performance />} />
               <Route
                 path="/meetings"
                 element={
