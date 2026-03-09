@@ -14,6 +14,8 @@ interface AddMeetingDialogProps {
 }
 
 interface MeetingForm {
+  activityId: string;
+  subActivityId: string;
   quarter: string;
   meetingDate: string;
   focusArea: string;
@@ -31,6 +33,8 @@ interface MeetingForm {
 }
 
 const emptyForm: MeetingForm = {
+  activityId: "",
+  subActivityId: "",
   quarter: "",
   meetingDate: "",
   focusArea: "",
