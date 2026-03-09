@@ -73,28 +73,67 @@ export type Database = {
       }
       indicators: {
         Row: {
+          activity_id: string | null
+          annual_performance: number | null
+          core_indicators: string | null
           created_at: string
           description: string | null
+          evidence: string | null
           id: string
           name: string
+          organisation: string | null
+          q1: number | null
+          q2: number | null
+          q3: number | null
+          q4: number | null
+          subactivity_id: string | null
+          target: number | null
           unit: string
           updated_at: string
+          workstream: string | null
+          year: number | null
         }
         Insert: {
+          activity_id?: string | null
+          annual_performance?: number | null
+          core_indicators?: string | null
           created_at?: string
           description?: string | null
+          evidence?: string | null
           id?: string
           name: string
+          organisation?: string | null
+          q1?: number | null
+          q2?: number | null
+          q3?: number | null
+          q4?: number | null
+          subactivity_id?: string | null
+          target?: number | null
           unit: string
           updated_at?: string
+          workstream?: string | null
+          year?: number | null
         }
         Update: {
+          activity_id?: string | null
+          annual_performance?: number | null
+          core_indicators?: string | null
           created_at?: string
           description?: string | null
+          evidence?: string | null
           id?: string
           name?: string
+          organisation?: string | null
+          q1?: number | null
+          q2?: number | null
+          q3?: number | null
+          q4?: number | null
+          subactivity_id?: string | null
+          target?: number | null
           unit?: string
           updated_at?: string
+          workstream?: string | null
+          year?: number | null
         }
         Relationships: []
       }
