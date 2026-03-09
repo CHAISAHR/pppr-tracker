@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/services/api";
 
 interface IndicatorExcelUploadProps {
   onSuccess: () => void;
@@ -62,9 +62,7 @@ export const IndicatorExcelUpload = ({ onSuccess }: IndicatorExcelUploadProps) =
         };
       });
 
-      const { error } = await supabase.from("indicators").insert(indicators as any);
-
-      if (error) throw error;
+      await api.createIndicatorsBulk(indicators);
 
       toast.success(`Successfully imported ${indicators.length} indicators`);
       onSuccess();

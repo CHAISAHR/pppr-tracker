@@ -426,7 +426,6 @@ class ApiService {
       await new Promise(resolve => setTimeout(resolve, 300));
       const mockAttendance = await this.getWorkshopAttendance();
       
-      // Group by organisation and count attendees
       const orgMap = new Map<string, Set<string>>();
       mockAttendance.forEach(attendance => {
         if (attendance.organization) {
@@ -437,14 +436,12 @@ class ApiService {
         }
       });
       
-      // Convert to array format
       const organisations = Array.from(orgMap.entries()).map(([name, attendees]) => ({
         name,
         count: attendees.size,
         attendees: Array.from(attendees)
       }));
       
-      // Sort by count descending
       return organisations.sort((a, b) => b.count - a.count);
     }
 
@@ -457,6 +454,121 @@ class ApiService {
     }
 
     return response.json();
+  }
+
+  // ========== Indicators ==========
+
+  async getIndicators(): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_indicators');
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    const response = await fetch(`${BASE_URL}/indicators`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch indicators');
+    }
+
+    return response.json();
+  }
+
+  async createIndicator(data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const indicator = { id: crypto.randomUUID(), created_at: new Date().toISOString(), ...data };
+      const stored = localStorage.getItem('mock_indicators');
+      const indicators = stored ? JSON.parse(stored) : [];
+      indicators.unshift(indicator);
+      localStorage.setItem('mock_indicators', JSON.stringify(indicators));
+      return indicator;
+    }
+
+    const response = await fetch(`${BASE_URL}/indicators`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create indicator');
+    }
+
+    return response.json();
+  }
+
+  async createIndicatorsBulk(data: any[]): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_indicators');
+      const indicators = stored ? JSON.parse(stored) : [];
+      const newIndicators = data.map(d => ({ id: crypto.randomUUID(), created_at: new Date().toISOString(), ...d }));
+      indicators.unshift(...newIndicators);
+      localStorage.setItem('mock_indicators', JSON.stringify(indicators));
+      return newIndicators;
+    }
+
+    const response = await fetch(`${BASE_URL}/indicators/bulk`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to import indicators');
+    }
+
+    return response.json();
+  }
+
+  async updateIndicator(id: string, data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_indicators');
+      const indicators = stored ? JSON.parse(stored) : [];
+      const index = indicators.findIndex((i: any) => i.id === id);
+      if (index !== -1) {
+        indicators[index] = { ...indicators[index], ...data };
+        localStorage.setItem('mock_indicators', JSON.stringify(indicators));
+        return indicators[index];
+      }
+      return { id, ...data };
+    }
+
+    const response = await fetch(`${BASE_URL}/indicators/${id}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update indicator');
+    }
+
+    return response.json();
+  }
+
+  async deleteIndicator(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_indicators');
+      const indicators = stored ? JSON.parse(stored) : [];
+      const filtered = indicators.filter((i: any) => i.id !== id);
+      localStorage.setItem('mock_indicators', JSON.stringify(filtered));
+      return;
+    }
+
+    const response = await fetch(`${BASE_URL}/indicators/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete indicator');
+    }
   }
 }
 

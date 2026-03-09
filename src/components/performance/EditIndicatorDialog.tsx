@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/services/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -60,7 +60,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
       const q4 = formData.q4 ? Number(formData.q4) : null;
       const annual_performance = [q1, q2, q3, q4].filter(v => v !== null).reduce((a, b) => a + b, 0) || null;
 
-      const { error } = await supabase.from("indicators").update({
+      await api.updateIndicator(indicator.id, {
         country: formData.country || null, activity_id: formData.activity_id || null,
         activity: formData.activity || null, long_term_outcome: formData.long_term_outcome || null,
         core_indicators: formData.core_indicators || null, workstream: formData.workstream || null,
@@ -81,9 +81,8 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
         target: formData.target ? Number(formData.target) : null,
         q1, q2, q3, q4, annual_performance,
         evidence: formData.evidence || null,
-      } as any).eq("id", indicator.id);
+      });
 
-      if (error) throw error;
       toast.success("Indicator updated successfully");
       onSuccess();
     } catch (error) {
