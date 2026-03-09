@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/services/api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Loader2, ExternalLink, Download } from "lucide-react";
@@ -56,13 +56,8 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
 
   const fetchIndicators = async () => {
     try {
-      const { data, error } = await supabase
-        .from("indicators")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setIndicators((data as any[]) || []);
+      const data = await api.getIndicators();
+      setIndicators(data || []);
     } catch (error) {
       console.error("Error fetching indicators:", error);
       toast.error("Failed to load indicators");
@@ -78,8 +73,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this indicator?")) return;
     try {
-      const { error } = await supabase.from("indicators").delete().eq("id", id);
-      if (error) throw error;
+      await api.deleteIndicator(id);
       toast.success("Indicator deleted successfully");
       fetchIndicators();
       onUpdate?.();
