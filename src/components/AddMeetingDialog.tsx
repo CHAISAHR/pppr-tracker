@@ -13,14 +13,29 @@ interface AddMeetingDialogProps {
   onAdd: (meeting: Meeting) => void;
 }
 
-const emptyForm = {
+interface MeetingForm {
+  quarter: string;
+  meetingDate: string;
+  focusArea: string;
+  implementingEntities: string;
+  deliveryPartners: string;
+  keyObjectives: string;
+  format: Meeting["format"];
+  organiserName: string;
+  organiserEmail: string;
+  organiserPhone: string;
+  preSurveyLink: string;
+  postSurveyLink: string;
+}
+
+const emptyForm: MeetingForm = {
   quarter: "",
   meetingDate: "",
   focusArea: "",
   implementingEntities: "",
   deliveryPartners: "",
   keyObjectives: "",
-  format: "Virtual" as const,
+  format: "Virtual",
   organiserName: "",
   organiserEmail: "",
   organiserPhone: "",
