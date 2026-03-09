@@ -29,8 +29,9 @@ const emptyMeeting: Meeting = {
   organiserPhone: "",
   preSurveyLink: "",
   postSurveyLink: "",
+  preSurveyQrCode: "",
+  postSurveyQrCode: "",
 };
-
 export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditMeetingDialogProps) => {
   const [formData, setFormData] = useState<Meeting>({ ...emptyMeeting });
 
