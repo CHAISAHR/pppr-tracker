@@ -29,8 +29,9 @@ const emptyMeeting: Meeting = {
   organiserPhone: "",
   preSurveyLink: "",
   postSurveyLink: "",
+  preSurveyQrCode: "",
+  postSurveyQrCode: "",
 };
-
 export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditMeetingDialogProps) => {
   const [formData, setFormData] = useState<Meeting>({ ...emptyMeeting });
 
@@ -116,19 +117,52 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
           </div>
 
           <div className="border rounded-md p-4 space-y-3">
-            <p className="text-sm font-medium">Survey Links</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="edit-preSurvey">Pre-Survey Link</Label>
-                <Input id="edit-preSurvey" type="url" placeholder="https://..." value={formData.preSurveyLink || ""} onChange={(e) => setFormData({ ...formData, preSurveyLink: e.target.value })} />
+            <p className="text-sm font-medium">Survey Links & QR Codes</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-preSurvey">Pre-Survey Link</Label>
+                  <Input id="edit-preSurvey" type="url" placeholder="https://..." value={formData.preSurveyLink || ""} onChange={(e) => setFormData({ ...formData, preSurveyLink: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-preQr">Pre-Survey QR Code</Label>
+                  <Input id="edit-preQr" type="file" accept="image/*" onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => setFormData({ ...formData, preSurveyQrCode: reader.result as string });
+                      reader.readAsDataURL(file);
+                    }
+                  }} />
+                  {formData.preSurveyQrCode && (
+                    <img src={formData.preSurveyQrCode} alt="Pre-Survey QR" className="w-20 h-20 object-contain border rounded" />
+                  )}
+                  <p className="text-xs text-muted-foreground">Auto-generated from link if not uploaded</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-postSurvey">Post-Survey Link</Label>
-                <Input id="edit-postSurvey" type="url" placeholder="https://..." value={formData.postSurveyLink || ""} onChange={(e) => setFormData({ ...formData, postSurveyLink: e.target.value })} />
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-postSurvey">Post-Survey Link</Label>
+                  <Input id="edit-postSurvey" type="url" placeholder="https://..." value={formData.postSurveyLink || ""} onChange={(e) => setFormData({ ...formData, postSurveyLink: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-postQr">Post-Survey QR Code</Label>
+                  <Input id="edit-postQr" type="file" accept="image/*" onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => setFormData({ ...formData, postSurveyQrCode: reader.result as string });
+                      reader.readAsDataURL(file);
+                    }
+                  }} />
+                  {formData.postSurveyQrCode && (
+                    <img src={formData.postSurveyQrCode} alt="Post-Survey QR" className="w-20 h-20 object-contain border rounded" />
+                  )}
+                  <p className="text-xs text-muted-foreground">Auto-generated from link if not uploaded</p>
+                </div>
               </div>
             </div>
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="edit-implementingEntities">Implementing Entities (separate with ;)</Label>
             <Input id="edit-implementingEntities" placeholder="Entity 1; Entity 2" value={formData.implementingEntities.join('; ')} onChange={(e) => handleArrayChange("implementingEntities", e.target.value)} />

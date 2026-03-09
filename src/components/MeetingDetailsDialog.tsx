@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle } from "lucide-react";
+import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle, QrCode } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { QRCodeSVG } from "qrcode.react";
 
 export interface Meeting {
   id: string;
@@ -17,6 +18,8 @@ export interface Meeting {
   organiserPhone?: string;
   preSurveyLink?: string;
   postSurveyLink?: string;
+  preSurveyQrCode?: string;
+  postSurveyQrCode?: string;
 }
 
 interface MeetingDetailsDialogProps {
@@ -106,27 +109,47 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
 
           {(meeting.preSurveyLink || meeting.postSurveyLink) && (
             <>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div className="flex items-start gap-2">
                   <LinkIcon className="h-4 w-4 mt-1 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="font-medium text-sm mb-2">Survey Links</p>
-                    <div className="space-y-1 text-sm">
+                    <p className="font-medium text-sm mb-3">Survey Links & QR Codes</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       {meeting.preSurveyLink && (
-                        <p>
-                          <span className="text-muted-foreground">Pre-Survey: </span>
-                          <a href={meeting.preSurveyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
+                          <p className="font-medium text-sm text-foreground">Pre-Survey</p>
+                          <a href={meeting.preSurveyLink} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
                             {meeting.preSurveyLink}
                           </a>
-                        </p>
+                          <div className="flex flex-col items-center gap-2 pt-2">
+                            {meeting.preSurveyQrCode ? (
+                              <img src={meeting.preSurveyQrCode} alt="Pre-Survey QR Code" className="w-40 h-40 object-contain rounded border bg-white p-1" />
+                            ) : (
+                              <div className="bg-white p-3 rounded border">
+                                <QRCodeSVG value={meeting.preSurveyLink} size={140} />
+                              </div>
+                            )}
+                            <p className="text-xs text-muted-foreground">Scan to open pre-survey</p>
+                          </div>
+                        </div>
                       )}
                       {meeting.postSurveyLink && (
-                        <p>
-                          <span className="text-muted-foreground">Post-Survey: </span>
-                          <a href={meeting.postSurveyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
+                          <p className="font-medium text-sm text-foreground">Post-Survey</p>
+                          <a href={meeting.postSurveyLink} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
                             {meeting.postSurveyLink}
                           </a>
-                        </p>
+                          <div className="flex flex-col items-center gap-2 pt-2">
+                            {meeting.postSurveyQrCode ? (
+                              <img src={meeting.postSurveyQrCode} alt="Post-Survey QR Code" className="w-40 h-40 object-contain rounded border bg-white p-1" />
+                            ) : (
+                              <div className="bg-white p-3 rounded border">
+                                <QRCodeSVG value={meeting.postSurveyLink} size={140} />
+                              </div>
+                            )}
+                            <p className="text-xs text-muted-foreground">Scan to open post-survey</p>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
