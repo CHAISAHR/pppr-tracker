@@ -8,6 +8,7 @@ import { EditMeetingDialog } from "@/components/EditMeetingDialog";
 import { AddMeetingDialog } from "@/components/AddMeetingDialog";
 import { MeetingExcelTemplate } from "@/components/MeetingExcelTemplate";
 import { MeetingExcelUpload } from "@/components/MeetingExcelUpload";
+import { MeetingExcelExport } from "@/components/MeetingExcelExport";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Meetings = () => {
