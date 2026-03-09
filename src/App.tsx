@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Index from "./pages/Index";
 import Meetings from "./pages/Meetings";
-nce";
+import Performance from "./pages/Performance";
 import Users from "./pages/Users";
 import Organisations from "./pages/Organisations";
 import Auth from "./pages/Auth";
