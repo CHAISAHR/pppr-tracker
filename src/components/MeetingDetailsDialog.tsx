@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Target, Building2, Users } from "lucide-react";
+import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export interface Meeting {
@@ -12,6 +12,11 @@ export interface Meeting {
   deliveryPartners: string[];
   keyObjectives: string;
   format: "Virtual" | "Hybrid" | "In-Person";
+  organiserName?: string;
+  organiserEmail?: string;
+  organiserPhone?: string;
+  preSurveyLink?: string;
+  postSurveyLink?: string;
 }
 
 interface MeetingDetailsDialogProps {
@@ -67,6 +72,69 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
           </div>
 
           <Separator />
+
+          {(meeting.organiserName || meeting.organiserEmail || meeting.organiserPhone) && (
+            <>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <UserCircle className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm mb-2">Organiser Contact</p>
+                    <div className="space-y-1 text-sm text-muted-foreground">
+                      {meeting.organiserName && <p>{meeting.organiserName}</p>}
+                      {meeting.organiserEmail && (
+                        <p className="flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          <a href={`mailto:${meeting.organiserEmail}`} className="text-primary hover:underline">
+                            {meeting.organiserEmail}
+                          </a>
+                        </p>
+                      )}
+                      {meeting.organiserPhone && (
+                        <p className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" />
+                          {meeting.organiserPhone}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
+
+          {(meeting.preSurveyLink || meeting.postSurveyLink) && (
+            <>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <LinkIcon className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm mb-2">Survey Links</p>
+                    <div className="space-y-1 text-sm">
+                      {meeting.preSurveyLink && (
+                        <p>
+                          <span className="text-muted-foreground">Pre-Survey: </span>
+                          <a href={meeting.preSurveyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {meeting.preSurveyLink}
+                          </a>
+                        </p>
+                      )}
+                      {meeting.postSurveyLink && (
+                        <p>
+                          <span className="text-muted-foreground">Post-Survey: </span>
+                          <a href={meeting.postSurveyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {meeting.postSurveyLink}
+                          </a>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
 
           <div className="space-y-2">
             <div className="flex items-start gap-2">
