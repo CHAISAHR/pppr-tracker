@@ -26,6 +26,8 @@ interface MeetingForm {
   organiserPhone: string;
   preSurveyLink: string;
   postSurveyLink: string;
+  preSurveyQrCode: string;
+  postSurveyQrCode: string;
 }
 
 const emptyForm: MeetingForm = {
@@ -41,8 +43,9 @@ const emptyForm: MeetingForm = {
   organiserPhone: "",
   preSurveyLink: "",
   postSurveyLink: "",
+  preSurveyQrCode: "",
+  postSurveyQrCode: "",
 };
-
 export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
