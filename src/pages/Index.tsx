@@ -268,7 +268,7 @@ const Index = () => {
         <Tabs defaultValue="activities" className="space-y-4">
           <TabsList>
             <TabsTrigger value="activities">Activity Tracker</TabsTrigger>
-            <TabsTrigger value="performance">Performance Tracking</TabsTrigger>
+            <TabsTrigger value="performance">Indicator Reporting</TabsTrigger>
           </TabsList>
 
           <TabsContent value="activities" className="space-y-4">

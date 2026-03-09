@@ -24,7 +24,7 @@ export default function Performance() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <TrendingUp className="h-8 w-8 text-primary" />
-            Performance Tracking
+            Indicator Reporting
           </h1>
           <p className="text-muted-foreground mt-1">
             Track performance indicators for activities and sub-activities

@@ -20,7 +20,7 @@ const items = [
   { title: "Activity Tracker", url: "/", icon: Home },
   { title: "Meetings", url: "/meetings", icon: Calendar },
   { title: "Workshops & Trainings", url: "/workshops", icon: GraduationCap },
-  { title: "Performance Tracking", url: "/performance", icon: TrendingUp },
+  { title: "Indicator Reporting", url: "/performance", icon: TrendingUp },
 ];
 
 const adminItems = [
