@@ -73,63 +73,108 @@ export type Database = {
       }
       indicators: {
         Row: {
+          activity: string | null
           activity_id: string | null
           annual_performance: number | null
+          baseline_proposal_year: number | null
           core_indicators: string | null
+          cost_usd: number | null
+          country: string | null
           created_at: string
+          data_source: string | null
           description: string | null
           evidence: string | null
           id: string
+          implementing_entity: string | null
+          indicator_definition: string | null
+          indicator_type: string | null
+          long_term_outcome: string | null
           name: string
+          naphs: string | null
           organisation: string | null
           q1: number | null
           q2: number | null
           q3: number | null
           q4: number | null
+          quarter_3: number | null
+          responsibility: string | null
           subactivity_id: string | null
           target: number | null
+          target_year_1: number | null
+          target_year_2: number | null
+          target_year_3: number | null
           unit: string
           updated_at: string
           workstream: string | null
           year: number | null
         }
         Insert: {
+          activity?: string | null
           activity_id?: string | null
           annual_performance?: number | null
+          baseline_proposal_year?: number | null
           core_indicators?: string | null
+          cost_usd?: number | null
+          country?: string | null
           created_at?: string
+          data_source?: string | null
           description?: string | null
           evidence?: string | null
           id?: string
+          implementing_entity?: string | null
+          indicator_definition?: string | null
+          indicator_type?: string | null
+          long_term_outcome?: string | null
           name: string
+          naphs?: string | null
           organisation?: string | null
           q1?: number | null
           q2?: number | null
           q3?: number | null
           q4?: number | null
+          quarter_3?: number | null
+          responsibility?: string | null
           subactivity_id?: string | null
           target?: number | null
+          target_year_1?: number | null
+          target_year_2?: number | null
+          target_year_3?: number | null
           unit: string
           updated_at?: string
           workstream?: string | null
           year?: number | null
         }
         Update: {
+          activity?: string | null
           activity_id?: string | null
           annual_performance?: number | null
+          baseline_proposal_year?: number | null
           core_indicators?: string | null
+          cost_usd?: number | null
+          country?: string | null
           created_at?: string
+          data_source?: string | null
           description?: string | null
           evidence?: string | null
           id?: string
+          implementing_entity?: string | null
+          indicator_definition?: string | null
+          indicator_type?: string | null
+          long_term_outcome?: string | null
           name?: string
+          naphs?: string | null
           organisation?: string | null
           q1?: number | null
           q2?: number | null
           q3?: number | null
           q4?: number | null
+          quarter_3?: number | null
+          responsibility?: string | null
           subactivity_id?: string | null
           target?: number | null
+          target_year_1?: number | null
+          target_year_2?: number | null
+          target_year_3?: number | null
           unit?: string
           updated_at?: string
           workstream?: string | null
