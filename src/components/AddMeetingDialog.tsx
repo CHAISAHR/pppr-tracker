@@ -70,8 +70,9 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       organiserPhone: form.organiserPhone || undefined,
       preSurveyLink: form.preSurveyLink || undefined,
       postSurveyLink: form.postSurveyLink || undefined,
+      preSurveyQrCode: form.preSurveyQrCode || undefined,
+      postSurveyQrCode: form.postSurveyQrCode || undefined,
     };
-
     onAdd(meeting);
     setForm({ ...emptyForm });
     setOpen(false);
