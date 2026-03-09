@@ -3,6 +3,8 @@ import { Plus, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorsTab } from "@/components/performance/IndicatorsTab";
 import { AddIndicatorDialog } from "@/components/performance/AddIndicatorDialog";
+import { IndicatorExcelTemplate } from "@/components/performance/IndicatorExcelTemplate";
+import { IndicatorExcelUpload } from "@/components/performance/IndicatorExcelUpload";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Performance() {
@@ -27,10 +29,14 @@ export default function Performance() {
           </p>
         </div>
         {user && (
-          <Button onClick={() => setAddIndicatorOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Indicator
-          </Button>
+          <div className="flex items-center gap-2">
+            <IndicatorExcelTemplate />
+            <IndicatorExcelUpload onSuccess={handleRefresh} />
+            <Button onClick={() => setAddIndicatorOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Indicator
+            </Button>
+          </div>
         )}
       </div>
 
