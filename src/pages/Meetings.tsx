@@ -71,6 +71,7 @@ const Meetings = () => {
             <AddMeetingDialog onAdd={handleAddMeeting} />
             {isAdmin() && (
               <>
+                <MeetingExcelExport meetings={meetings} />
                 <MeetingExcelTemplate />
                 <MeetingExcelUpload onUpload={handleUploadMeetings} />
               </>
