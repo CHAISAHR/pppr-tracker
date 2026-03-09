@@ -1,0 +1,16 @@
+ALTER TABLE public.indicators
+  ADD COLUMN IF NOT EXISTS country text,
+  ADD COLUMN IF NOT EXISTS activity text,
+  ADD COLUMN IF NOT EXISTS long_term_outcome text,
+  ADD COLUMN IF NOT EXISTS indicator_type text,
+  ADD COLUMN IF NOT EXISTS indicator_definition text,
+  ADD COLUMN IF NOT EXISTS naphs text,
+  ADD COLUMN IF NOT EXISTS responsibility text,
+  ADD COLUMN IF NOT EXISTS cost_usd numeric,
+  ADD COLUMN IF NOT EXISTS implementing_entity text,
+  ADD COLUMN IF NOT EXISTS data_source text,
+  ADD COLUMN IF NOT EXISTS baseline_proposal_year numeric,
+  ADD COLUMN IF NOT EXISTS quarter_3 numeric,
+  ADD COLUMN IF NOT EXISTS target_year_1 numeric,
+  ADD COLUMN IF NOT EXISTS target_year_2 numeric,
+  ADD COLUMN IF NOT EXISTS target_year_3 numeric;
