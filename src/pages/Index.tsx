@@ -197,7 +197,7 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float" />
             <div>
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-foreground">
               Pandemic Fund Activity Tracker
             </h1>
               <p className="text-muted-foreground">
