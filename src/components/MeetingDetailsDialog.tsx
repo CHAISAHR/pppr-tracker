@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Target, Building2, Users } from "lucide-react";
+import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export interface Meeting {
@@ -12,6 +12,11 @@ export interface Meeting {
   deliveryPartners: string[];
   keyObjectives: string;
   format: "Virtual" | "Hybrid" | "In-Person";
+  organiserName?: string;
+  organiserEmail?: string;
+  organiserPhone?: string;
+  preSurveyLink?: string;
+  postSurveyLink?: string;
 }
 
 interface MeetingDetailsDialogProps {

@@ -19,8 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Index from "./pages/Index";
 import Meetings from "./pages/Meetings";
-
-import Performance from "./pages/Performance";
+nce";
 import Users from "./pages/Users";
 import Organisations from "./pages/Organisations";
 import Auth from "./pages/Auth";
@@ -86,8 +85,7 @@ function AppContent() {
             <Routes>
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<Index />} />
-              <Route path="/workshops" element={<Workshops />} />
-              <Route path="/performance" element={<Performance />} />
+              <Route path="/workshops" element={<Workshoelement={<Performance />} />
               <Route
                 path="/meetings"
                 element={
