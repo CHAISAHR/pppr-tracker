@@ -92,7 +92,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="add-format">Format *</Label>
-              <Select value={form.format} onValueChange={(value: "Virtual" | "Hybrid" | "In-Person") => setForm({ ...form, format: value })}>
+              <Select value={form.format} onValueChange={(value: string) => setForm({ ...form, format: value as Meeting["format"] })}>
                 <SelectTrigger id="add-format"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Virtual">Virtual</SelectItem>
