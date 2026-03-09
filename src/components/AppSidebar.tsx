@@ -18,9 +18,8 @@ import logo from "@/assets/logo.png";
 
 const items = [
   { title: "Activity Tracker", url: "/", icon: Home },
-  { title: "Meetings", url: "/meetings", icon: Calendar },
-  { title: "Workshops & Trainings", url: "/workshops", icon: GraduationCap },
   { title: "Indicator Reporting", url: "/performance", icon: TrendingUp },
+  { title: "Meeting Schedule", url: "/meetings", icon: Calendar },
 ];
 
 const adminItems = [
