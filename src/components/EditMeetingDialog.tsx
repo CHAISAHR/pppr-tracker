@@ -17,6 +17,8 @@ interface EditMeetingDialogProps {
 
 const emptyMeeting: Meeting = {
   id: "",
+  activityId: "",
+  subActivityId: "",
   quarter: "",
   meetingDate: "",
   focusArea: "",
