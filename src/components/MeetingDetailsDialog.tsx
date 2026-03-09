@@ -6,6 +6,8 @@ import { QRCodeSVG } from "qrcode.react";
 
 export interface Meeting {
   id: string;
+  activityId: string;
+  subActivityId: string;
   quarter: string;
   meetingDate: string;
   focusArea: string;
