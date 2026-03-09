@@ -5,13 +5,8 @@ import { ExcelUpload } from "@/components/ExcelUpload";
 import { ExcelTemplate } from "@/components/ExcelTemplate";
 import { ExcelExport } from "@/components/ExcelExport";
 import { AddProjectDialog } from "@/components/AddProjectDialog";
-import { ClipboardList, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { IndicatorsTab } from "@/components/performance/IndicatorsTab";
-import { SubActivitiesTab } from "@/components/performance/SubActivitiesTab";
-import { PerformanceDataTab } from "@/components/performance/PerformanceDataTab";
-import { AddIndicatorDialog } from "@/components/performance/AddIndicatorDialog";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -94,12 +89,6 @@ const Index = () => {
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [addIndicatorOpen, setAddIndicatorOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
 
   // Get unique entities and partners for filters
   const implementingEntities = useMemo(
@@ -264,76 +253,20 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Tabs: Activities and Performance */}
-        <Tabs defaultValue="activities" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="activities">Activity Tracker</TabsTrigger>
-            <TabsTrigger value="performance">Indicator Reporting</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="activities" className="space-y-4">
-            <ProjectTable
-              projects={filteredProjects}
-              onUpdateProject={handleUpdateProject}
-              readOnly={!user}
-            />
-          </TabsContent>
-
-          <TabsContent value="performance" className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-xl font-semibold">Performance Indicators</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Define metrics to track across your activities
-                  </p>
-                </div>
-                {user && (
-                  <Button onClick={() => setAddIndicatorOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Indicator
-                  </Button>
-                )}
-              </div>
-              <IndicatorsTab key={`indicators-${refreshKey}`} onUpdate={handleRefresh} />
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-xl font-semibold">Sub-Activities</h2>
-                <p className="text-sm text-muted-foreground">
-                  Break down activities into manageable tasks
-                </p>
-              </div>
-              <SubActivitiesTab key={`sub-${refreshKey}`} onUpdate={handleRefresh} />
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-xl font-semibold">Performance Data</h2>
-                <p className="text-sm text-muted-foreground">
-                  Track targets and actual achievements for your indicators
-                </p>
-              </div>
-              <PerformanceDataTab key={`data-${refreshKey}`} onUpdate={handleRefresh} />
-            </div>
-          </TabsContent>
-        </Tabs>
+        {/* Project Table */}
+        <ProjectTable
+          projects={filteredProjects}
+          onUpdateProject={handleUpdateProject}
+          readOnly={!user}
+        />
 
         {/* Add Project Dialog */}
         {user && (
-          <>
-            <AddProjectDialog
-              open={addDialogOpen}
-              onOpenChange={setAddDialogOpen}
-              onAdd={handleAddProject}
-            />
-            <AddIndicatorDialog
-              open={addIndicatorOpen}
-              onOpenChange={setAddIndicatorOpen}
-              onSuccess={handleRefresh}
-            />
-          </>
+          <AddProjectDialog
+            open={addDialogOpen}
+            onOpenChange={setAddDialogOpen}
+            onAdd={handleAddProject}
+          />
         )}
       </div>
     </div>
