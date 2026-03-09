@@ -101,6 +101,17 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label htmlFor="add-activityId">Activity ID</Label>
+                <Input id="add-activityId" placeholder="ACT-001" value={form.activityId} onChange={(e) => setForm({ ...form, activityId: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-subActivityId">Sub-Activity ID</Label>
+                <Input id="add-subActivityId" placeholder="SUB-001" value={form.subActivityId} onChange={(e) => setForm({ ...form, subActivityId: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label htmlFor="add-quarter">Quarter *</Label>
                 <Input id="add-quarter" placeholder="Q1 2025" value={form.quarter} onChange={(e) => setForm({ ...form, quarter: e.target.value })} />
               </div>
