@@ -89,7 +89,6 @@ const Index = () => {
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [addIndicatorOpen, setAddIndicatorOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => {
