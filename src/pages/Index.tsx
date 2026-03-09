@@ -197,7 +197,7 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float" />
             <div>
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-foreground">
               Pandemic Fund Activity Tracker
             </h1>
               <p className="text-muted-foreground">
@@ -240,7 +240,7 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-primary/20 p-6 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:scale-105 animate-fade-in">
             <div className="text-sm font-medium text-primary mb-2">Total Projects</div>
-            <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <div className="text-3xl font-bold text-primary">
               {filteredProjects.length}
             </div>
           </div>
