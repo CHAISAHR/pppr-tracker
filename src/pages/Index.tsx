@@ -89,11 +89,6 @@ const Index = () => {
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
 
   // Get unique entities and partners for filters
   const implementingEntities = useMemo(
