@@ -62,6 +62,8 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
     const meeting: Meeting = {
       id: crypto.randomUUID(),
+      activityId: form.activityId,
+      subActivityId: form.subActivityId,
       quarter: form.quarter,
       meetingDate: form.meetingDate,
       focusArea: form.focusArea,
