@@ -14,6 +14,8 @@ interface AddMeetingDialogProps {
 }
 
 interface MeetingForm {
+  activityId: string;
+  subActivityId: string;
   quarter: string;
   meetingDate: string;
   focusArea: string;
@@ -31,6 +33,8 @@ interface MeetingForm {
 }
 
 const emptyForm: MeetingForm = {
+  activityId: "",
+  subActivityId: "",
   quarter: "",
   meetingDate: "",
   focusArea: "",
@@ -58,6 +62,8 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
     const meeting: Meeting = {
       id: crypto.randomUUID(),
+      activityId: form.activityId,
+      subActivityId: form.subActivityId,
       quarter: form.quarter,
       meetingDate: form.meetingDate,
       focusArea: form.focusArea,
@@ -93,6 +99,17 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="add-activityId">Activity ID</Label>
+                <Input id="add-activityId" placeholder="ACT-001" value={form.activityId} onChange={(e) => setForm({ ...form, activityId: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-subActivityId">Sub-Activity ID</Label>
+                <Input id="add-subActivityId" placeholder="SUB-001" value={form.subActivityId} onChange={(e) => setForm({ ...form, subActivityId: e.target.value })} />
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="add-quarter">Quarter *</Label>

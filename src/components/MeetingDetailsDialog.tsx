@@ -6,6 +6,8 @@ import { QRCodeSVG } from "qrcode.react";
 
 export interface Meeting {
   id: string;
+  activityId: string;
+  subActivityId: string;
   quarter: string;
   meetingDate: string;
   focusArea: string;
@@ -49,6 +51,19 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
         </DialogHeader>
 
         <div className="space-y-4 mt-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-medium text-muted-foreground">Activity ID:</span>
+              <p>{meeting.activityId || "—"}</p>
+            </div>
+            <div>
+              <span className="font-medium text-muted-foreground">Sub-Activity ID:</span>
+              <p>{meeting.subActivityId || "—"}</p>
+            </div>
+          </div>
+
+          <Separator />
+
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">Meeting Date:</span>

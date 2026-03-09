@@ -17,6 +17,8 @@ interface EditMeetingDialogProps {
 
 const emptyMeeting: Meeting = {
   id: "",
+  activityId: "",
+  subActivityId: "",
   quarter: "",
   meetingDate: "",
   focusArea: "",
@@ -65,6 +67,17 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-activityId">Activity ID</Label>
+              <Input id="edit-activityId" placeholder="ACT-001" value={formData.activityId} onChange={(e) => setFormData({ ...formData, activityId: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-subActivityId">Sub-Activity ID</Label>
+              <Input id="edit-subActivityId" placeholder="SUB-001" value={formData.subActivityId} onChange={(e) => setFormData({ ...formData, subActivityId: e.target.value })} />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="edit-quarter">Quarter *</Label>

@@ -76,6 +76,8 @@ export const MeetingExcelUpload = ({ onUpload }: MeetingExcelUploadProps) => {
 
         return {
           id: `${Date.now()}-${index}`,
+          activityId: String(row["Activity ID"] || row["activity_id"] || ""),
+          subActivityId: String(row["Sub-Activity ID"] || row["sub_activity_id"] || ""),
           quarter: String(row["Quarter"] || row["quarter"] || ""),
           meetingDate: meetingDate,
           focusArea: String(row["Focus Area"] || row["focus_area"] || ""),
