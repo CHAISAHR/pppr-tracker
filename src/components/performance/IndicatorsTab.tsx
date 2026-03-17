@@ -129,7 +129,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
     });
   }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId, filterDeliveryPartner, filterImplementingEntity, filterYear, filterActivity]);
 
-  const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all";
+  const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all" || filterDeliveryPartner !== "all" || filterImplementingEntity !== "all" || filterYear !== "all" || filterActivity !== "all";
 
   const clearFilters = () => {
     setSearchText("");
