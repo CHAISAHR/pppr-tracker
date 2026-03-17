@@ -34,14 +34,14 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
       implementing_entity: ind.implementing_entity || "",
       data_source: ind.data_source || "", unit: ind.unit,
       subactivity_id: ind.subactivity_id || "", description: ind.description || "",
-      baseline_proposal_year: ind.baseline_proposal_year?.toString() || "",
+      baseline_proposal_year: ind.baseline_proposal_year || "",
       quarter_3: ind.quarter_3?.toString() || "",
-      target_year_1: ind.target_year_1?.toString() || "",
-      target_year_2: ind.target_year_2?.toString() || "",
-      target_year_3: ind.target_year_3?.toString() || "",
-      target_year_4: ind.target_year_4?.toString() || "",
-      target_year_5: ind.target_year_5?.toString() || "",
-      target_year_6: ind.target_year_6?.toString() || "",
+      target_year_1: ind.target_year_1 || "",
+      target_year_2: ind.target_year_2 || "",
+      target_year_3: ind.target_year_3 || "",
+      target_year_4: ind.target_year_4 || "",
+      target_year_5: ind.target_year_5 || "",
+      target_year_6: ind.target_year_6 || "",
       year: ind.year?.toString() || "", target: ind.target?.toString() || "",
       q1: ind.q1?.toString() || "", q2: ind.q2?.toString() || "",
       q3: ind.q3?.toString() || "", q4: ind.q4?.toString() || "",
@@ -75,14 +75,14 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
         implementing_entity: formData.implementing_entity || null,
         data_source: formData.data_source || null, unit: formData.unit,
         subactivity_id: formData.subactivity_id || null, description: formData.description || null,
-        baseline_proposal_year: formData.baseline_proposal_year ? Number(formData.baseline_proposal_year) : null,
+        baseline_proposal_year: formData.baseline_proposal_year || null,
         quarter_3: formData.quarter_3 ? Number(formData.quarter_3) : null,
-        target_year_1: formData.target_year_1 ? Number(formData.target_year_1) : null,
-        target_year_2: formData.target_year_2 ? Number(formData.target_year_2) : null,
-        target_year_3: formData.target_year_3 ? Number(formData.target_year_3) : null,
-        target_year_4: formData.target_year_4 ? Number(formData.target_year_4) : null,
-        target_year_5: formData.target_year_5 ? Number(formData.target_year_5) : null,
-        target_year_6: formData.target_year_6 ? Number(formData.target_year_6) : null,
+        target_year_1: formData.target_year_1 || null,
+        target_year_2: formData.target_year_2 || null,
+        target_year_3: formData.target_year_3 || null,
+        target_year_4: formData.target_year_4 || null,
+        target_year_5: formData.target_year_5 || null,
+        target_year_6: formData.target_year_6 || null,
         year: formData.year ? Number(formData.year) : null,
         target: formData.target ? Number(formData.target) : null,
         q1, q2, q3, q4, annual_performance,
@@ -161,15 +161,15 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>Baseline Yr</Label><Input type="number" value={formData.baseline_proposal_year} onChange={e => update("baseline_proposal_year", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y1</Label><Input type="number" value={formData.target_year_1} onChange={e => update("target_year_1", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y2</Label><Input type="number" value={formData.target_year_2} onChange={e => update("target_year_2", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Baseline Yr</Label><Input value={formData.baseline_proposal_year} onChange={e => update("baseline_proposal_year", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y1</Label><Input value={formData.target_year_1} onChange={e => update("target_year_1", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y2</Label><Input value={formData.target_year_2} onChange={e => update("target_year_2", e.target.value)} /></div>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              <div className="space-y-2"><Label>Target Y3</Label><Input type="number" value={formData.target_year_3} onChange={e => update("target_year_3", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y4</Label><Input type="number" value={formData.target_year_4} onChange={e => update("target_year_4", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y5</Label><Input type="number" value={formData.target_year_5} onChange={e => update("target_year_5", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y6</Label><Input type="number" value={formData.target_year_6} onChange={e => update("target_year_6", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y3</Label><Input value={formData.target_year_3} onChange={e => update("target_year_3", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y4</Label><Input value={formData.target_year_4} onChange={e => update("target_year_4", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y5</Label><Input value={formData.target_year_5} onChange={e => update("target_year_5", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y6</Label><Input value={formData.target_year_6} onChange={e => update("target_year_6", e.target.value)} /></div>
             </div>
 
             <hr className="border-border" />

@@ -39,14 +39,14 @@ export interface Indicator {
   cost_usd: number | null;
   implementing_entity: string | null;
   data_source: string | null;
-  baseline_proposal_year: number | null;
+  baseline_proposal_year: string | null;
   quarter_3: number | null;
-  target_year_1: number | null;
-  target_year_2: number | null;
-  target_year_3: number | null;
-  target_year_4: number | null;
-  target_year_5: number | null;
-  target_year_6: number | null;
+  target_year_1: string | null;
+  target_year_2: string | null;
+  target_year_3: string | null;
+  target_year_4: string | null;
+  target_year_5: string | null;
+  target_year_6: string | null;
 }
 
 interface IndicatorsTabProps {

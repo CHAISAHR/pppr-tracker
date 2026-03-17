@@ -76,7 +76,7 @@ export type Database = {
           activity: string | null
           activity_id: string | null
           annual_performance: number | null
-          baseline_proposal_year: number | null
+          baseline_proposal_year: string | null
           core_indicators: string | null
           cost_usd: number | null
           country: string | null
@@ -100,12 +100,12 @@ export type Database = {
           responsibility: string | null
           subactivity_id: string | null
           target: number | null
-          target_year_1: number | null
-          target_year_2: number | null
-          target_year_3: number | null
-          target_year_4: number | null
-          target_year_5: number | null
-          target_year_6: number | null
+          target_year_1: string | null
+          target_year_2: string | null
+          target_year_3: string | null
+          target_year_4: string | null
+          target_year_5: string | null
+          target_year_6: string | null
           unit: string
           updated_at: string
           workstream: string | null
@@ -115,7 +115,7 @@ export type Database = {
           activity?: string | null
           activity_id?: string | null
           annual_performance?: number | null
-          baseline_proposal_year?: number | null
+          baseline_proposal_year?: string | null
           core_indicators?: string | null
           cost_usd?: number | null
           country?: string | null
@@ -139,12 +139,12 @@ export type Database = {
           responsibility?: string | null
           subactivity_id?: string | null
           target?: number | null
-          target_year_1?: number | null
-          target_year_2?: number | null
-          target_year_3?: number | null
-          target_year_4?: number | null
-          target_year_5?: number | null
-          target_year_6?: number | null
+          target_year_1?: string | null
+          target_year_2?: string | null
+          target_year_3?: string | null
+          target_year_4?: string | null
+          target_year_5?: string | null
+          target_year_6?: string | null
           unit: string
           updated_at?: string
           workstream?: string | null
@@ -154,7 +154,7 @@ export type Database = {
           activity?: string | null
           activity_id?: string | null
           annual_performance?: number | null
-          baseline_proposal_year?: number | null
+          baseline_proposal_year?: string | null
           core_indicators?: string | null
           cost_usd?: number | null
           country?: string | null
@@ -178,12 +178,12 @@ export type Database = {
           responsibility?: string | null
           subactivity_id?: string | null
           target?: number | null
-          target_year_1?: number | null
-          target_year_2?: number | null
-          target_year_3?: number | null
-          target_year_4?: number | null
-          target_year_5?: number | null
-          target_year_6?: number | null
+          target_year_1?: string | null
+          target_year_2?: string | null
+          target_year_3?: string | null
+          target_year_4?: string | null
+          target_year_5?: string | null
+          target_year_6?: string | null
           unit?: string
           updated_at?: string
           workstream?: string | null
