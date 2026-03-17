@@ -20,7 +20,7 @@ export const ProjectDetailsDialog = ({ project, open, onOpenChange }: ProjectDet
         <DialogHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <DialogTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
+              <DialogTitle className="text-2xl text-foreground">
                 {project.activityDescription}
               </DialogTitle>
               <DialogDescription className="mt-2 flex items-center gap-2">
