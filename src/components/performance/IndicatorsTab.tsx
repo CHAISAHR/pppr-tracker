@@ -109,6 +109,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       if (filterWorkstream !== "all" && ind.workstream !== filterWorkstream) return false;
       if (filterIndicatorType !== "all" && ind.indicator_type !== filterIndicatorType) return false;
       if (filterActivityId !== "all" && ind.activity_id !== filterActivityId) return false;
+      if (filterDeliveryPartner !== "all" && ind.organisation !== filterDeliveryPartner) return false;
+      if (filterImplementingEntity !== "all" && ind.implementing_entity !== filterImplementingEntity) return false;
+      if (filterYear !== "all" && ind.year?.toString() !== filterYear) return false;
+      if (filterActivity !== "all" && ind.activity !== filterActivity) return false;
       if (searchText) {
         const search = searchText.toLowerCase();
         return (
@@ -123,7 +127,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       }
       return true;
     });
-  }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId]);
+  }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId, filterDeliveryPartner, filterImplementingEntity, filterYear, filterActivity]);
 
   const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all";
 
