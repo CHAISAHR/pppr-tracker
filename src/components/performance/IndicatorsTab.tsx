@@ -277,9 +277,53 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
               <SelectValue placeholder="Activity ID" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Activities</SelectItem>
+              <SelectItem value="all">All Activity IDs</SelectItem>
               {filterOptions.activityIds.map(a => (
                 <SelectItem key={a} value={a}>{a}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterActivity} onValueChange={setFilterActivity}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Activity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Activities</SelectItem>
+              {filterOptions.activities.map(a => (
+                <SelectItem key={a} value={a}>{a}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterDeliveryPartner} onValueChange={setFilterDeliveryPartner}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Delivery Partner" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Partners</SelectItem>
+              {filterOptions.deliveryPartners.map(p => (
+                <SelectItem key={p} value={p}>{p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterImplementingEntity} onValueChange={setFilterImplementingEntity}>
+            <SelectTrigger className="w-[190px]">
+              <SelectValue placeholder="Implementing Entity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Entities</SelectItem>
+              {filterOptions.implementingEntities.map(e => (
+                <SelectItem key={e} value={e}>{e}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterYear} onValueChange={setFilterYear}>
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {filterOptions.years.map(y => (
+                <SelectItem key={y} value={y}>{y}</SelectItem>
               ))}
             </SelectContent>
           </Select>
