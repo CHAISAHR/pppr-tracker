@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import type { Meeting } from "./MeetingDetailsDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EditMeetingDialogProps {
   meeting: Meeting | null;
