@@ -17,7 +17,7 @@ const Meetings = () => {
   const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   useEffect(() => {
     const savedMeetings = localStorage.getItem("meetings");

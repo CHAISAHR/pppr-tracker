@@ -87,14 +87,8 @@ function AppContent() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<Index />} />
               <Route path="/performance" element={<Performance />} />
-              <Route
-                path="/meetings"
-                element={
-                  <ProtectedRoute>
-                    <Meetings />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/meetings" element={<Meetings />} />
+              <Route path="/organisations" element={<Organisations />} />
               <Route
                 path="/users"
                 element={
@@ -108,14 +102,6 @@ function AppContent() {
                 element={
                   <ProtectedRoute>
                     <Administration />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/organisations"
-                element={
-                  <ProtectedRoute>
-                    <Organisations />
                   </ProtectedRoute>
                 }
               />
