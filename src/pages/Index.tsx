@@ -187,7 +187,7 @@ const Index = () => {
             <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float" />
             <div>
             <h1 className="text-2xl font-bold text-foreground">
-              Pandemic Fund Activity Tracker
+              M&E Reporting Tool
             </h1>
               <p className="text-muted-foreground">
                 Track and manage all project activities
