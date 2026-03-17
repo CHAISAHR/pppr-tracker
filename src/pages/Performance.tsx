@@ -18,10 +18,10 @@ export default function Performance() {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <TrendingUp className="h-8 w-8 text-primary" />
+            <TrendingUp className="h-8 w-8 text-primary flex-shrink-0" />
             Indicator Reporting
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -29,7 +29,7 @@ export default function Performance() {
           </p>
         </div>
         {user && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
             <IndicatorExcelTemplate />
             <IndicatorExcelUpload onSuccess={handleRefresh} />
             <Button onClick={() => setAddIndicatorOpen(true)}>
