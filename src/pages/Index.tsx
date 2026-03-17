@@ -182,20 +182,20 @@ const Index = () => {
     <div className="bg-gradient-subtle min-h-screen">
       <div className="container mx-auto py-8 px-4 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 animate-fade-in">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float" />
-            <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              M&E Reporting Tool
-            </h1>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 animate-fade-in">
+          <div className="flex items-center gap-3 min-w-0">
+            <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold text-foreground whitespace-nowrap">
+                M&E Reporting Tool
+              </h1>
               <p className="text-muted-foreground">
                 Track and manage all project activities
               </p>
             </div>
           </div>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 flex-shrink-0">
               <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
                 Add Activity
