@@ -1,7 +1,7 @@
 // API service for Railway backend
-// TODO: Update BASE_URL with your Railway backend URL
-const BASE_URL = 'https://your-railway-app.railway.app/api';
-const MOCK_MODE = true; // Set to false when Railway backend is ready
+// Set your Railway backend URL here after deploying
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-app.railway.app/api';
+const MOCK_MODE = !import.meta.env.VITE_API_URL; // Auto-disables mock when API URL is set
 
 export interface User {
   id: string;
