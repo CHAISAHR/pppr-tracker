@@ -17,7 +17,7 @@ const Meetings = () => {
   const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   useEffect(() => {
     const savedMeetings = localStorage.getItem("meetings");
@@ -68,7 +68,7 @@ const Meetings = () => {
             <p className="text-muted-foreground text-lg">View and manage your scheduled meetings</p>
           </div>
           <div className="flex gap-2">
-            <AddMeetingDialog onAdd={handleAddMeeting} />
+            {user && <AddMeetingDialog onAdd={handleAddMeeting} />}
             {isAdmin() && (
               <>
                 <MeetingExcelExport meetings={meetings} />
