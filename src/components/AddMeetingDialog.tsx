@@ -8,6 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { Meeting } from "./MeetingDetailsDialog";
 import { Plus } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AddMeetingDialogProps {
   onAdd: (meeting: Meeting) => void;
