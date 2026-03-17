@@ -122,21 +122,42 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
             </>
           )}
 
-          {(meeting.preSurveyLink || meeting.postSurveyLink) && (
+        {(meeting.preSurveyLink || meeting.postSurveyLink) && (
             <>
               <div className="space-y-4">
                 <div className="flex items-start gap-2">
                   <LinkIcon className="h-4 w-4 mt-1 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="font-medium text-sm mb-3">Survey Links & QR Codes</p>
+                    <p className="font-medium text-sm mb-3">Survey Links</p>
+                    <div className="flex flex-wrap gap-3 mb-4">
+                      {meeting.preSurveyLink && (
+                        <a
+                          href={meeting.preSurveyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                        >
+                          <LinkIcon className="h-4 w-4" />
+                          Open Pre-Survey
+                        </a>
+                      )}
+                      {meeting.postSurveyLink && (
+                        <a
+                          href={meeting.postSurveyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
+                        >
+                          <LinkIcon className="h-4 w-4" />
+                          Open Post-Survey
+                        </a>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       {meeting.preSurveyLink && (
                         <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
-                          <p className="font-medium text-sm text-foreground">Pre-Survey</p>
-                          <a href={meeting.preSurveyLink} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
-                            {meeting.preSurveyLink}
-                          </a>
-                          <div className="flex flex-col items-center gap-2 pt-2">
+                          <p className="font-medium text-sm text-foreground">Pre-Survey QR Code</p>
+                          <div className="flex flex-col items-center gap-2">
                             {meeting.preSurveyQrCode ? (
                               <img src={meeting.preSurveyQrCode} alt="Pre-Survey QR Code" className="w-40 h-40 object-contain rounded border bg-white p-1" />
                             ) : (
@@ -150,11 +171,8 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
                       )}
                       {meeting.postSurveyLink && (
                         <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
-                          <p className="font-medium text-sm text-foreground">Post-Survey</p>
-                          <a href={meeting.postSurveyLink} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
-                            {meeting.postSurveyLink}
-                          </a>
-                          <div className="flex flex-col items-center gap-2 pt-2">
+                          <p className="font-medium text-sm text-foreground">Post-Survey QR Code</p>
+                          <div className="flex flex-col items-center gap-2">
                             {meeting.postSurveyQrCode ? (
                               <img src={meeting.postSurveyQrCode} alt="Post-Survey QR Code" className="w-40 h-40 object-contain rounded border bg-white p-1" />
                             ) : (
