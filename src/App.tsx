@@ -21,6 +21,7 @@ import Index from "./pages/Index";
 import Meetings from "./pages/Meetings";
 import Performance from "./pages/Performance";
 import Users from "./pages/Users";
+import Administration from "./pages/Administration";
 import Organisations from "./pages/Organisations";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -99,6 +100,14 @@ function AppContent() {
                 element={
                   <ProtectedRoute>
                     <Users />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/administration"
+                element={
+                  <ProtectedRoute>
+                    <Administration />
                   </ProtectedRoute>
                 }
               />

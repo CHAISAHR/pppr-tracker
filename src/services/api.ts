@@ -220,6 +220,12 @@ class ApiService {
   }
 
   async getProjects(): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_projects');
+      return stored ? JSON.parse(stored) : [];
+    }
+
     const response = await fetch(`${BASE_URL}/projects`, {
       headers: this.getAuthHeaders(),
     });
@@ -231,7 +237,44 @@ class ApiService {
     return response.json();
   }
 
+  async createProject(data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const project = { id: crypto.randomUUID(), ...data };
+      const stored = localStorage.getItem('mock_projects');
+      const projects = stored ? JSON.parse(stored) : [];
+      projects.unshift(project);
+      localStorage.setItem('mock_projects', JSON.stringify(projects));
+      return project;
+    }
+
+    const response = await fetch(`${BASE_URL}/projects`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create project');
+    }
+
+    return response.json();
+  }
+
   async updateProject(id: string, data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_projects');
+      const projects = stored ? JSON.parse(stored) : [];
+      const index = projects.findIndex((p: any) => p.id === id);
+      if (index !== -1) {
+        projects[index] = { ...projects[index], ...data };
+        localStorage.setItem('mock_projects', JSON.stringify(projects));
+        return projects[index];
+      }
+      return { id, ...data };
+    }
+
     const response = await fetch(`${BASE_URL}/projects/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
@@ -245,7 +288,33 @@ class ApiService {
     return response.json();
   }
 
+  async deleteProject(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_projects');
+      const projects = stored ? JSON.parse(stored) : [];
+      const filtered = projects.filter((p: any) => p.id !== id);
+      localStorage.setItem('mock_projects', JSON.stringify(filtered));
+      return;
+    }
+
+    const response = await fetch(`${BASE_URL}/projects/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete project');
+    }
+  }
+
   async getMeetings(): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_meetings');
+      return stored ? JSON.parse(stored) : [];
+    }
+
     const response = await fetch(`${BASE_URL}/meetings`, {
       headers: this.getAuthHeaders(),
     });
@@ -257,7 +326,44 @@ class ApiService {
     return response.json();
   }
 
+  async createMeeting(data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const meeting = { id: crypto.randomUUID(), ...data };
+      const stored = localStorage.getItem('mock_meetings');
+      const meetings = stored ? JSON.parse(stored) : [];
+      meetings.unshift(meeting);
+      localStorage.setItem('mock_meetings', JSON.stringify(meetings));
+      return meeting;
+    }
+
+    const response = await fetch(`${BASE_URL}/meetings`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create meeting');
+    }
+
+    return response.json();
+  }
+
   async updateMeeting(id: string, data: any): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_meetings');
+      const meetings = stored ? JSON.parse(stored) : [];
+      const index = meetings.findIndex((m: any) => m.id === id);
+      if (index !== -1) {
+        meetings[index] = { ...meetings[index], ...data };
+        localStorage.setItem('mock_meetings', JSON.stringify(meetings));
+        return meetings[index];
+      }
+      return { id, ...data };
+    }
+
     const response = await fetch(`${BASE_URL}/meetings/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
@@ -269,6 +375,26 @@ class ApiService {
     }
 
     return response.json();
+  }
+
+  async deleteMeeting(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_meetings');
+      const meetings = stored ? JSON.parse(stored) : [];
+      const filtered = meetings.filter((m: any) => m.id !== id);
+      localStorage.setItem('mock_meetings', JSON.stringify(filtered));
+      return;
+    }
+
+    const response = await fetch(`${BASE_URL}/meetings/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete meeting');
+    }
   }
 
   async getWorkshops(): Promise<any[]> {
