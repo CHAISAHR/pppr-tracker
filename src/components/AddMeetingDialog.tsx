@@ -163,47 +163,49 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
               </div>
             </div>
 
-            <div className="border rounded-md p-4 space-y-3">
-              <p className="text-sm font-medium">Survey Links & QR Codes</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="add-preSurvey">Pre-Survey Link</Label>
-                    <Input id="add-preSurvey" type="url" placeholder="https://..." value={form.preSurveyLink} onChange={(e) => setForm({ ...form, preSurveyLink: e.target.value })} />
+            {isAdmin() && (
+              <div className="border rounded-md p-4 space-y-3">
+                <p className="text-sm font-medium">Survey Links & QR Codes</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="add-preSurvey">Pre-Survey Link</Label>
+                      <Input id="add-preSurvey" type="url" placeholder="https://..." value={form.preSurveyLink} onChange={(e) => setForm({ ...form, preSurveyLink: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="add-preQr">Pre-Survey QR Code (optional)</Label>
+                      <Input id="add-preQr" type="file" accept="image/*" onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => setForm({ ...form, preSurveyQrCode: reader.result as string });
+                          reader.readAsDataURL(file);
+                        }
+                      }} />
+                      <p className="text-xs text-muted-foreground">If not provided, a QR code will be auto-generated from the link</p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="add-preQr">Pre-Survey QR Code (optional)</Label>
-                    <Input id="add-preQr" type="file" accept="image/*" onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => setForm({ ...form, preSurveyQrCode: reader.result as string });
-                        reader.readAsDataURL(file);
-                      }
-                    }} />
-                    <p className="text-xs text-muted-foreground">If not provided, a QR code will be auto-generated from the link</p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="add-postSurvey">Post-Survey Link</Label>
-                    <Input id="add-postSurvey" type="url" placeholder="https://..." value={form.postSurveyLink} onChange={(e) => setForm({ ...form, postSurveyLink: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="add-postQr">Post-Survey QR Code (optional)</Label>
-                    <Input id="add-postQr" type="file" accept="image/*" onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => setForm({ ...form, postSurveyQrCode: reader.result as string });
-                        reader.readAsDataURL(file);
-                      }
-                    }} />
-                    <p className="text-xs text-muted-foreground">If not provided, a QR code will be auto-generated from the link</p>
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="add-postSurvey">Post-Survey Link</Label>
+                      <Input id="add-postSurvey" type="url" placeholder="https://..." value={form.postSurveyLink} onChange={(e) => setForm({ ...form, postSurveyLink: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="add-postQr">Post-Survey QR Code (optional)</Label>
+                      <Input id="add-postQr" type="file" accept="image/*" onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => setForm({ ...form, postSurveyQrCode: reader.result as string });
+                          reader.readAsDataURL(file);
+                        }
+                      }} />
+                      <p className="text-xs text-muted-foreground">If not provided, a QR code will be auto-generated from the link</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="add-implementingEntities">Implementing Entities (separate with ;)</Label>
               <Input id="add-implementingEntities" placeholder="Entity 1; Entity 2" value={form.implementingEntities} onChange={(e) => setForm({ ...form, implementingEntities: e.target.value })} />
