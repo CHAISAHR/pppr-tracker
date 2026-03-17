@@ -54,6 +54,7 @@ const emptyForm: MeetingForm = {
 export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
+  const { isAdmin } = useAuth();
 
   const handleAdd = () => {
     if (!form.quarter || !form.meetingDate || !form.focusArea) {
