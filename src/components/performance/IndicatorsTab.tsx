@@ -137,6 +137,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
     setFilterWorkstream("all");
     setFilterIndicatorType("all");
     setFilterActivityId("all");
+    setFilterDeliveryPartner("all");
+    setFilterImplementingEntity("all");
+    setFilterYear("all");
+    setFilterActivity("all");
   };
 
   const handleDelete = async (id: string) => {
