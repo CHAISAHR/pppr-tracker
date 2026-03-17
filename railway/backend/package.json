@@ -1,7 +1,7 @@
 {
   "name": "railway-backend",
   "version": "1.0.0",
-  "description": "Express API backend for Railway deployment",
+  "description": "Express API backend for Railway deployment (MySQL)",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -13,6 +13,6 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.13.0"
+    "mysql2": "^3.11.0"
   }
 }

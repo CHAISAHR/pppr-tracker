@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const mysql = require('mysql2/promise');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const projectsRoutes = require('./routes/projects');
@@ -12,10 +12,12 @@ const subActivitiesRoutes = require('./routes/subActivities');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Database connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+// Database connection pool
+const pool = mysql.createPool({
+  uri: process.env.DATABASE_URL || process.env.MYSQL_URL,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
 // Make pool available to routes
