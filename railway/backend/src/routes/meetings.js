@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
@@ -6,8 +7,9 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
-    const result = await pool.query('SELECT * FROM meetings ORDER BY date DESC');
-    res.json(result.rows);
+    const [rows] = await pool.execute('SELECT * FROM meetings ORDER BY date DESC');
+    const meetings = rows.map(r => ({ ...r, attendees: r.attendees ? JSON.parse(r.attendees) : [] }));
+    res.json(meetings);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch meetings' });
   }
@@ -16,14 +18,18 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const { title, description, date, time, venue, meeting_type, attendees, minutes, action_items, status } = req.body;
+  const id = crypto.randomUUID();
 
   try {
-    const result = await pool.query(
-      `INSERT INTO meetings (title, description, date, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
-      [title, description, date, time, venue, meeting_type, attendees || [], minutes, action_items, status || 'scheduled', req.user.id]
+    await pool.execute(
+      `INSERT INTO meetings (id, title, description, date, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, title, description, date, time || null, venue || null, meeting_type || null, JSON.stringify(attendees || []), minutes || null, action_items || null, status || 'scheduled', req.user.id]
     );
-    res.status(201).json(result.rows[0]);
+    const [rows] = await pool.execute('SELECT * FROM meetings WHERE id = ?', [id]);
+    const meeting = rows[0];
+    meeting.attendees = meeting.attendees ? JSON.parse(meeting.attendees) : [];
+    res.status(201).json(meeting);
   } catch (error) {
     console.error('Create meeting error:', error);
     res.status(500).json({ message: 'Failed to create meeting' });
@@ -36,15 +42,18 @@ router.put('/:id', authenticateToken, async (req, res) => {
   const { title, description, date, time, venue, meeting_type, attendees, minutes, action_items, status } = req.body;
 
   try {
-    const result = await pool.query(
-      `UPDATE meetings SET title = COALESCE($1, title), description = COALESCE($2, description), date = COALESCE($3, date),
-       time = COALESCE($4, time), venue = COALESCE($5, venue), meeting_type = COALESCE($6, meeting_type),
-       attendees = COALESCE($7, attendees), minutes = COALESCE($8, minutes), action_items = COALESCE($9, action_items),
-       status = COALESCE($10, status) WHERE id = $11 RETURNING *`,
-      [title, description, date, time, venue, meeting_type, attendees, minutes, action_items, status, id]
+    await pool.execute(
+      `UPDATE meetings SET title = COALESCE(?, title), description = COALESCE(?, description), date = COALESCE(?, date),
+       time = COALESCE(?, time), venue = COALESCE(?, venue), meeting_type = COALESCE(?, meeting_type),
+       attendees = COALESCE(?, attendees), minutes = COALESCE(?, minutes), action_items = COALESCE(?, action_items),
+       status = COALESCE(?, status) WHERE id = ?`,
+      [title, description, date, time, venue, meeting_type, attendees ? JSON.stringify(attendees) : null, minutes, action_items, status, id]
     );
-    if (result.rows.length === 0) return res.status(404).json({ message: 'Meeting not found' });
-    res.json(result.rows[0]);
+    const [rows] = await pool.execute('SELECT * FROM meetings WHERE id = ?', [id]);
+    if (rows.length === 0) return res.status(404).json({ message: 'Meeting not found' });
+    const meeting = rows[0];
+    meeting.attendees = meeting.attendees ? JSON.parse(meeting.attendees) : [];
+    res.json(meeting);
   } catch (error) {
     res.status(500).json({ message: 'Failed to update meeting' });
   }
@@ -53,7 +62,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
-    await pool.query('DELETE FROM meetings WHERE id = $1', [req.params.id]);
+    await pool.execute('DELETE FROM meetings WHERE id = ?', [req.params.id]);
     res.json({ message: 'Meeting deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete meeting' });

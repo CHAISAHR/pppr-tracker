@@ -1,196 +1,168 @@
 -- =============================================
--- Railway PostgreSQL Schema
--- Run this in Railway's PostgreSQL Query tab
+-- Railway MySQL Schema
+-- Run this in MySQL Workbench
 -- =============================================
 
 -- 1. Users table
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  name TEXT NOT NULL,
-  role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user')),
-  organization TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
+  organization VARCHAR(255),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 2. Projects table
 CREATE TABLE IF NOT EXISTS projects (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  title VARCHAR(255) NOT NULL,
   description TEXT,
-  status TEXT NOT NULL DEFAULT 'active',
+  status VARCHAR(50) NOT NULL DEFAULT 'active',
   start_date DATE,
   end_date DATE,
-  budget NUMERIC,
-  delivery_partners TEXT[], -- array of partner names
-  country TEXT,
-  organisation TEXT,
-  created_by UUID REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  budget DECIMAL(15,2),
+  delivery_partners JSON,
+  country VARCHAR(255),
+  organisation VARCHAR(255),
+  created_by CHAR(36),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- 3. Meetings table
 CREATE TABLE IF NOT EXISTS meetings (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  title VARCHAR(255) NOT NULL,
   description TEXT,
   date DATE NOT NULL,
-  time TEXT,
-  venue TEXT,
-  meeting_type TEXT,
-  attendees TEXT[],
+  time VARCHAR(50),
+  venue VARCHAR(255),
+  meeting_type VARCHAR(100),
+  attendees JSON,
   minutes TEXT,
   action_items TEXT,
-  status TEXT NOT NULL DEFAULT 'scheduled',
-  created_by UUID REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  status VARCHAR(50) NOT NULL DEFAULT 'scheduled',
+  created_by CHAR(36),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- 4. Workshops table
 CREATE TABLE IF NOT EXISTS workshops (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  activity TEXT,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  name VARCHAR(255) NOT NULL,
+  activity VARCHAR(255),
   date DATE NOT NULL,
-  venue TEXT,
-  number_of_days INTEGER DEFAULT 1,
-  registrations INTEGER DEFAULT 0,
-  created_by UUID REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  venue VARCHAR(255),
+  number_of_days INT DEFAULT 1,
+  registrations INT DEFAULT 0,
+  created_by CHAR(36),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- 5. Workshop Attendance table
 CREATE TABLE IF NOT EXISTS workshop_attendance (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workshop_id UUID REFERENCES workshops(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  email TEXT,
-  organization TEXT,
-  phone_number TEXT,
-  submitted_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  workshop_id CHAR(36),
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  organization VARCHAR(255),
+  phone_number VARCHAR(50),
+  submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (workshop_id) REFERENCES workshops(id) ON DELETE CASCADE
 );
 
--- 6. Indicators table (Indicator Tracker)
+-- 6. Indicators table
 CREATE TABLE IF NOT EXISTS indicators (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  name VARCHAR(255) NOT NULL,
   description TEXT,
-  unit TEXT NOT NULL,
-  country TEXT,
-  workstream TEXT,
-  organisation TEXT,              -- Delivery Partner
-  implementing_entity TEXT,
-  activity_id TEXT,
-  activity TEXT,                  -- Activity Name
+  unit VARCHAR(100) NOT NULL,
+  country VARCHAR(255),
+  workstream VARCHAR(255),
+  organisation VARCHAR(255),
+  implementing_entity VARCHAR(255),
+  activity_id VARCHAR(255),
+  activity VARCHAR(255),
   long_term_outcome TEXT,
-  core_indicators TEXT,
-  indicator_type TEXT,
+  core_indicators VARCHAR(255),
+  indicator_type VARCHAR(255),
   indicator_definition TEXT,
-  naphs TEXT,
-  responsibility TEXT,
-  cost_usd NUMERIC,
-  data_source TEXT,
+  naphs VARCHAR(255),
+  responsibility VARCHAR(255),
+  cost_usd DECIMAL(15,2),
+  data_source VARCHAR(255),
   evidence TEXT,
-  year INTEGER,
-  target NUMERIC,
-  q1 NUMERIC,
-  q2 NUMERIC,
-  q3 NUMERIC,
-  q4 NUMERIC,
-  quarter_3 NUMERIC,
-  annual_performance NUMERIC,
-  -- Free-text year/target columns
-  baseline_proposal_year TEXT,
-  target_year_1 TEXT,
-  target_year_2 TEXT,
-  target_year_3 TEXT,
-  target_year_4 TEXT,
-  target_year_5 TEXT,
-  target_year_6 TEXT,
-  subactivity_id TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  year INT,
+  target DECIMAL(15,2),
+  q1 DECIMAL(15,2),
+  q2 DECIMAL(15,2),
+  q3 DECIMAL(15,2),
+  q4 DECIMAL(15,2),
+  quarter_3 DECIMAL(15,2),
+  annual_performance DECIMAL(15,2),
+  baseline_proposal_year VARCHAR(255),
+  target_year_1 VARCHAR(255),
+  target_year_2 VARCHAR(255),
+  target_year_3 VARCHAR(255),
+  target_year_4 VARCHAR(255),
+  target_year_5 VARCHAR(255),
+  target_year_6 VARCHAR(255),
+  subactivity_id VARCHAR(255),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 7. Sub-Activities table
 CREATE TABLE IF NOT EXISTS sub_activities (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  project_id TEXT NOT NULL,
-  name TEXT NOT NULL,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  project_id VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
   description TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 8. Indicator Values table
 CREATE TABLE IF NOT EXISTS indicator_values (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  indicator_id UUID NOT NULL REFERENCES indicators(id) ON DELETE CASCADE,
-  sub_activity_id UUID REFERENCES sub_activities(id) ON DELETE SET NULL,
-  project_id TEXT,
-  reporting_period TEXT,
-  target_value NUMERIC,
-  actual_value NUMERIC,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  indicator_id CHAR(36) NOT NULL,
+  sub_activity_id CHAR(36),
+  project_id VARCHAR(255),
+  reporting_period VARCHAR(100),
+  target_value DECIMAL(15,2),
+  actual_value DECIMAL(15,2),
   notes TEXT,
-  recorded_by UUID REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  recorded_by CHAR(36),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (indicator_id) REFERENCES indicators(id) ON DELETE CASCADE,
+  FOREIGN KEY (sub_activity_id) REFERENCES sub_activities(id) ON DELETE SET NULL,
+  FOREIGN KEY (recorded_by) REFERENCES users(id)
 );
-
--- =============================================
--- Auto-update updated_at trigger
--- =============================================
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = now();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Apply trigger to all tables with updated_at
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_projects_updated_at BEFORE UPDATE ON projects
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_meetings_updated_at BEFORE UPDATE ON meetings
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_workshops_updated_at BEFORE UPDATE ON workshops
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_indicators_updated_at BEFORE UPDATE ON indicators
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_sub_activities_updated_at BEFORE UPDATE ON sub_activities
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_indicator_values_updated_at BEFORE UPDATE ON indicator_values
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- =============================================
 -- Create indexes for common queries
 -- =============================================
-CREATE INDEX IF NOT EXISTS idx_indicators_country ON indicators(country);
-CREATE INDEX IF NOT EXISTS idx_indicators_organisation ON indicators(organisation);
-CREATE INDEX IF NOT EXISTS idx_indicators_implementing_entity ON indicators(implementing_entity);
-CREATE INDEX IF NOT EXISTS idx_indicators_year ON indicators(year);
-CREATE INDEX IF NOT EXISTS idx_indicators_activity ON indicators(activity);
-CREATE INDEX IF NOT EXISTS idx_indicator_values_indicator_id ON indicator_values(indicator_id);
-CREATE INDEX IF NOT EXISTS idx_workshop_attendance_workshop_id ON workshop_attendance(workshop_id);
-CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX idx_indicators_country ON indicators(country);
+CREATE INDEX idx_indicators_organisation ON indicators(organisation);
+CREATE INDEX idx_indicators_implementing_entity ON indicators(implementing_entity);
+CREATE INDEX idx_indicators_year ON indicators(year);
+CREATE INDEX idx_indicators_activity ON indicators(activity);
+CREATE INDEX idx_indicator_values_indicator_id ON indicator_values(indicator_id);
+CREATE INDEX idx_workshop_attendance_workshop_id ON workshop_attendance(workshop_id);
+CREATE INDEX idx_projects_status ON projects(status);
 
 -- =============================================
 -- Seed an admin user (password: admin123)
 -- Replace the password_hash with a bcrypt hash in production
 -- =============================================
-INSERT INTO users (email, password_hash, name, role)
-VALUES ('admin@example.com', '$2b$10$placeholder_hash_replace_me', 'Admin User', 'admin')
-ON CONFLICT (email) DO NOTHING;
+INSERT IGNORE INTO users (id, email, password_hash, name, role)
+VALUES (UUID(), 'admin@example.com', '$2b$10$placeholder_hash_replace_me', 'Admin User', 'admin');
