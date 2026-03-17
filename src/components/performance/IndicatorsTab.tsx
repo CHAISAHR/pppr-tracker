@@ -65,6 +65,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   const [filterWorkstream, setFilterWorkstream] = useState("all");
   const [filterIndicatorType, setFilterIndicatorType] = useState("all");
   const [filterActivityId, setFilterActivityId] = useState("all");
+  const [filterDeliveryPartner, setFilterDeliveryPartner] = useState("all");
+  const [filterImplementingEntity, setFilterImplementingEntity] = useState("all");
+  const [filterYear, setFilterYear] = useState("all");
+  const [filterActivity, setFilterActivity] = useState("all");
 
   const fetchIndicators = async () => {
     try {
