@@ -45,7 +45,7 @@ export function AppSidebar() {
           <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg" />
           {open && (
             <div className="flex flex-col">
-              <span className="font-semibold text-sidebar-foreground">Activity Reporting Tool</span>
+              <span className="font-semibold text-sidebar-foreground">M&E Reporting Tool</span>
               {user && <span className="text-xs text-muted-foreground">{user.name}</span>}
             </div>
           )}
