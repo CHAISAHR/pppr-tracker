@@ -95,6 +95,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       workstreams: unique(indicators.map(i => i.workstream)),
       indicatorTypes: unique(indicators.map(i => i.indicator_type)),
       activityIds: unique(indicators.map(i => i.activity_id)),
+      deliveryPartners: unique(indicators.map(i => i.organisation)),
+      implementingEntities: unique(indicators.map(i => i.implementing_entity)),
+      years: unique(indicators.map(i => i.year?.toString())),
+      activities: unique(indicators.map(i => i.activity)),
     };
   }, [indicators]);
 
