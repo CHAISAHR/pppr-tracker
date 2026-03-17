@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, LogOut, Building2, TrendingUp } from "lucide-react";
+import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -23,6 +23,7 @@ const items = [
 ];
 
 const adminItems = [
+  { title: "Administration", url: "/administration", icon: Settings },
   { title: "Users", url: "/users", icon: Users },
   { title: "Organisations", url: "/organisations", icon: Building2 },
 ];
