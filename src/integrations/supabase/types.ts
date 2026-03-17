@@ -103,6 +103,9 @@ export type Database = {
           target_year_1: number | null
           target_year_2: number | null
           target_year_3: number | null
+          target_year_4: number | null
+          target_year_5: number | null
+          target_year_6: number | null
           unit: string
           updated_at: string
           workstream: string | null
@@ -139,6 +142,9 @@ export type Database = {
           target_year_1?: number | null
           target_year_2?: number | null
           target_year_3?: number | null
+          target_year_4?: number | null
+          target_year_5?: number | null
+          target_year_6?: number | null
           unit: string
           updated_at?: string
           workstream?: string | null
@@ -175,6 +181,9 @@ export type Database = {
           target_year_1?: number | null
           target_year_2?: number | null
           target_year_3?: number | null
+          target_year_4?: number | null
+          target_year_5?: number | null
+          target_year_6?: number | null
           unit?: string
           updated_at?: string
           workstream?: string | null

@@ -35,7 +35,7 @@ export const IndicatorExcelUpload = ({ onSuccess }: IndicatorExcelUploadProps) =
       }
 
       const indicators = jsonData.map((row) => {
-        const responsibility = String(row["Responsibility for Implementation"] || row["responsibility"] || "");
+        const responsibility = String(row["Responsibility for Implementation (Delivery Entity/Implementing Entity)"] || row["Responsibility for Implementation"] || row["responsibility"] || "");
         
         return {
           country: String(row["Country"] || "") || null,
@@ -47,18 +47,20 @@ export const IndicatorExcelUpload = ({ onSuccess }: IndicatorExcelUploadProps) =
           indicator_type: String(row["Indicator Type"] || row["Indicator type"] || "") || null,
           name: String(row["Indicator Name"] || row["Indicator name"] || row["name"] || "Unnamed"),
           indicator_definition: String(row["Indicator Definition"] || row["Indicator definition"] || "") || null,
-          naphs: String(row["NAPHS"] || row["naphs"] || "") || null,
+          naphs: String(row["NAPHS (Yes/No)"] || row["NAPHS"] || row["naphs"] || "") || null,
           responsibility: responsibility || null,
-          organisation: String(row["Organisation Name"] || row["Organisation name"] || row["organisation"] || "") || null,
+          organisation: String(row["Delivery Partner"] || row["Organisation Name"] || row["Organisation name"] || row["organisation"] || "") || null,
           cost_usd: row["Cost US$"] || row["Cost USD"] ? Number(row["Cost US$"] || row["Cost USD"]) : null,
           implementing_entity: String(row["Implementing Entity"] || row["Implementing entity"] || "") || null,
           data_source: String(row["Data Source"] || row["Data source"] || "") || null,
           unit: String(row["Unit"] || row["unit"] || "Number"),
           baseline_proposal_year: row["Baseline Proposal Year"] ? Number(row["Baseline Proposal Year"]) : null,
-          quarter_3: row["Quarter 3"] ? Number(row["Quarter 3"]) : null,
           target_year_1: row["Target Year 1"] || row["Target Year 1 (proposal year)"] ? Number(row["Target Year 1"] || row["Target Year 1 (proposal year)"]) : null,
           target_year_2: row["Target Year 2"] ? Number(row["Target Year 2"]) : null,
           target_year_3: row["Target Year 3"] ? Number(row["Target Year 3"]) : null,
+          target_year_4: row["Target Year 4"] ? Number(row["Target Year 4"]) : null,
+          target_year_5: row["Target Year 5"] ? Number(row["Target Year 5"]) : null,
+          target_year_6: row["Target Year 6"] ? Number(row["Target Year 6"]) : null,
         };
       });
 

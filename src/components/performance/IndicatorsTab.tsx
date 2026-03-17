@@ -42,6 +42,9 @@ export interface Indicator {
   target_year_1: number | null;
   target_year_2: number | null;
   target_year_3: number | null;
+  target_year_4: number | null;
+  target_year_5: number | null;
+  target_year_6: number | null;
 }
 
 interface IndicatorsTabProps {
@@ -105,17 +108,19 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       "Indicator Type": ind.indicator_type || "",
       "Indicator Name": ind.name,
       "Indicator Definition": ind.indicator_definition || "",
-      "NAPHS": ind.naphs || "",
+      "NAPHS (Yes/No)": ind.naphs || "",
       "Responsibility for Implementation": ind.responsibility || "",
-      "Organisation Name": ind.organisation || "",
-      "Cost US$": ind.cost_usd ?? "",
+      "Delivery Partner": ind.organisation || "",
       "Implementing Entity": ind.implementing_entity || "",
       "Data Source": ind.data_source || "",
+      "Cost US$": ind.cost_usd ?? "",
       "Baseline Proposal Year": ind.baseline_proposal_year ?? "",
-      "Quarter 3": ind.quarter_3 ?? "",
       "Target Year 1": ind.target_year_1 ?? "",
       "Target Year 2": ind.target_year_2 ?? "",
       "Target Year 3": ind.target_year_3 ?? "",
+      "Target Year 4": ind.target_year_4 ?? "",
+      "Target Year 5": ind.target_year_5 ?? "",
+      "Target Year 6": ind.target_year_6 ?? "",
       "Year": ind.year || "",
       "Target": ind.target ?? "",
       "Q1": ind.q1 ?? "",
@@ -171,17 +176,20 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
               <TableHead>Workstream</TableHead>
               <TableHead>Indicator Type</TableHead>
               <TableHead>Indicator Name</TableHead>
-              <TableHead>NAPHS</TableHead>
+              <TableHead>Indicator Definition</TableHead>
+              <TableHead>NAPHS (Yes/No)</TableHead>
               <TableHead>Responsibility</TableHead>
-              <TableHead>Organisation</TableHead>
-              <TableHead>Cost US$</TableHead>
+              <TableHead>Delivery Partner</TableHead>
               <TableHead>Implementing Entity</TableHead>
               <TableHead>Data Source</TableHead>
+              <TableHead>Cost US$</TableHead>
               <TableHead>Baseline Yr</TableHead>
-              <TableHead>Q3</TableHead>
               <TableHead>Target Y1</TableHead>
               <TableHead>Target Y2</TableHead>
               <TableHead>Target Y3</TableHead>
+              <TableHead>Target Y4</TableHead>
+              <TableHead>Target Y5</TableHead>
+              <TableHead>Target Y6</TableHead>
               <TableHead>Year</TableHead>
               <TableHead>Target</TableHead>
               <TableHead>Q1</TableHead>
@@ -204,17 +212,20 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
                 <TableCell>{ind.workstream || "-"}</TableCell>
                 <TableCell>{ind.indicator_type || "-"}</TableCell>
                 <TableCell className="font-medium">{ind.name}</TableCell>
+                <TableCell>{ind.indicator_definition || "-"}</TableCell>
                 <TableCell>{ind.naphs || "-"}</TableCell>
                 <TableCell>{ind.responsibility || "-"}</TableCell>
                 <TableCell>{ind.organisation || "-"}</TableCell>
-                <TableCell>{ind.cost_usd != null ? `$${ind.cost_usd.toLocaleString()}` : "-"}</TableCell>
                 <TableCell>{ind.implementing_entity || "-"}</TableCell>
                 <TableCell>{ind.data_source || "-"}</TableCell>
+                <TableCell>{ind.cost_usd != null ? `$${ind.cost_usd.toLocaleString()}` : "-"}</TableCell>
                 <TableCell>{ind.baseline_proposal_year ?? "-"}</TableCell>
-                <TableCell>{ind.quarter_3 ?? "-"}</TableCell>
                 <TableCell>{ind.target_year_1 ?? "-"}</TableCell>
                 <TableCell>{ind.target_year_2 ?? "-"}</TableCell>
                 <TableCell>{ind.target_year_3 ?? "-"}</TableCell>
+                <TableCell>{ind.target_year_4 ?? "-"}</TableCell>
+                <TableCell>{ind.target_year_5 ?? "-"}</TableCell>
+                <TableCell>{ind.target_year_6 ?? "-"}</TableCell>
                 <TableCell>{ind.year || "-"}</TableCell>
                 <TableCell>{ind.target ?? "-"}</TableCell>
                 <TableCell>{ind.q1 ?? "-"}</TableCell>
