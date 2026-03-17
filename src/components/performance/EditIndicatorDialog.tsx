@@ -161,15 +161,15 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>Baseline Yr</Label><Input type="number" value={formData.baseline_proposal_year} onChange={e => update("baseline_proposal_year", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y1</Label><Input type="number" value={formData.target_year_1} onChange={e => update("target_year_1", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y2</Label><Input type="number" value={formData.target_year_2} onChange={e => update("target_year_2", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Baseline Yr</Label><Input value={formData.baseline_proposal_year} onChange={e => update("baseline_proposal_year", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y1</Label><Input value={formData.target_year_1} onChange={e => update("target_year_1", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y2</Label><Input value={formData.target_year_2} onChange={e => update("target_year_2", e.target.value)} /></div>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              <div className="space-y-2"><Label>Target Y3</Label><Input type="number" value={formData.target_year_3} onChange={e => update("target_year_3", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y4</Label><Input type="number" value={formData.target_year_4} onChange={e => update("target_year_4", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y5</Label><Input type="number" value={formData.target_year_5} onChange={e => update("target_year_5", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y6</Label><Input type="number" value={formData.target_year_6} onChange={e => update("target_year_6", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y3</Label><Input value={formData.target_year_3} onChange={e => update("target_year_3", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y4</Label><Input value={formData.target_year_4} onChange={e => update("target_year_4", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y5</Label><Input value={formData.target_year_5} onChange={e => update("target_year_5", e.target.value)} /></div>
+              <div className="space-y-2"><Label>Target Y6</Label><Input value={formData.target_year_6} onChange={e => update("target_year_6", e.target.value)} /></div>
             </div>
 
             <hr className="border-border" />
