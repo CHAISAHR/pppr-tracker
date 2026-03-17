@@ -18,7 +18,7 @@ import logo from "@/assets/logo.png";
 
 const items = [
   { title: "Activity Tracker", url: "/", icon: Home },
-  { title: "Indicator Reporting", url: "/performance", icon: TrendingUp },
+  { title: "Indicator Tracker", url: "/performance", icon: TrendingUp },
   { title: "Meeting Schedule", url: "/meetings", icon: Calendar },
   { title: "Administration", url: "/administration", icon: Settings },
 ];
