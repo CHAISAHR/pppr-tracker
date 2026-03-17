@@ -68,7 +68,7 @@ const Meetings = () => {
             <p className="text-muted-foreground text-lg">View and manage your scheduled meetings</p>
           </div>
           <div className="flex gap-2">
-            <AddMeetingDialog onAdd={handleAddMeeting} />
+            {user && <AddMeetingDialog onAdd={handleAddMeeting} />}
             {isAdmin() && (
               <>
                 <MeetingExcelExport meetings={meetings} />
