@@ -21,8 +21,9 @@ const initialFormData = {
   core_indicators: "", workstream: "", indicator_type: "", name: "",
   indicator_definition: "", naphs: "", responsibility: "", organisation: "",
   cost_usd: "", implementing_entity: "", data_source: "", unit: "",
-  baseline_proposal_year: "", quarter_3: "", target_year_1: "",
-  target_year_2: "", target_year_3: "", year: "", target: "",
+  baseline_proposal_year: "", target_year_1: "",
+  target_year_2: "", target_year_3: "", target_year_4: "",
+  target_year_5: "", target_year_6: "", year: "", target: "",
   q1: "", q2: "", q3: "", q4: "", evidence: "", description: "",
   subactivity_id: "",
 };
@@ -62,10 +63,12 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
         subactivity_id: formData.subactivity_id || null,
         description: formData.description || null,
         baseline_proposal_year: formData.baseline_proposal_year ? Number(formData.baseline_proposal_year) : null,
-        quarter_3: formData.quarter_3 ? Number(formData.quarter_3) : null,
         target_year_1: formData.target_year_1 ? Number(formData.target_year_1) : null,
         target_year_2: formData.target_year_2 ? Number(formData.target_year_2) : null,
         target_year_3: formData.target_year_3 ? Number(formData.target_year_3) : null,
+        target_year_4: formData.target_year_4 ? Number(formData.target_year_4) : null,
+        target_year_5: formData.target_year_5 ? Number(formData.target_year_5) : null,
+        target_year_6: formData.target_year_6 ? Number(formData.target_year_6) : null,
         year: formData.year ? Number(formData.year) : null,
         target: formData.target ? Number(formData.target) : null,
         q1, q2, q3, q4, annual_performance,
@@ -144,7 +147,7 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>NAPHS</Label>
+                <Label>NAPHS (Yes/No)</Label>
                 <Select value={formData.naphs} onValueChange={v => update("naphs", v)}>
                   <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
                   <SelectContent>
@@ -168,7 +171,7 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Organisation Name</Label>
+                <Label>Delivery Partner</Label>
                 <Input value={formData.organisation} onChange={e => update("organisation", e.target.value)} placeholder="e.g., UNDP" />
               </div>
               <div className="space-y-2">
@@ -199,14 +202,10 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Baseline Proposal Year</Label>
                 <Input type="number" value={formData.baseline_proposal_year} onChange={e => update("baseline_proposal_year", e.target.value)} placeholder="2025" />
-              </div>
-              <div className="space-y-2">
-                <Label>Quarter 3</Label>
-                <Input type="number" value={formData.quarter_3} onChange={e => update("quarter_3", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>Target Year 1</Label>
@@ -218,10 +217,22 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label>Target Year 3</Label>
                 <Input type="number" value={formData.target_year_3} onChange={e => update("target_year_3", e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Target Year 4</Label>
+                <Input type="number" value={formData.target_year_4} onChange={e => update("target_year_4", e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Target Year 5</Label>
+                <Input type="number" value={formData.target_year_5} onChange={e => update("target_year_5", e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Target Year 6</Label>
+                <Input type="number" value={formData.target_year_6} onChange={e => update("target_year_6", e.target.value)} />
               </div>
             </div>
 

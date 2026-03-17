@@ -16,17 +16,19 @@ export const IndicatorExcelTemplate = () => {
         "Indicator Type": "Output",
         "Indicator Name": "Number of participants trained",
         "Indicator Definition": "Total participants completing training",
-        "NAPHS": "Yes",
-        "Responsibility for Implementation": "Delivery Partner",
-        "Organisation Name": "UNDP",
-        "Cost US$": 50000,
+        "NAPHS (Yes/No)": "Yes",
+        "Responsibility for Implementation (Delivery Entity/Implementing Entity)": "Delivery Partner",
+        "Delivery Partner": "UNDP",
         "Implementing Entity": "Ministry of Health",
         "Data Source": "Training records",
+        "Cost US$": 50000,
         "Baseline Proposal Year": 2025,
-        "Quarter 3": 25,
         "Target Year 1": 100,
         "Target Year 2": 150,
         "Target Year 3": 200,
+        "Target Year 4": 250,
+        "Target Year 5": 300,
+        "Target Year 6": 350,
       },
     ];
 
@@ -37,9 +39,10 @@ export const IndicatorExcelTemplate = () => {
     worksheet["!cols"] = [
       { wch: 18 }, { wch: 12 }, { wch: 30 }, { wch: 25 },
       { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 30 },
-      { wch: 35 }, { wch: 8 }, { wch: 30 }, { wch: 20 },
-      { wch: 12 }, { wch: 20 }, { wch: 20 }, { wch: 20 },
-      { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+      { wch: 35 }, { wch: 14 }, { wch: 45 }, { wch: 20 },
+      { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 20 },
+      { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+      { wch: 15 }, { wch: 15 },
     ];
 
     XLSX.writeFile(workbook, "indicators_template.xlsx");
