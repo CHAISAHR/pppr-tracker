@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
 
 const router = express.Router();
@@ -11,18 +12,20 @@ router.post('/register', async (req, res) => {
   const { email, password, name, organization } = req.body;
 
   try {
-    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (existing.rows.length > 0) {
+    const [existing] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing.length > 0) {
       return res.status(400).json({ message: 'Email already registered' });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      'INSERT INTO users (email, password_hash, name, organization) VALUES ($1, $2, $3, $4) RETURNING id, email, name, role, organization',
-      [email, passwordHash, name, organization || null]
+    const id = crypto.randomUUID();
+    await pool.execute(
+      'INSERT INTO users (id, email, password_hash, name, organization) VALUES (?, ?, ?, ?, ?)',
+      [id, email, passwordHash, name, organization || null]
     );
 
-    const user = result.rows[0];
+    const [rows] = await pool.execute('SELECT id, email, name, role, organization FROM users WHERE id = ?', [id]);
+    const user = rows[0];
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({ user, token });
@@ -38,12 +41,12 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (result.rows.length === 0) {
+    const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const user = result.rows[0];
+    const user = rows[0];
     const validPassword = await bcrypt.compare(password, user.password_hash);
     if (!validPassword) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -63,12 +66,12 @@ router.post('/login', async (req, res) => {
 router.get('/me', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
-    const result = await pool.query(
-      'SELECT id, email, name, role, organization FROM users WHERE id = $1',
+    const [rows] = await pool.execute(
+      'SELECT id, email, name, role, organization FROM users WHERE id = ?',
       [req.user.id]
     );
-    if (result.rows.length === 0) return res.status(404).json({ message: 'User not found' });
-    res.json(result.rows[0]);
+    if (rows.length === 0) return res.status(404).json({ message: 'User not found' });
+    res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ message: 'Failed to get user' });
   }

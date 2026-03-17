@@ -1,62 +1,64 @@
-# Railway Backend Setup Guide
+# Railway Backend (MySQL)
 
-## 1. Create Railway Project
+## Setup
 
-1. Go to [railway.app](https://railway.app) and sign in
-2. Click **"New Project"** → **"Deploy from GitHub repo"** (or start empty)
-3. Add a **PostgreSQL** service: Click **"+ New"** → **"Database"** → **"PostgreSQL"**
-4. Add a **Node.js** service for the API
+### 1. Add a MySQL service in Railway
+- Go to your Railway project → **New** → **Database** → **MySQL**
+- Copy the connection credentials
 
-## 2. Set Up the Database
+### 2. Run the schema
+- Open **MySQL Workbench**
+- Connect using the Railway MySQL credentials (host, port, user, password from Railway dashboard)
+- Open `railway/schema.sql` and execute it
+- This creates all tables: users, projects, meetings, workshops, workshop_attendance, indicators, sub_activities, indicator_values
 
-1. Click on the PostgreSQL service in Railway
-2. Go to the **"Data"** tab → **"Query"** tab
-3. Copy and paste the contents of `railway/schema.sql` and execute it
-4. This creates all tables: users, projects, meetings, workshops, workshop_attendance, indicators, sub_activities, indicator_values
+### 3. Deploy the backend
+- In Railway, add a **New Service** → connect your GitHub repo
+- Set the **Root Directory** to `railway/backend`
+- Add environment variables:
+  - `MYSQL_URL` — from the MySQL service (Railway can auto-inject via `${{MySQL.MYSQL_URL}}`)
+  - `JWT_SECRET` — a random secret string for signing tokens
+  - `NODE_ENV` — `production`
 
-## 3. Deploy the Backend API
+### 4. Connect the frontend
+- In `src/services/api.ts`, set `MOCK_MODE = false` and update `BASE_URL` to your Railway backend URL (e.g., `https://your-backend.up.railway.app`)
 
-### Option A: Deploy from this folder
-1. Push the `railway/backend/` folder to a GitHub repo
-2. Connect it to Railway as a new service
-3. Set the environment variables (see below)
+## MySQL Workbench Connection
+Use the following from Railway's MySQL service variables:
+- **Host**: `MYSQLHOST`
+- **Port**: `MYSQLPORT`
+- **Username**: `MYSQLUSER`
+- **Password**: `MYSQLPASSWORD`
+- **Database**: `MYSQLDATABASE`
 
-### Option B: Deploy manually
-1. Create a new service in Railway
-2. Upload the backend code
-3. Railway auto-detects Node.js and runs `npm start`
-
-## 4. Environment Variables
-
-Set these in your Railway Node.js service → **Variables** tab:
-
-```
-DATABASE_URL=<auto-populated if you link the PostgreSQL service>
-JWT_SECRET=your-secret-key-here
-PORT=3000
-```
-
-To link the PostgreSQL service:
-- Click on your Node.js service → **Variables** → **"Add Reference"** → Select your PostgreSQL service → `DATABASE_URL`
-
-## 5. Connect Frontend
-
-After deploying, get your Railway backend URL (e.g., `https://your-app.up.railway.app`).
-
-Update `src/services/api.ts`:
-```typescript
-const BASE_URL = 'https://your-app.up.railway.app/api';
-const MOCK_MODE = false;
-```
-
-## 6. Deploy Frontend
-
-### Option A: Deploy frontend on Railway too
-1. Add another service in Railway for the frontend
-2. Set build command: `npm run build`
-3. Set start command: `npx serve dist`
-4. Add env variable: `VITE_API_URL=https://your-backend.up.railway.app/api`
-
-### Option B: Use Lovable's built-in publishing
-1. Click "Publish" in Lovable
-2. Update the API URL in `src/services/api.ts` to point to your Railway backend
+## API Endpoints
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | /api/auth/login | No | Login |
+| POST | /api/auth/register | No | Register |
+| GET | /api/auth/me | Yes | Current user |
+| GET | /api/users | Admin | List users |
+| PUT | /api/users/:id | Admin | Update user |
+| DELETE | /api/users/:id | Admin | Delete user |
+| GET | /api/projects | Yes | List projects |
+| POST | /api/projects | Yes | Create project |
+| PUT | /api/projects/:id | Yes | Update project |
+| DELETE | /api/projects/:id | Yes | Delete project |
+| GET | /api/meetings | Yes | List meetings |
+| POST | /api/meetings | Yes | Create meeting |
+| PUT | /api/meetings/:id | Yes | Update meeting |
+| DELETE | /api/meetings/:id | Yes | Delete meeting |
+| GET | /api/workshops | Yes | List workshops |
+| POST | /api/workshops | Yes | Create workshop |
+| DELETE | /api/workshops/:id | Yes | Delete workshop |
+| POST | /api/workshops/attendance | No | Submit attendance |
+| GET | /api/workshops/attendance | Yes | All attendance |
+| GET | /api/workshops/:id/attendance | Yes | Workshop attendance |
+| GET | /api/indicators | Yes | List indicators |
+| POST | /api/indicators | Yes | Create indicator |
+| POST | /api/indicators/bulk | Yes | Bulk import |
+| PUT | /api/indicators/:id | Yes | Update indicator |
+| DELETE | /api/indicators/:id | Yes | Delete indicator |
+| GET | /api/sub-activities | Yes | List sub-activities |
+| POST | /api/sub-activities | Yes | Create sub-activity |
+| DELETE | /api/sub-activities/:id | Yes | Delete sub-activity |
