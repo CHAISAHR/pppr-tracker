@@ -65,6 +65,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   const [filterWorkstream, setFilterWorkstream] = useState("all");
   const [filterIndicatorType, setFilterIndicatorType] = useState("all");
   const [filterActivityId, setFilterActivityId] = useState("all");
+  const [filterDeliveryPartner, setFilterDeliveryPartner] = useState("all");
+  const [filterImplementingEntity, setFilterImplementingEntity] = useState("all");
+  const [filterYear, setFilterYear] = useState("all");
+  const [filterActivity, setFilterActivity] = useState("all");
 
   const fetchIndicators = async () => {
     try {
@@ -91,6 +95,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       workstreams: unique(indicators.map(i => i.workstream)),
       indicatorTypes: unique(indicators.map(i => i.indicator_type)),
       activityIds: unique(indicators.map(i => i.activity_id)),
+      deliveryPartners: unique(indicators.map(i => i.organisation)),
+      implementingEntities: unique(indicators.map(i => i.implementing_entity)),
+      years: unique(indicators.map(i => i.year?.toString())),
+      activities: unique(indicators.map(i => i.activity)),
     };
   }, [indicators]);
 
@@ -101,6 +109,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       if (filterWorkstream !== "all" && ind.workstream !== filterWorkstream) return false;
       if (filterIndicatorType !== "all" && ind.indicator_type !== filterIndicatorType) return false;
       if (filterActivityId !== "all" && ind.activity_id !== filterActivityId) return false;
+      if (filterDeliveryPartner !== "all" && ind.organisation !== filterDeliveryPartner) return false;
+      if (filterImplementingEntity !== "all" && ind.implementing_entity !== filterImplementingEntity) return false;
+      if (filterYear !== "all" && ind.year?.toString() !== filterYear) return false;
+      if (filterActivity !== "all" && ind.activity !== filterActivity) return false;
       if (searchText) {
         const search = searchText.toLowerCase();
         return (
@@ -115,9 +127,9 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       }
       return true;
     });
-  }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId]);
+  }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId, filterDeliveryPartner, filterImplementingEntity, filterYear, filterActivity]);
 
-  const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all";
+  const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all" || filterDeliveryPartner !== "all" || filterImplementingEntity !== "all" || filterYear !== "all" || filterActivity !== "all";
 
   const clearFilters = () => {
     setSearchText("");
@@ -125,6 +137,10 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
     setFilterWorkstream("all");
     setFilterIndicatorType("all");
     setFilterActivityId("all");
+    setFilterDeliveryPartner("all");
+    setFilterImplementingEntity("all");
+    setFilterYear("all");
+    setFilterActivity("all");
   };
 
   const handleDelete = async (id: string) => {
@@ -261,9 +277,53 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
               <SelectValue placeholder="Activity ID" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Activities</SelectItem>
+              <SelectItem value="all">All Activity IDs</SelectItem>
               {filterOptions.activityIds.map(a => (
                 <SelectItem key={a} value={a}>{a}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterActivity} onValueChange={setFilterActivity}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Activity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Activities</SelectItem>
+              {filterOptions.activities.map(a => (
+                <SelectItem key={a} value={a}>{a}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterDeliveryPartner} onValueChange={setFilterDeliveryPartner}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Delivery Partner" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Partners</SelectItem>
+              {filterOptions.deliveryPartners.map(p => (
+                <SelectItem key={p} value={p}>{p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterImplementingEntity} onValueChange={setFilterImplementingEntity}>
+            <SelectTrigger className="w-[190px]">
+              <SelectValue placeholder="Implementing Entity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Entities</SelectItem>
+              {filterOptions.implementingEntities.map(e => (
+                <SelectItem key={e} value={e}>{e}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterYear} onValueChange={setFilterYear}>
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {filterOptions.years.map(y => (
+                <SelectItem key={y} value={y}>{y}</SelectItem>
               ))}
             </SelectContent>
           </Select>
