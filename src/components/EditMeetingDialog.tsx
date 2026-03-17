@@ -37,6 +37,7 @@ const emptyMeeting: Meeting = {
 };
 export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditMeetingDialogProps) => {
   const [formData, setFormData] = useState<Meeting>({ ...emptyMeeting });
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     if (meeting) {
