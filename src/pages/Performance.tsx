@@ -22,7 +22,7 @@ export default function Performance() {
         <div className="min-w-0">
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <TrendingUp className="h-8 w-8 text-primary flex-shrink-0" />
-            Indicator Reporting
+            Indicator Tracker
           </h1>
           <p className="text-muted-foreground mt-1">
             Define and track performance indicators across your activities
