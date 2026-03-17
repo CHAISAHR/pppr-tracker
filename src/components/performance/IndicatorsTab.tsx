@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "@/services/api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2, Loader2, ExternalLink, Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Pencil, Trash2, Loader2, ExternalLink, Download, Search, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { EditIndicatorDialog } from "./EditIndicatorDialog";
@@ -57,6 +59,13 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   const [loading, setLoading] = useState(true);
   const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(null);
 
+  // Filter state
+  const [searchText, setSearchText] = useState("");
+  const [filterCountry, setFilterCountry] = useState("all");
+  const [filterWorkstream, setFilterWorkstream] = useState("all");
+  const [filterIndicatorType, setFilterIndicatorType] = useState("all");
+  const [filterActivityId, setFilterActivityId] = useState("all");
+
   const fetchIndicators = async () => {
     try {
       const data = await api.getIndicators();
@@ -72,6 +81,51 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   useEffect(() => {
     fetchIndicators();
   }, []);
+
+  // Unique filter options
+  const filterOptions = useMemo(() => {
+    const unique = (arr: (string | null | undefined)[]) =>
+      [...new Set(arr.filter(Boolean))].sort() as string[];
+    return {
+      countries: unique(indicators.map(i => i.country)),
+      workstreams: unique(indicators.map(i => i.workstream)),
+      indicatorTypes: unique(indicators.map(i => i.indicator_type)),
+      activityIds: unique(indicators.map(i => i.activity_id)),
+    };
+  }, [indicators]);
+
+  // Filtered indicators
+  const filteredIndicators = useMemo(() => {
+    return indicators.filter(ind => {
+      if (filterCountry !== "all" && ind.country !== filterCountry) return false;
+      if (filterWorkstream !== "all" && ind.workstream !== filterWorkstream) return false;
+      if (filterIndicatorType !== "all" && ind.indicator_type !== filterIndicatorType) return false;
+      if (filterActivityId !== "all" && ind.activity_id !== filterActivityId) return false;
+      if (searchText) {
+        const search = searchText.toLowerCase();
+        return (
+          ind.name?.toLowerCase().includes(search) ||
+          ind.activity?.toLowerCase().includes(search) ||
+          ind.indicator_definition?.toLowerCase().includes(search) ||
+          ind.country?.toLowerCase().includes(search) ||
+          ind.activity_id?.toLowerCase().includes(search) ||
+          ind.organisation?.toLowerCase().includes(search) ||
+          ind.implementing_entity?.toLowerCase().includes(search)
+        );
+      }
+      return true;
+    });
+  }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId]);
+
+  const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all";
+
+  const clearFilters = () => {
+    setSearchText("");
+    setFilterCountry("all");
+    setFilterWorkstream("all");
+    setFilterIndicatorType("all");
+    setFilterActivityId("all");
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this indicator?")) return;
@@ -93,12 +147,12 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   };
 
   const handleExport = () => {
-    if (indicators.length === 0) {
+    if (filteredIndicators.length === 0) {
       toast.error("No indicators to export");
       return;
     }
 
-    const excelData = indicators.map(ind => ({
+    const excelData = filteredIndicators.map(ind => ({
       "Country": ind.country || "",
       "Activity ID": ind.activity_id || "",
       "Activity": ind.activity || "",
@@ -136,7 +190,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Indicators");
     const timestamp = new Date().toISOString().split("T")[0];
     XLSX.writeFile(workbook, `indicators_export_${timestamp}.xlsx`);
-    toast.success(`Exported ${indicators.length} indicators successfully`);
+    toast.success(`Exported ${filteredIndicators.length} indicators successfully`);
   };
 
   if (loading) {
@@ -157,11 +211,78 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
 
   return (
     <>
-      <div className="flex justify-end mb-4">
-        <Button onClick={handleExport} variant="default" className="gap-2">
-          <Download className="h-4 w-4" />
-          Export Indicators
-        </Button>
+      {/* Filters */}
+      <div className="space-y-3 mb-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[200px] max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search indicators..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Select value={filterCountry} onValueChange={setFilterCountry}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Country" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Countries</SelectItem>
+              {filterOptions.countries.map(c => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterWorkstream} onValueChange={setFilterWorkstream}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Workstream" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Workstreams</SelectItem>
+              {filterOptions.workstreams.map(w => (
+                <SelectItem key={w} value={w}>{w}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterIndicatorType} onValueChange={setFilterIndicatorType}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Indicator Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              {filterOptions.indicatorTypes.map(t => (
+                <SelectItem key={t} value={t}>{t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterActivityId} onValueChange={setFilterActivityId}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Activity ID" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Activities</SelectItem>
+              {filterOptions.activityIds.map(a => (
+                <SelectItem key={a} value={a}>{a}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1">
+              <X className="h-4 w-4" /> Clear
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {filteredIndicators.length} of {indicators.length} indicators
+            {hasActiveFilters && " (filtered)"}
+          </p>
+          <Button onClick={handleExport} variant="default" className="gap-2">
+            <Download className="h-4 w-4" />
+            Export {hasActiveFilters ? "Filtered" : "All"} ({filteredIndicators.length})
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border overflow-x-auto">
@@ -202,58 +323,66 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {indicators.map((ind) => (
-              <TableRow key={ind.id}>
-                <TableCell>{ind.country || "-"}</TableCell>
-                <TableCell>{ind.activity_id || "-"}</TableCell>
-                <TableCell>{ind.activity || "-"}</TableCell>
-                <TableCell>{ind.long_term_outcome || "-"}</TableCell>
-                <TableCell>{ind.core_indicators || "-"}</TableCell>
-                <TableCell>{ind.workstream || "-"}</TableCell>
-                <TableCell>{ind.indicator_type || "-"}</TableCell>
-                <TableCell className="font-medium">{ind.name}</TableCell>
-                <TableCell>{ind.indicator_definition || "-"}</TableCell>
-                <TableCell>{ind.naphs || "-"}</TableCell>
-                <TableCell>{ind.responsibility || "-"}</TableCell>
-                <TableCell>{ind.organisation || "-"}</TableCell>
-                <TableCell>{ind.implementing_entity || "-"}</TableCell>
-                <TableCell>{ind.data_source || "-"}</TableCell>
-                <TableCell>{ind.cost_usd != null ? `$${ind.cost_usd.toLocaleString()}` : "-"}</TableCell>
-                <TableCell>{ind.baseline_proposal_year ?? "-"}</TableCell>
-                <TableCell>{ind.target_year_1 ?? "-"}</TableCell>
-                <TableCell>{ind.target_year_2 ?? "-"}</TableCell>
-                <TableCell>{ind.target_year_3 ?? "-"}</TableCell>
-                <TableCell>{ind.target_year_4 ?? "-"}</TableCell>
-                <TableCell>{ind.target_year_5 ?? "-"}</TableCell>
-                <TableCell>{ind.target_year_6 ?? "-"}</TableCell>
-                <TableCell>{ind.year || "-"}</TableCell>
-                <TableCell>{ind.target ?? "-"}</TableCell>
-                <TableCell>{ind.q1 ?? "-"}</TableCell>
-                <TableCell>{ind.q2 ?? "-"}</TableCell>
-                <TableCell>{ind.q3 ?? "-"}</TableCell>
-                <TableCell>{ind.q4 ?? "-"}</TableCell>
-                <TableCell>{ind.annual_performance ?? "-"}</TableCell>
-                <TableCell>
-                  {ind.evidence ? (
-                    <a href={ind.evidence} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
-                      View <ExternalLink className="h-3 w-3" />
-                    </a>
-                  ) : "-"}
+            {filteredIndicators.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={31} className="text-center py-8 text-muted-foreground">
+                  No indicators match the current filters.
                 </TableCell>
-                {user && (
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => setEditingIndicator(ind)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDelete(ind.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                )}
               </TableRow>
-            ))}
+            ) : (
+              filteredIndicators.map((ind) => (
+                <TableRow key={ind.id}>
+                  <TableCell>{ind.country || "-"}</TableCell>
+                  <TableCell>{ind.activity_id || "-"}</TableCell>
+                  <TableCell>{ind.activity || "-"}</TableCell>
+                  <TableCell>{ind.long_term_outcome || "-"}</TableCell>
+                  <TableCell>{ind.core_indicators || "-"}</TableCell>
+                  <TableCell>{ind.workstream || "-"}</TableCell>
+                  <TableCell>{ind.indicator_type || "-"}</TableCell>
+                  <TableCell className="font-medium">{ind.name}</TableCell>
+                  <TableCell>{ind.indicator_definition || "-"}</TableCell>
+                  <TableCell>{ind.naphs || "-"}</TableCell>
+                  <TableCell>{ind.responsibility || "-"}</TableCell>
+                  <TableCell>{ind.organisation || "-"}</TableCell>
+                  <TableCell>{ind.implementing_entity || "-"}</TableCell>
+                  <TableCell>{ind.data_source || "-"}</TableCell>
+                  <TableCell>{ind.cost_usd != null ? `$${ind.cost_usd.toLocaleString()}` : "-"}</TableCell>
+                  <TableCell>{ind.baseline_proposal_year ?? "-"}</TableCell>
+                  <TableCell>{ind.target_year_1 ?? "-"}</TableCell>
+                  <TableCell>{ind.target_year_2 ?? "-"}</TableCell>
+                  <TableCell>{ind.target_year_3 ?? "-"}</TableCell>
+                  <TableCell>{ind.target_year_4 ?? "-"}</TableCell>
+                  <TableCell>{ind.target_year_5 ?? "-"}</TableCell>
+                  <TableCell>{ind.target_year_6 ?? "-"}</TableCell>
+                  <TableCell>{ind.year || "-"}</TableCell>
+                  <TableCell>{ind.target ?? "-"}</TableCell>
+                  <TableCell>{ind.q1 ?? "-"}</TableCell>
+                  <TableCell>{ind.q2 ?? "-"}</TableCell>
+                  <TableCell>{ind.q3 ?? "-"}</TableCell>
+                  <TableCell>{ind.q4 ?? "-"}</TableCell>
+                  <TableCell>{ind.annual_performance ?? "-"}</TableCell>
+                  <TableCell>
+                    {ind.evidence ? (
+                      <a href={ind.evidence} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
+                        View <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : "-"}
+                  </TableCell>
+                  {user && (
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => setEditingIndicator(ind)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleDelete(ind.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
