@@ -64,8 +64,8 @@ const Meetings = () => {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-4xl font-bold mb-2 text-foreground">Meeting Schedule</h1>
-            <p className="text-muted-foreground text-lg">View and manage your scheduled meetings</p>
+            <h1 className="text-4xl font-bold mb-2 text-foreground">Event Schedule</h1>
+            <p className="text-muted-foreground text-lg">View and manage your scheduled events</p>
           </div>
           <div className="flex gap-2">
             {user && <AddMeetingDialog onAdd={handleAddMeeting} />}
