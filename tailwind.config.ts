@@ -115,6 +115,12 @@ export default {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-accent": "var(--gradient-accent)",
         "gradient-subtle": "var(--gradient-subtle)",
+        "gradient-surface": "var(--gradient-surface)",
+      },
+      boxShadow: {
+        "xs": "var(--shadow-xs)",
+        "card": "var(--shadow-card)",
+        "glow": "var(--shadow-glow)",
       },
     },
   },
