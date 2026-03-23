@@ -5,13 +5,12 @@ import { ExcelUpload } from "@/components/ExcelUpload";
 import { ExcelTemplate } from "@/components/ExcelTemplate";
 import { ExcelExport } from "@/components/ExcelExport";
 import { AddProjectDialog } from "@/components/AddProjectDialog";
-import { Plus } from "lucide-react";
+import { Plus, Activity, CheckCircle2, Clock, Hourglass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
-// Sample data
 const initialProjects: Project[] = [
   {
     id: "1",
@@ -90,7 +89,6 @@ const Index = () => {
   const [periodFilter, setPeriodFilter] = useState("all");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
-  // Get unique entities and partners for filters
   const implementingEntities = useMemo(
     () => Array.from(new Set(projects.map((p) => p.implementingEntity))),
     [projects]
@@ -114,7 +112,6 @@ const Index = () => {
     return Array.from(periodSet).sort();
   }, [projects]);
 
-  // Filter projects
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       const matchesSearch =
@@ -122,16 +119,9 @@ const Index = () => {
         Object.values(project).some((value) =>
           value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
-
-      const matchesStatus =
-        statusFilter === "all" || project.status === statusFilter;
-
-      const matchesEntity =
-        entityFilter === "all" || project.implementingEntity === entityFilter;
-
-      const matchesPartner =
-        partnerFilter === "all" || project.deliveryPartner === partnerFilter;
-
+      const matchesStatus = statusFilter === "all" || project.status === statusFilter;
+      const matchesEntity = entityFilter === "all" || project.implementingEntity === entityFilter;
+      const matchesPartner = partnerFilter === "all" || project.deliveryPartner === partnerFilter;
       const matchesPeriod =
         periodFilter === "all" || (() => {
           if (!project.startDate) return false;
@@ -140,7 +130,6 @@ const Index = () => {
           const year = date.getFullYear();
           return `Q${quarter} ${year}` === periodFilter;
         })();
-
       return matchesSearch && matchesStatus && matchesEntity && matchesPartner && matchesPeriod;
     });
   }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter]);
@@ -178,25 +167,45 @@ const Index = () => {
     setProjects((prev) => [...prev, newProject]);
   };
 
+  const completedCount = filteredProjects.filter((p) => p.status === "Completed").length;
+  const inProgressCount = filteredProjects.filter((p) => p.status === "In Progress").length;
+  const pendingCount = filteredProjects.filter((p) => p.status === "Pending").length;
+
+  const stats = [
+    { label: "Total Activities", value: filteredProjects.length, icon: Activity, color: "primary" as const },
+    { label: "Completed", value: completedCount, icon: CheckCircle2, color: "success" as const },
+    { label: "In Progress", value: inProgressCount, icon: Clock, color: "warning" as const },
+    { label: "Pending", value: pendingCount, icon: Hourglass, color: "muted" as const },
+  ];
+
+  const colorMap = {
+    primary: { bg: "bg-primary/8", text: "text-primary", border: "border-primary/15", icon: "text-primary" },
+    success: { bg: "bg-success/8", text: "text-success", border: "border-success/15", icon: "text-success" },
+    warning: { bg: "bg-warning/8", text: "text-warning", border: "border-warning/15", icon: "text-warning" },
+    muted: { bg: "bg-muted", text: "text-muted-foreground", border: "border-border", icon: "text-muted-foreground" },
+  };
+
   return (
-    <div className="bg-gradient-subtle min-h-screen">
-      <div className="container mx-auto py-8 px-4 space-y-6">
+    <div className="min-h-full bg-background">
+      <div className="container mx-auto py-8 px-4 sm:px-6 space-y-6">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 animate-fade-in">
-          <div className="flex items-center gap-3 min-w-0">
-            <img src={logo} alt="Project Management Logo" className="h-12 w-12 rounded-lg animate-float flex-shrink-0" />
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg" />
+            </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-bold text-foreground whitespace-nowrap">
-                M&E Reporting Tool
+              <h1 className="text-2xl font-bold text-foreground">
+                Activity Tracker
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm text-muted-foreground mt-0.5">
                 Track and manage all project activities
               </p>
             </div>
           </div>
           {user && (
             <div className="flex flex-wrap gap-2 flex-shrink-0">
-              <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
+              <Button onClick={() => setAddDialogOpen(true)} className="gap-2 shadow-sm">
                 <Plus className="h-4 w-4" />
                 Add Activity
               </Button>
@@ -205,6 +214,29 @@ const Index = () => {
               <ExcelExport projects={filteredProjects} />
             </div>
           )}
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {stats.map((stat, i) => {
+            const colors = colorMap[stat.color];
+            return (
+              <div
+                key={stat.label}
+                className={`rounded-xl border ${colors.border} ${colors.bg} p-4 transition-all duration-200 hover:shadow-md`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-xs font-medium ${colors.text} uppercase tracking-wide`}>
+                    {stat.label}
+                  </span>
+                  <stat.icon className={`h-4 w-4 ${colors.icon} opacity-60`} />
+                </div>
+                <div className={`text-2xl font-bold ${colors.text}`}>
+                  {stat.value}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Filters */}
@@ -225,42 +257,15 @@ const Index = () => {
           periods={periods}
         />
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-primary/20 p-6 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:scale-105 animate-fade-in">
-            <div className="text-sm font-medium text-primary mb-2">Total Projects</div>
-            <div className="text-3xl font-bold text-primary">
-              {filteredProjects.length}
-            </div>
-          </div>
-          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-success/20 p-6 hover:shadow-lg hover:shadow-success/10 transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <div className="text-sm font-medium text-success mb-2">Completed</div>
-            <div className="text-3xl font-bold text-success">
-              {filteredProjects.filter((p) => p.status === "Completed").length}
-            </div>
-          </div>
-          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-warning/20 p-6 hover:shadow-lg hover:shadow-warning/10 transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '200ms' }}>
-            <div className="text-sm font-medium text-warning mb-2">In Progress</div>
-            <div className="text-3xl font-bold text-warning">
-              {filteredProjects.filter((p) => p.status === "In Progress").length}
-            </div>
-          </div>
-          <div className="bg-card/80 backdrop-blur-sm rounded-lg border-2 border-border p-6 hover:shadow-lg hover:shadow-muted/10 transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '300ms' }}>
-            <div className="text-sm font-medium text-muted-foreground mb-2">Pending</div>
-            <div className="text-3xl font-bold text-muted-foreground">
-              {filteredProjects.filter((p) => p.status === "Pending").length}
-            </div>
-          </div>
+        {/* Project Table */}
+        <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
+          <ProjectTable
+            projects={filteredProjects}
+            onUpdateProject={handleUpdateProject}
+            readOnly={!user}
+          />
         </div>
 
-        {/* Project Table */}
-        <ProjectTable
-          projects={filteredProjects}
-          onUpdateProject={handleUpdateProject}
-          readOnly={!user}
-        />
-
-        {/* Add Project Dialog */}
         {user && (
           <AddProjectDialog
             open={addDialogOpen}
