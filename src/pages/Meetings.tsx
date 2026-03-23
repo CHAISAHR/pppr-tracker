@@ -64,8 +64,8 @@ const Meetings = () => {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-4xl font-bold mb-2 text-foreground">Meeting Schedule</h1>
-            <p className="text-muted-foreground text-lg">View and manage your scheduled meetings</p>
+            <h1 className="text-4xl font-bold mb-2 text-foreground">Event Schedule</h1>
+            <p className="text-muted-foreground text-lg">View and manage your scheduled events</p>
           </div>
           <div className="flex gap-2">
             {user && <AddMeetingDialog onAdd={handleAddMeeting} />}
@@ -83,8 +83,8 @@ const Meetings = () => {
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-1">No meetings scheduled</h3>
-              <p className="text-sm text-muted-foreground">Click "Add Meeting" to schedule your first meeting.</p>
+              <h3 className="text-lg font-semibold text-foreground mb-1">No events scheduled</h3>
+              <p className="text-sm text-muted-foreground">Click "Add Event" to schedule your first event.</p>
             </CardContent>
           </Card>
         ) : (
