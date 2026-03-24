@@ -46,7 +46,7 @@ const initialProjects: Project[] = [
     subActivityDescription: "Conduct system training",
     implementingEntity: "Learning Corp",
     deliveryPartner: "Training Partners",
-    status: "Pending",
+    status: "Not Yet Started",
     startDate: "2025-01-01",
     endDate: "2025-03-31",
     comments: "Waiting for resource allocation",
