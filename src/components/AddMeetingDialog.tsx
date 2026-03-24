@@ -24,6 +24,7 @@ interface MeetingForm {
   deliveryPartners: string;
   keyObjectives: string;
   format: Meeting["format"];
+  links: string;
   organiserName: string;
   organiserEmail: string;
   organiserPhone: string;
@@ -43,6 +44,7 @@ const emptyForm: MeetingForm = {
   deliveryPartners: "",
   keyObjectives: "",
   format: "Virtual",
+  links: "",
   organiserName: "",
   organiserEmail: "",
   organiserPhone: "",
