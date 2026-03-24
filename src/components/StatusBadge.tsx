@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-type Status = "Completed" | "In Progress" | "Pending";
+type Status = "Completed" | "In Progress" | "Not Yet Started";
 
 interface StatusBadgeProps {
   status: Status;
