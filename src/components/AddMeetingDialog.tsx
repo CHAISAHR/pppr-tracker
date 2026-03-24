@@ -219,7 +219,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handleAdd}>Add Meeting</Button>
+            <Button onClick={handleAdd}>AddEvent</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
