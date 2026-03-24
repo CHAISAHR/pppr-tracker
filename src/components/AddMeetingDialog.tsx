@@ -148,6 +148,12 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
               <Textarea id="add-keyObjectives" placeholder="Enter the key objectives for this meeting" value={form.keyObjectives} onChange={(e) => setForm({ ...form, keyObjectives: e.target.value })} rows={3} />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="add-links">Links</Label>
+              <Textarea id="add-links" placeholder="Paste survey URLs here, one per line" value={form.links} onChange={(e) => setForm({ ...form, links: e.target.value })} rows={3} />
+              <p className="text-xs text-muted-foreground">Enter one URL per line for survey or related links</p>
+            </div>
+
             <div className="border rounded-md p-4 space-y-3">
               <p className="text-sm font-medium">Organiser Contact Details</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

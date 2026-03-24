@@ -114,6 +114,12 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
             <Textarea id="edit-keyObjectives" placeholder="Enter the key objectives for this meeting" value={formData.keyObjectives} onChange={(e) => setFormData({ ...formData, keyObjectives: e.target.value })} rows={3} />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="edit-links">Links</Label>
+            <Textarea id="edit-links" placeholder="Paste survey URLs here, one per line" value={formData.links || ""} onChange={(e) => setFormData({ ...formData, links: e.target.value })} rows={3} />
+            <p className="text-xs text-muted-foreground">Enter one URL per line for survey or related links</p>
+          </div>
+
           <div className="border rounded-md p-4 space-y-3">
             <p className="text-sm font-medium">Organiser Contact Details</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
