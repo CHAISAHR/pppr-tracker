@@ -18,7 +18,11 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [organization, setOrganization] = useState('');
   const [loading, setLoading] = useState(false);
-  
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetPassword, setResetPassword] = useState('');
+  const [resetConfirm, setResetConfirm] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
