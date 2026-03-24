@@ -80,7 +80,7 @@ export const ProjectFilters = ({
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="Completed">Completed</SelectItem>
             <SelectItem value="In Progress">In Progress</SelectItem>
-            <SelectItem value="Pending">Pending</SelectItem>
+            <SelectItem value="Not Yet Started">Not Yet Started</SelectItem>
           </SelectContent>
         </Select>
 

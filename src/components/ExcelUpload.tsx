@@ -44,11 +44,11 @@ export const ExcelUpload = ({ onUpload }: ExcelUploadProps) => {
       const projects: Project[] = jsonData.map((row, index) => {
         // Validate required fields
         const activityId = row["Activity ID"] || row["activity_id"] || `ACT-${Date.now()}-${index}`;
-        const status = (row["Status"] || row["status"] || "Pending") as Status;
+        const status = (row["Status"] || row["status"] || "Not Yet Started") as Status;
         
         // Ensure status is valid
-        const validStatuses: Status[] = ["Completed", "In Progress", "Pending"];
-        const finalStatus = validStatuses.includes(status) ? status : "Pending";
+        const validStatuses: Status[] = ["Completed", "In Progress", "Not Yet Started"];
+        const finalStatus = validStatuses.includes(status) ? status : "Not Yet Started";
 
         // Parse dates
         const parseDate = (value: any) => {
