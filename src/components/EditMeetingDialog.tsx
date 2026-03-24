@@ -27,6 +27,7 @@ const emptyMeeting: Meeting = {
   deliveryPartners: [],
   keyObjectives: "",
   format: "Virtual",
+  links: "",
   organiserName: "",
   organiserEmail: "",
   organiserPhone: "",
