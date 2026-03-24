@@ -192,6 +192,60 @@ export default function Auth() {
           </TabsContent>
         </Tabs>
       </Card>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>Enter your email and a new password to reset your account.</DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (resetPassword !== resetConfirm) {
+                toast({ title: "Error", description: "Passwords do not match", variant: "destructive" });
+                return;
+              }
+              if (resetPassword.length < 6) {
+                toast({ title: "Error", description: "Password must be at least 6 characters", variant: "destructive" });
+                return;
+              }
+              setResetLoading(true);
+              try {
+                await api.resetPassword(resetEmail, resetPassword);
+                toast({ title: "Success", description: "Password has been reset. You can now log in." });
+                setForgotOpen(false);
+                setResetEmail('');
+                setResetPassword('');
+                setResetConfirm('');
+              } catch (error) {
+                toast({ title: "Error", description: error instanceof Error ? error.message : "Reset failed", variant: "destructive" });
+              } finally {
+                setResetLoading(false);
+              }
+            }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input id="reset-email" type="email" placeholder="Enter your email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reset-new-password">New Password</Label>
+              <Input id="reset-new-password" type="password" placeholder="Enter new password" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reset-confirm-password">Confirm Password</Label>
+              <Input id="reset-confirm-password" type="password" placeholder="Confirm new password" value={resetConfirm} onChange={(e) => setResetConfirm(e.target.value)} required />
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full" disabled={resetLoading}>
+                {resetLoading ? "Resetting..." : "Reset Password"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
