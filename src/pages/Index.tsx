@@ -169,7 +169,7 @@ const Index = () => {
 
   const completedCount = filteredProjects.filter((p) => p.status === "Completed").length;
   const inProgressCount = filteredProjects.filter((p) => p.status === "In Progress").length;
-  const pendingCount = filteredProjects.filter((p) => p.status === "Pending").length;
+  const pendingCount = filteredProjects.filter((p) => p.status === "Not Yet Started").length;
 
   const stats = [
     { label: "Total Activities", value: filteredProjects.length, icon: Activity, color: "primary" as const },
