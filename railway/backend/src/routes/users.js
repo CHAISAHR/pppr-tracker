@@ -2,6 +2,8 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
+const crypto = require('crypto');
+
 const router = express.Router();
 
 // GET /api/users
