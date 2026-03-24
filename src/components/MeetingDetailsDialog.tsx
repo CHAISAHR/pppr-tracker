@@ -15,6 +15,7 @@ export interface Meeting {
   deliveryPartners: string[];
   keyObjectives: string;
   format: "Virtual" | "Hybrid" | "In-Person";
+  links?: string;
   organiserName?: string;
   organiserEmail?: string;
   organiserPhone?: string;

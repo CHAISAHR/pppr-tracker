@@ -24,6 +24,7 @@ interface MeetingForm {
   deliveryPartners: string;
   keyObjectives: string;
   format: Meeting["format"];
+  links: string;
   organiserName: string;
   organiserEmail: string;
   organiserPhone: string;
@@ -43,6 +44,7 @@ const emptyForm: MeetingForm = {
   deliveryPartners: "",
   keyObjectives: "",
   format: "Virtual",
+  links: "",
   organiserName: "",
   organiserEmail: "",
   organiserPhone: "",
@@ -73,6 +75,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       deliveryPartners: form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean),
       keyObjectives: form.keyObjectives,
       format: form.format,
+      links: form.links || undefined,
       organiserName: form.organiserName || undefined,
       organiserEmail: form.organiserEmail || undefined,
       organiserPhone: form.organiserPhone || undefined,
@@ -143,6 +146,12 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
             <div className="space-y-2">
               <Label htmlFor="add-keyObjectives">Key Objectives</Label>
               <Textarea id="add-keyObjectives" placeholder="Enter the key objectives for this meeting" value={form.keyObjectives} onChange={(e) => setForm({ ...form, keyObjectives: e.target.value })} rows={3} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="add-links">Links</Label>
+              <Textarea id="add-links" placeholder="Paste survey URLs here, one per line" value={form.links} onChange={(e) => setForm({ ...form, links: e.target.value })} rows={3} />
+              <p className="text-xs text-muted-foreground">Enter one URL per line for survey or related links</p>
             </div>
 
             <div className="border rounded-md p-4 space-y-3">

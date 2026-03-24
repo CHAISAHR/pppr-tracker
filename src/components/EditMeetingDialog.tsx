@@ -27,6 +27,7 @@ const emptyMeeting: Meeting = {
   deliveryPartners: [],
   keyObjectives: "",
   format: "Virtual",
+  links: "",
   organiserName: "",
   organiserEmail: "",
   organiserPhone: "",
@@ -111,6 +112,12 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
           <div className="space-y-2">
             <Label htmlFor="edit-keyObjectives">Key Objectives</Label>
             <Textarea id="edit-keyObjectives" placeholder="Enter the key objectives for this meeting" value={formData.keyObjectives} onChange={(e) => setFormData({ ...formData, keyObjectives: e.target.value })} rows={3} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-links">Links</Label>
+            <Textarea id="edit-links" placeholder="Paste survey URLs here, one per line" value={formData.links || ""} onChange={(e) => setFormData({ ...formData, links: e.target.value })} rows={3} />
+            <p className="text-xs text-muted-foreground">Enter one URL per line for survey or related links</p>
           </div>
 
           <div className="border rounded-md p-4 space-y-3">
