@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
@@ -16,7 +18,11 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [organization, setOrganization] = useState('');
   const [loading, setLoading] = useState(false);
-  
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetPassword, setResetPassword] = useState('');
+  const [resetConfirm, setResetConfirm] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -114,9 +120,17 @@ export default function Auth() {
                   />
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="text-sm text-muted-foreground"
+                  onClick={() => setForgotOpen(true)}
+                >
+                  Forgot password?
                 </Button>
               </CardFooter>
             </form>
@@ -178,6 +192,60 @@ export default function Auth() {
           </TabsContent>
         </Tabs>
       </Card>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>Enter your email and a new password to reset your account.</DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (resetPassword !== resetConfirm) {
+                toast({ title: "Error", description: "Passwords do not match", variant: "destructive" });
+                return;
+              }
+              if (resetPassword.length < 6) {
+                toast({ title: "Error", description: "Password must be at least 6 characters", variant: "destructive" });
+                return;
+              }
+              setResetLoading(true);
+              try {
+                await api.resetPassword(resetEmail, resetPassword);
+                toast({ title: "Success", description: "Password has been reset. You can now log in." });
+                setForgotOpen(false);
+                setResetEmail('');
+                setResetPassword('');
+                setResetConfirm('');
+              } catch (error) {
+                toast({ title: "Error", description: error instanceof Error ? error.message : "Reset failed", variant: "destructive" });
+              } finally {
+                setResetLoading(false);
+              }
+            }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input id="reset-email" type="email" placeholder="Enter your email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reset-new-password">New Password</Label>
+              <Input id="reset-new-password" type="password" placeholder="Enter new password" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reset-confirm-password">Confirm Password</Label>
+              <Input id="reset-confirm-password" type="password" placeholder="Confirm new password" value={resetConfirm} onChange={(e) => setResetConfirm(e.target.value)} required />
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full" disabled={resetLoading}>
+                {resetLoading ? "Resetting..." : "Reset Password"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
