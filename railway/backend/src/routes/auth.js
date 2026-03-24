@@ -82,4 +82,25 @@ router.post('/logout', authenticateToken, (req, res) => {
   res.json({ message: 'Logged out' });
 });
 
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  const pool = req.app.locals.pool;
+  const { email, newPassword } = req.body;
+
+  try {
+    const [rows] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'No account found with that email' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await pool.execute('UPDATE users SET password_hash = ? WHERE email = ?', [passwordHash, email]);
+
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ message: 'Password reset failed' });
+  }
+});
+
 module.exports = router;
