@@ -2,6 +2,8 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
+const crypto = require('crypto');
+
 const router = express.Router();
 
 // GET /api/users
@@ -12,6 +14,35 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch users' });
+  }
+});
+
+// POST /api/users (admin creates a user)
+router.post('/', authenticateToken, requireAdmin, async (req, res) => {
+  const pool = req.app.locals.pool;
+  const { name, email, password, role, organization } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email and password are required' });
+  }
+
+  try {
+    const [existing] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing.length > 0) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const id = crypto.randomUUID();
+    await pool.execute(
+      'INSERT INTO users (id, email, password_hash, name, role, organization) VALUES (?, ?, ?, ?, ?, ?)',
+      [id, email, passwordHash, name, role || 'user', organization || null]
+    );
+    const [rows] = await pool.execute('SELECT id, email, name, role, organization, created_at FROM users WHERE id = ?', [id]);
+    res.status(201).json(rows[0]);
+  } catch (error) {
+    console.error('Create user error:', error);
+    res.status(500).json({ message: 'Failed to create user' });
   }
 });
 

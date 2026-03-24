@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserTable } from "@/components/UserTable";
+import { AddUserDialog } from "@/components/AddUserDialog";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +9,7 @@ import { api, User } from "@/services/api";
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -26,6 +28,30 @@ export default function Users() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateUser = async (data: {
+    name: string;
+    email: string;
+    password: string;
+    role: "admin" | "user";
+    organization?: string;
+  }) => {
+    try {
+      const newUser = await api.createUser(data);
+      setUsers([newUser, ...users]);
+      setAddDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "User created successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create user",
+        variant: "destructive",
+      });
     }
   };
 
@@ -79,10 +105,10 @@ export default function Users() {
             User Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage user accounts and permissions
+            Manage user accounts, roles and permissions
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
           <UserPlus className="h-4 w-4" />
           Add User
         </Button>
@@ -92,6 +118,12 @@ export default function Users() {
         users={users}
         onUpdateUser={handleUpdateUser}
         onDeleteUser={handleDeleteUser}
+      />
+
+      <AddUserDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onSave={handleCreateUser}
       />
     </div>
   );

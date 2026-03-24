@@ -143,6 +143,31 @@ class ApiService {
     return response.json();
   }
 
+  async createUser(data: { name: string; email: string; password: string; role: 'admin' | 'user'; organization?: string }): Promise<User> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return {
+        id: crypto.randomUUID(),
+        email: data.email,
+        name: data.name,
+        role: data.role,
+        organization: data.organization,
+      };
+    }
+
+    const response = await fetch(`${BASE_URL}/users`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to create user');
+    }
+
+    return response.json();
+  }
 
   async getUsers(): Promise<User[]> {
     if (MOCK_MODE) {
@@ -582,7 +607,62 @@ class ApiService {
     return response.json();
   }
 
-  // ========== Indicators ==========
+  async createOrganisation(data: { name: string; description?: string }): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { id: crypto.randomUUID(), ...data, attendee_count: 0 };
+    }
+
+    const response = await fetch(`${BASE_URL}/organisations`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to create organisation');
+    }
+
+    return response.json();
+  }
+
+  async updateOrganisation(id: string, data: { name?: string; description?: string }): Promise<any> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { id, ...data };
+    }
+
+    const response = await fetch(`${BASE_URL}/organisations/${id}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update organisation');
+    }
+
+    return response.json();
+  }
+
+  async deleteOrganisation(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return;
+    }
+
+    const response = await fetch(`${BASE_URL}/organisations/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete organisation');
+    }
+  }
+
+
 
   async getIndicators(): Promise<any[]> {
     if (MOCK_MODE) {

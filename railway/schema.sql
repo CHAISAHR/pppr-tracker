@@ -160,6 +160,17 @@ CREATE INDEX idx_indicator_values_indicator_id ON indicator_values(indicator_id)
 CREATE INDEX idx_workshop_attendance_workshop_id ON workshop_attendance(workshop_id);
 CREATE INDEX idx_projects_status ON projects(status);
 
+-- 9. Organisations table
+CREATE TABLE IF NOT EXISTS organisations (
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  name VARCHAR(255) UNIQUE NOT NULL,
+  description TEXT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_organisations_name ON organisations(name);
+
 -- =============================================
 -- Seed an admin user (password: admin123)
 -- Replace the password_hash with a bcrypt hash in production
