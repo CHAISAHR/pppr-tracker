@@ -14,7 +14,7 @@ import { EditProjectDialog } from "./EditProjectDialog";
 import { ProjectDetailsDialog } from "./ProjectDetailsDialog";
 import { useAuth } from "@/contexts/AuthContext";
 
-export type Status = "Completed" | "In Progress" | "Pending";
+export type Status = "Completed" | "In Progress" | "Not Yet Started";
 
 export interface Project {
   id: string;

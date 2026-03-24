@@ -130,7 +130,7 @@ export const AddProjectDialog = ({ open, onOpenChange, onAdd }: AddProjectDialog
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Not Yet Started">Not Yet Started</SelectItem>
                 <SelectItem value="In Progress">In Progress</SelectItem>
                 <SelectItem value="Completed">Completed</SelectItem>
               </SelectContent>
