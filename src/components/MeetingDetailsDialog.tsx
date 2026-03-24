@@ -90,6 +90,33 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
             </div>
           </div>
 
+          {meeting.links && (
+            <>
+              <Separator />
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <LinkIcon className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm mb-1">Links</p>
+                    <div className="space-y-1">
+                      {meeting.links.split('\n').filter(Boolean).map((url, idx) => (
+                        <a
+                          key={idx}
+                          href={url.trim()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-sm text-primary hover:underline truncate"
+                        >
+                          {url.trim()}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           <Separator />
 
           {(meeting.organiserName || meeting.organiserEmail || meeting.organiserPhone) && (
