@@ -22,7 +22,7 @@ export const AddProjectDialog = ({ open, onOpenChange, onAdd }: AddProjectDialog
     subActivityDescription: "",
     implementingEntity: "",
     deliveryPartner: "",
-    status: "Pending" as Status,
+    status: "Not Yet Started" as Status,
     startDate: "",
     endDate: "",
     comments: "",
