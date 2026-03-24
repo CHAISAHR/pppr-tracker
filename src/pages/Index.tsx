@@ -175,7 +175,7 @@ const Index = () => {
     { label: "Total Activities", value: filteredProjects.length, icon: Activity, color: "primary" as const },
     { label: "Completed", value: completedCount, icon: CheckCircle2, color: "success" as const },
     { label: "In Progress", value: inProgressCount, icon: Clock, color: "warning" as const },
-    { label: "Pending", value: pendingCount, icon: Hourglass, color: "muted" as const },
+    { label: "Not Yet Started", value: pendingCount, icon: Hourglass, color: "muted" as const },
   ];
 
   const colorMap = {
