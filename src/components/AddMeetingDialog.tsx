@@ -75,6 +75,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       deliveryPartners: form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean),
       keyObjectives: form.keyObjectives,
       format: form.format,
+      links: form.links || undefined,
       organiserName: form.organiserName || undefined,
       organiserEmail: form.organiserEmail || undefined,
       organiserPhone: form.organiserPhone || undefined,
