@@ -8,6 +8,7 @@ const meetingsRoutes = require('./routes/meetings');
 const workshopsRoutes = require('./routes/workshops');
 const indicatorsRoutes = require('./routes/indicators');
 const subActivitiesRoutes = require('./routes/subActivities');
+const organisationsRoutes = require('./routes/organisations');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
