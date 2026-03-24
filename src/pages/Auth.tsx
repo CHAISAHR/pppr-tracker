@@ -120,9 +120,17 @@ export default function Auth() {
                   />
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="text-sm text-muted-foreground"
+                  onClick={() => setForgotOpen(true)}
+                >
+                  Forgot password?
                 </Button>
               </CardFooter>
             </form>
