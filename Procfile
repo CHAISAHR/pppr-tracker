@@ -1,1 +1,1 @@
-web: node node_modules/.bin/serve dist -s -l $PORT
+web: npm start
