@@ -5,9 +5,8 @@ import { ExcelUpload } from "@/components/ExcelUpload";
 import { ExcelTemplate } from "@/components/ExcelTemplate";
 import { ExcelExport } from "@/components/ExcelExport";
 import { AddProjectDialog } from "@/components/AddProjectDialog";
-import { Plus, Activity, CheckCircle2, Clock, Hourglass, AlertTriangle, Target, MapPin, Layers } from "lucide-react";
+import { Plus, Activity, CheckCircle2, Clock, Hourglass } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -80,39 +79,6 @@ const initialProjects: Project[] = [
   },
 ];
 
-const workstreams = [
-  {
-    title: "Early Warning & Surveillance",
-    emoji: "🔍",
-    progress: 70,
-    color: "hsl(var(--success))",
-    description: "STAR workshops completed, One Health indicators identified",
-  },
-  {
-    title: "Laboratory Systems",
-    emoji: "🔬",
-    progress: 75,
-    color: "hsl(var(--primary))",
-    description: "National PPPR Plan drafted, One Health frameworks advanced",
-  },
-  {
-    title: "Human Resources",
-    emoji: "👥",
-    progress: 45,
-    color: "hsl(var(--warning))",
-    description: "Scoping mission planned, stakeholder engagements ongoing",
-  },
-  {
-    title: "Monitoring & Evaluation",
-    emoji: "📊",
-    progress: 65,
-    color: "hsl(var(--success))",
-    description: "M&E framework developed, dashboard prototype ready",
-  },
-];
-
-type DashboardTab = "overview" | "implementation" | "success" | "challenges" | "priorities";
-
 const Index = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>(initialProjects);
@@ -122,7 +88,6 @@ const Index = () => {
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<DashboardTab>("overview");
 
   const implementingEntities = useMemo(
     () => Array.from(new Set(projects.map((p) => p.implementingEntity))),
@@ -206,211 +171,100 @@ const Index = () => {
   const inProgressCount = filteredProjects.filter((p) => p.status === "In Progress").length;
   const pendingCount = filteredProjects.filter((p) => p.status === "Not Yet Started").length;
 
-  const tabs: { key: DashboardTab; label: string }[] = [
-    { key: "overview", label: "Programme Overview" },
-    { key: "implementation", label: "Implementation Status" },
-    { key: "success", label: "Success Stories" },
-    { key: "challenges", label: "Challenges & Risks" },
-    { key: "priorities", label: "Next Quarter Priorities" },
+  const stats = [
+    { label: "Total Activities", value: filteredProjects.length, icon: Activity, color: "primary" as const },
+    { label: "Completed", value: completedCount, icon: CheckCircle2, color: "success" as const },
+    { label: "In Progress", value: inProgressCount, icon: Clock, color: "warning" as const },
+    { label: "Not Yet Started", value: pendingCount, icon: Hourglass, color: "muted" as const },
   ];
 
-  const overviewStats = [
-    { label: "Total Grant Value", value: "USD 1.03M", icon: Activity },
-    { label: "Workstreams", value: "4", icon: Layers },
-    { label: "Priority Activities", value: "12", icon: Target },
-    { label: "Provinces Covered", value: "9", icon: MapPin },
-  ];
+  const colorMap = {
+    primary: { bg: "bg-primary/8", text: "text-primary", border: "border-primary/15", icon: "text-primary" },
+    success: { bg: "bg-success/8", text: "text-success", border: "border-success/15", icon: "text-success" },
+    warning: { bg: "bg-warning/8", text: "text-warning", border: "border-warning/15", icon: "text-warning" },
+    muted: { bg: "bg-muted", text: "text-muted-foreground", border: "border-border", icon: "text-muted-foreground" },
+  };
 
   return (
-    <div className="min-h-full bg-[hsl(220,25%,14%)]">
-      {/* Hero Header */}
-      <div className="px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-        <div className="max-w-7xl mx-auto text-center space-y-3">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[hsl(210,30%,85%)]">
-            PPPR Programme Implementation Status
-          </h1>
-          <p className="text-[hsl(210,20%,65%)] text-base sm:text-lg">
-            Building a Resilient Future: Strengthening Pandemic Preparedness through One Health
-          </p>
-          <div className="inline-block">
-            <span className="text-sm text-[hsl(210,20%,60%)] bg-[hsl(220,25%,20%)] px-4 py-1.5 rounded-full border border-[hsl(220,20%,25%)]">
-              Reporting Period: March - December 2025
-            </span>
+    <div className="min-h-full bg-background">
+      <div className="container mx-auto py-8 px-4 sm:px-6 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold text-foreground">
+                Activity Tracker
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Track and manage all project activities
+              </p>
+            </div>
           </div>
+          {user && (
+            <div className="flex flex-wrap gap-2 flex-shrink-0">
+              <Button onClick={() => setAddDialogOpen(true)} className="gap-2 shadow-sm">
+                <Plus className="h-4 w-4" />
+                Add Activity
+              </Button>
+              <ExcelTemplate />
+              <ExcelUpload onUpload={handleExcelUpload} />
+              <ExcelExport projects={filteredProjects} />
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 space-y-6">
-        {/* Tab Navigation */}
-        <div className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,22%)] p-1.5">
-          <div className="flex flex-wrap gap-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 sm:px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                  activeTab === tab.key
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-[hsl(210,20%,60%)] hover:text-[hsl(210,20%,80%)] hover:bg-[hsl(220,22%,22%)]"
-                }`}
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {stats.map((stat, i) => {
+            const colors = colorMap[stat.color];
+            return (
+              <div
+                key={stat.label}
+                className={`rounded-xl border ${colors.border} ${colors.bg} p-4 transition-all duration-200 hover:shadow-md`}
               >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-xs font-medium ${colors.text} uppercase tracking-wide`}>
+                    {stat.label}
+                  </span>
+                  <stat.icon className={`h-4 w-4 ${colors.icon} opacity-60`} />
+                </div>
+                <div className={`text-2xl font-bold ${colors.text}`}>
+                  {stat.value}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Programme Overview Tab */}
-        {activeTab === "overview" && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {overviewStats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-5 text-center transition-all duration-200 hover:border-[hsl(220,20%,30%)]"
-                >
-                  <div className="text-2xl sm:text-3xl font-bold text-[hsl(210,30%,85%)] mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-[hsl(210,20%,55%)]">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Filters */}
+        <ProjectFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          entityFilter={entityFilter}
+          onEntityFilterChange={setEntityFilter}
+          partnerFilter={partnerFilter}
+          onPartnerFilterChange={setPartnerFilter}
+          periodFilter={periodFilter}
+          onPeriodFilterChange={setPeriodFilter}
+          onClearFilters={handleClearFilters}
+          implementingEntities={implementingEntities}
+          deliveryPartners={deliveryPartners}
+          periods={periods}
+        />
 
-            {/* Workstream Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {workstreams.map((ws) => (
-                <div
-                  key={ws.title}
-                  className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-5 space-y-3 transition-all duration-200 hover:border-[hsl(220,20%,30%)]"
-                >
-                  <h3 className="text-lg font-semibold text-[hsl(210,30%,85%)] flex items-center gap-2">
-                    <span>{ws.emoji}</span> {ws.title}
-                  </h3>
-                  <div className="relative h-2 w-full rounded-full bg-[hsl(220,20%,25%)] overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${ws.progress}%`,
-                        background: ws.color,
-                      }}
-                    />
-                  </div>
-                  <p className="text-sm text-[hsl(210,20%,60%)]">
-                    <span className="font-semibold text-[hsl(210,25%,75%)]">{ws.progress}% Progress:</span>{" "}
-                    {ws.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Implementation Status Tab */}
-        {activeTab === "implementation" && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Activity Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {[
-                { label: "Total Activities", value: filteredProjects.length, color: "hsl(var(--primary))" },
-                { label: "Completed", value: completedCount, color: "hsl(var(--success))" },
-                { label: "In Progress", value: inProgressCount, color: "hsl(var(--warning))" },
-                { label: "Not Yet Started", value: pendingCount, color: "hsl(var(--muted-foreground))" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-4 text-center"
-                >
-                  <div className="text-2xl font-bold mb-1" style={{ color: stat.color }}>
-                    {stat.value}
-                  </div>
-                  <div className="text-xs text-[hsl(210,20%,55%)] uppercase tracking-wide font-medium">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Actions */}
-            {user && (
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => setAddDialogOpen(true)} className="gap-2 shadow-sm">
-                  <Plus className="h-4 w-4" />
-                  Add Activity
-                </Button>
-                <ExcelTemplate />
-                <ExcelUpload onUpload={handleExcelUpload} />
-                <ExcelExport projects={filteredProjects} />
-              </div>
-            )}
-
-            {/* Filters */}
-            <div className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-4">
-              <ProjectFilters
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                statusFilter={statusFilter}
-                onStatusFilterChange={setStatusFilter}
-                entityFilter={entityFilter}
-                onEntityFilterChange={setEntityFilter}
-                partnerFilter={partnerFilter}
-                onPartnerFilterChange={setPartnerFilter}
-                periodFilter={periodFilter}
-                onPeriodFilterChange={setPeriodFilter}
-                onClearFilters={handleClearFilters}
-                implementingEntities={implementingEntities}
-                deliveryPartners={deliveryPartners}
-                periods={periods}
-              />
-            </div>
-
-            {/* Table */}
-            <div className="rounded-2xl border border-[hsl(220,20%,24%)] bg-[hsl(220,22%,18%)] overflow-hidden">
-              <ProjectTable
-                projects={filteredProjects}
-                onUpdateProject={handleUpdateProject}
-                readOnly={!user}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Success Stories Tab */}
-        {activeTab === "success" && (
-          <div className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-8 text-center animate-in fade-in duration-300">
-            <CheckCircle2 className="h-12 w-12 mx-auto mb-4 text-[hsl(var(--success))]" />
-            <h2 className="text-xl font-semibold text-[hsl(210,30%,85%)] mb-2">Success Stories</h2>
-            <p className="text-[hsl(210,20%,55%)]">
-              Key achievements and milestones from the programme will be showcased here.
-            </p>
-          </div>
-        )}
-
-        {/* Challenges & Risks Tab */}
-        {activeTab === "challenges" && (
-          <div className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-8 text-center animate-in fade-in duration-300">
-            <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-[hsl(var(--warning))]" />
-            <h2 className="text-xl font-semibold text-[hsl(210,30%,85%)] mb-2">Challenges & Risks</h2>
-            <p className="text-[hsl(210,20%,55%)]">
-              Identified challenges, risks, and mitigation strategies will be documented here.
-            </p>
-          </div>
-        )}
-
-        {/* Next Quarter Priorities Tab */}
-        {activeTab === "priorities" && (
-          <div className="bg-[hsl(220,22%,18%)] rounded-2xl border border-[hsl(220,20%,24%)] p-8 text-center animate-in fade-in duration-300">
-            <Target className="h-12 w-12 mx-auto mb-4 text-[hsl(var(--primary))]" />
-            <h2 className="text-xl font-semibold text-[hsl(210,30%,85%)] mb-2">Next Quarter Priorities</h2>
-            <p className="text-[hsl(210,20%,55%)]">
-              Priority activities and targets for the upcoming quarter will be outlined here.
-            </p>
-          </div>
-        )}
+        {/* Project Table */}
+        <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
+          <ProjectTable
+            projects={filteredProjects}
+            onUpdateProject={handleUpdateProject}
+            readOnly={!user}
+          />
+        </div>
 
         {user && (
           <AddProjectDialog
