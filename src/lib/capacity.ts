@@ -1,8 +1,18 @@
-// Shared capacity-assessment records backed by public.capacity_assessments.
-// One row per (participant × competency × event). The UI groups them
-// back into per-event / per-participant cards.
+// Shared capacity-assessment records backed by the Railway backend
+// (table: capacity_assessments). One row per (participant × competency × event).
+// The UI groups them back into per-event / per-participant cards.
 
-import { supabase } from "@/integrations/supabase/client";
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-app.railway.app/api';
+const MOCK_MODE = !import.meta.env.VITE_API_URL;
+const MOCK_KEY = 'mock_capacity_assessments';
+
+function authHeaders(): HeadersInit {
+  const token = localStorage.getItem('auth_token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+}
 
 export interface CapacityRow {
   id: string;
@@ -13,13 +23,12 @@ export interface CapacityRow {
   competency: string;
   pre_score: number | null;
   post_score: number | null;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ParticipantRecord {
   participantName: string;
-  // rowId per competency so we can update/delete individual cells
   scores: Record<string, { id: string; pre: number | null; post: number | null }>;
 }
 
@@ -34,47 +43,41 @@ export interface EventCapacity {
 let cache: CapacityRow[] = [];
 let loaded = false;
 let loadingPromise: Promise<void> | null = null;
-let realtimeBound = false;
 
-const EVENT = "capacity-changed";
-
+const EVENT = 'capacity-changed';
 function emitChange() {
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
-function bindRealtime() {
-  if (realtimeBound) return;
-  realtimeBound = true;
-  supabase
-    .channel("capacity_assessments_changes")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "capacity_assessments" },
-      () => {
-        // Easiest correct path: refetch. Volume is small.
-        loadCapacity(true).catch(() => {});
-      }
-    )
-    .subscribe();
+function readMock(): CapacityRow[] {
+  try {
+    const raw = localStorage.getItem(MOCK_KEY);
+    return raw ? (JSON.parse(raw) as CapacityRow[]) : [];
+  } catch {
+    return [];
+  }
+}
+function writeMock(rows: CapacityRow[]) {
+  localStorage.setItem(MOCK_KEY, JSON.stringify(rows));
 }
 
 export async function loadCapacity(force = false): Promise<void> {
   if (loaded && !force) return;
   if (loadingPromise) return loadingPromise;
   loadingPromise = (async () => {
-    const { data, error } = await supabase
-      .from("capacity_assessments")
-      .select("*")
-      .order("event_date", { ascending: false })
-      .order("participant_name");
-    if (error) {
-      console.warn("Failed to load capacity assessments", error);
-      return;
+    try {
+      if (MOCK_MODE) {
+        cache = readMock();
+      } else {
+        const res = await fetch(`${BASE_URL}/capacity-assessments`, { headers: authHeaders() });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        cache = (await res.json()) as CapacityRow[];
+      }
+      loaded = true;
+      emitChange();
+    } catch (err) {
+      console.warn('Failed to load capacity assessments', err);
     }
-    cache = (data ?? []) as CapacityRow[];
-    loaded = true;
-    bindRealtime();
-    emitChange();
   })();
   try {
     await loadingPromise;
@@ -115,8 +118,8 @@ export function groupByEvent(rows: CapacityRow[] = cache): EventCapacity[] {
     };
   }
   return Array.from(events.values()).sort((a, b) => {
-    const ad = a.eventDate ?? "";
-    const bd = b.eventDate ?? "";
+    const ad = a.eventDate ?? '';
+    const bd = b.eventDate ?? '';
     return bd.localeCompare(ad);
   });
 }
@@ -133,20 +136,51 @@ export interface SaveInput {
   }>;
 }
 
+async function deleteRows(ids: string[]): Promise<void> {
+  if (!ids.length) return;
+  if (MOCK_MODE) {
+    const remaining = readMock().filter(r => !ids.includes(r.id));
+    writeMock(remaining);
+    return;
+  }
+  const res = await fetch(`${BASE_URL}/capacity-assessments`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+    body: JSON.stringify({ ids }),
+  });
+  if (!res.ok) throw new Error(`Delete failed (${res.status})`);
+}
+
+async function insertRows(
+  rows: Array<Omit<CapacityRow, 'id' | 'created_at' | 'updated_at'>>,
+): Promise<void> {
+  if (!rows.length) return;
+  if (MOCK_MODE) {
+    const now = new Date().toISOString();
+    const withIds: CapacityRow[] = rows.map(r => ({
+      ...r,
+      id: crypto.randomUUID(),
+      created_at: now,
+      updated_at: now,
+    }));
+    writeMock([...readMock(), ...withIds]);
+    return;
+  }
+  const res = await fetch(`${BASE_URL}/capacity-assessments`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ rows }),
+  });
+  if (!res.ok) throw new Error(`Insert failed (${res.status})`);
+}
+
 /** Replace ALL rows for the given event with the supplied participant data. */
 export async function saveEventCapacity(
   input: SaveInput,
   existingRowIds: string[] = [],
 ): Promise<void> {
-  // Delete existing rows for this event/label first.
-  if (existingRowIds.length) {
-    const { error: delErr } = await supabase
-      .from("capacity_assessments")
-      .delete()
-      .in("id", existingRowIds);
-    if (delErr) throw delErr;
-  }
-  const inserts: Array<Omit<CapacityRow, "id" | "created_at" | "updated_at">> = [];
+  if (existingRowIds.length) await deleteRows(existingRowIds);
+  const inserts: Array<Omit<CapacityRow, 'id' | 'created_at' | 'updated_at'>> = [];
   for (const p of input.participants) {
     const name = p.participantName.trim();
     if (!name) continue;
@@ -167,27 +201,18 @@ export async function saveEventCapacity(
       });
     }
   }
-  if (inserts.length) {
-    const { error } = await supabase.from("capacity_assessments").insert(inserts);
-    if (error) throw error;
-  }
+  await insertRows(inserts);
   await loadCapacity(true);
 }
 
 export async function deleteEventCapacity(rowIds: string[]): Promise<void> {
   if (!rowIds.length) return;
-  const { error } = await supabase
-    .from("capacity_assessments")
-    .delete()
-    .in("id", rowIds);
-  if (error) throw error;
+  await deleteRows(rowIds);
   await loadCapacity(true);
 }
 
 export function rowIdsForEvent(evt: EventCapacity): string[] {
-  return evt.participants.flatMap(p =>
-    Object.values(p.scores).map(s => s.id),
-  );
+  return evt.participants.flatMap(p => Object.values(p.scores).map(s => s.id));
 }
 
 export function averagesPerCompetency(evt: EventCapacity) {

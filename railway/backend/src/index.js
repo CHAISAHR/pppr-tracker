@@ -10,6 +10,8 @@ const indicatorsRoutes = require('./routes/indicators');
 const subActivitiesRoutes = require('./routes/subActivities');
 const organisationsRoutes = require('./routes/organisations');
 const userRequestsRoutes = require('./routes/userRequests');
+const capacityAssessmentsRoutes = require('./routes/capacityAssessments');
+const orgLogosRoutes = require('./routes/orgLogos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,7 +29,7 @@ app.locals.pool = pool;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -39,6 +41,8 @@ app.use('/api/indicators', indicatorsRoutes);
 app.use('/api/sub-activities', subActivitiesRoutes);
 app.use('/api/organisations', organisationsRoutes);
 app.use('/api/user-requests', userRequestsRoutes);
+app.use('/api/capacity-assessments', capacityAssessmentsRoutes);
+app.use('/api/org-logos', orgLogosRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
