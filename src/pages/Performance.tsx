@@ -8,7 +8,7 @@ import { IndicatorExcelUpload } from "@/components/performance/IndicatorExcelUpl
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Performance() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [addIndicatorOpen, setAddIndicatorOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
