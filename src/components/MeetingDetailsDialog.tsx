@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle, QrCode } from "lucide-react";
+import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle, QrCode, Paperclip } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -23,6 +23,7 @@ export interface Meeting {
   postSurveyLink?: string;
   preSurveyQrCode?: string;
   postSurveyQrCode?: string;
+  attachments?: string;
 }
 
 interface MeetingDetailsDialogProps {
