@@ -90,26 +90,12 @@ function AppContent() {
           <main className="flex-1 overflow-auto">
             <Routes>
               <Route path="/auth" element={<Auth />} />
-              <Route path="/" element={<Index />} />
-              <Route path="/performance" element={<Performance />} />
-              <Route path="/meetings" element={<Meetings />} />
-              <Route path="/organisations" element={<Organisations />} />
-              <Route
-                path="/users"
-                element={
-                  <ProtectedRoute>
-                    <Users />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/administration"
-                element={
-                  <ProtectedRoute>
-                    <Administration />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
+              <Route path="/meetings" element={<ProtectedRoute><Meetings /></ProtectedRoute>} />
+              <Route path="/organisations" element={<ProtectedRoute><Organisations /></ProtectedRoute>} />
+              <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+              <Route path="/administration" element={<ProtectedRoute><Administration /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
