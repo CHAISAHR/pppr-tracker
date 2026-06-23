@@ -25,6 +25,7 @@ import Performance from "./pages/Performance";
 import Users from "./pages/Users";
 import Administration from "./pages/Administration";
 import Organisations from "./pages/Organisations";
+import Documents from "./pages/Documents";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -102,6 +103,7 @@ function AppContent() {
               <Route path="/organisations" element={<ProtectedRoute><Organisations /></ProtectedRoute>} />
               <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
               <Route path="/administration" element={<ProtectedRoute><Administration /></ProtectedRoute>} />
+              <Route path="/documents" element={<ProtectedRoute requireAdmin><Documents /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

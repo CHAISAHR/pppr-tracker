@@ -35,6 +35,7 @@ const emptyMeeting: Meeting = {
   postSurveyLink: "",
   preSurveyQrCode: "",
   postSurveyQrCode: "",
+  attachments: "",
 };
 export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditMeetingDialogProps) => {
   const [formData, setFormData] = useState<Meeting>({ ...emptyMeeting });
@@ -190,6 +191,17 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
           <div className="space-y-2">
             <Label htmlFor="edit-implementingEntities">Implementing Entities (separate with ;)</Label>
             <Input id="edit-implementingEntities" placeholder="Entity 1; Entity 2" value={formData.implementingEntities.join('; ')} onChange={(e) => handleArrayChange("implementingEntities", e.target.value)} />
+          </div>
+          <div className="border rounded-md p-4 space-y-2">
+            <Label htmlFor="edit-attachments">Attachments (pre/post event documentation)</Label>
+            <Textarea
+              id="edit-attachments"
+              placeholder={"Agenda | https://drive.google.com/...\nAttendance register | https://...\nhttps://example.com/report.pdf"}
+              value={formData.attachments || ""}
+              onChange={(e) => setFormData({ ...formData, attachments: e.target.value })}
+              rows={4}
+            />
+            <p className="text-xs text-muted-foreground">One link per line. Use <code>Label | URL</code> to add a name, or paste a URL on its own.</p>
           </div>
 
           <div className="space-y-2">
