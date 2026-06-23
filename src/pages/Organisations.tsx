@@ -93,9 +93,11 @@ const Organisations = () => {
     }
     try {
       const newOrg = await api.createOrganisation(formData);
+      persistLogo(formData.name);
       setOrganisations([...organisations, newOrg]);
       setAddOpen(false);
       setFormData({ name: "", description: "" });
+      setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation created successfully" });
     } catch (error: any) {
       toast({ title: "Error", description: error.message || "Failed to create organisation", variant: "destructive" });
@@ -106,9 +108,19 @@ const Organisations = () => {
     if (!editOrg?.id) return;
     try {
       await api.updateOrganisation(editOrg.id, formData);
+      // If the name changed, move the logo across
+      if (editOrg.name !== formData.name) {
+        const existing = getLogo(editOrg.name);
+        if (existing) {
+          removeLogo(editOrg.name);
+          if (logoPreview === undefined) setLogo(formData.name, existing);
+        }
+      }
+      persistLogo(formData.name);
       setOrganisations(organisations.map(o => o.id === editOrg.id ? { ...o, ...formData } : o));
       setEditOrg(null);
       setFormData({ name: "", description: "" });
+      setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation updated successfully" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to update organisation", variant: "destructive" });
@@ -117,8 +129,11 @@ const Organisations = () => {
 
   const handleDelete = async (id: string) => {
     try {
+      const org = organisations.find(o => o.id === id);
       await api.deleteOrganisation(id);
+      if (org?.name) removeLogo(org.name);
       setOrganisations(organisations.filter(o => o.id !== id));
+      setLogoTick(t => t + 1);
       toast({ title: "Success", description: "Organisation deleted successfully" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to delete organisation", variant: "destructive" });
@@ -128,7 +143,9 @@ const Organisations = () => {
   const openEdit = (org: Organisation) => {
     setEditOrg(org);
     setFormData({ name: org.name, description: org.description || "" });
+    setLogoPreview(undefined);
   };
+
 
   if (!isAdmin()) {
     return (
