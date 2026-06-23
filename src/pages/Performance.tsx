@@ -8,7 +8,7 @@ import { IndicatorExcelUpload } from "@/components/performance/IndicatorExcelUpl
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Performance() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [addIndicatorOpen, setAddIndicatorOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -35,8 +35,8 @@ export default function Performance() {
           </div>
           {user && (
             <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
-              <IndicatorExcelTemplate />
-              <IndicatorExcelUpload onSuccess={handleRefresh} />
+              {isAdmin() && <IndicatorExcelTemplate />}
+              {isAdmin() && <IndicatorExcelUpload onSuccess={handleRefresh} />}
               <Button onClick={() => setAddIndicatorOpen(true)} className="gap-2 shadow-sm">
                 <Plus className="h-4 w-4" />
                 Add Indicator

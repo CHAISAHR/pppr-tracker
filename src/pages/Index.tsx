@@ -80,7 +80,7 @@ const initialProjects: Project[] = [
 ];
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -209,8 +209,8 @@ const Index = () => {
                 <Plus className="h-4 w-4" />
                 Add Activity
               </Button>
-              <ExcelTemplate />
-              <ExcelUpload onUpload={handleExcelUpload} />
+              {isAdmin() && <ExcelTemplate />}
+              {isAdmin() && <ExcelUpload onUpload={handleExcelUpload} />}
               <ExcelExport projects={filteredProjects} />
             </div>
           )}
