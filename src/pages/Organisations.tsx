@@ -196,6 +196,7 @@ const Organisations = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-16">Logo</TableHead>
                   <TableHead>Organisation Name</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead className="text-right">Attendees</TableHead>
@@ -203,8 +204,21 @@ const Organisations = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {organisations.map((org, index) => (
+                {organisations.map((org, index) => {
+                  // logoTick forces re-render when logos change
+                  void logoTick;
+                  const logo = getLogo(org.name);
+                  return (
                   <TableRow key={org.id || index}>
+                    <TableCell>
+                      {logo ? (
+                        <img src={logo} alt={org.name} className="h-10 w-10 rounded-md object-contain bg-muted border border-border" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-md bg-muted border border-border flex items-center justify-center text-[10px] text-muted-foreground">
+                          —
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium">{org.name}</TableCell>
                     <TableCell className="text-muted-foreground">{org.description || '-'}</TableCell>
                     <TableCell className="text-right">{org.attendee_count ?? org.count ?? 0}</TableCell>
@@ -235,7 +249,8 @@ const Organisations = () => {
                       )}
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           )}
