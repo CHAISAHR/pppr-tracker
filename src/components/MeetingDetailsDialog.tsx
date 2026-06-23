@@ -299,3 +299,92 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
     </Dialog>
   );
 };
+
+function CapacitySummary({ meetingId }: { meetingId: string }) {
+  const [record, setRecord] = useState<EventCapacity | undefined>();
+
+  useEffect(() => {
+    const refresh = () => {
+      const evt = groupByEvent(getAllRows()).find((e) => e.eventId === meetingId);
+      setRecord(evt);
+    };
+    void loadCapacity().then(refresh);
+    window.addEventListener("capacity-changed", refresh);
+    return () => window.removeEventListener("capacity-changed", refresh);
+  }, [meetingId]);
+
+  if (!record) {
+    return (
+      <>
+        <div className="flex items-start gap-2 text-sm">
+          <TrendingUp className="h-4 w-4 mt-0.5 text-muted-foreground" />
+          <div className="flex-1">
+            <p className="font-medium text-sm mb-1">Capacity Outcomes</p>
+            <p className="text-xs text-muted-foreground">
+              No capacity data recorded.{" "}
+              <Link to="/capacity" className="text-primary hover:underline">
+                Add in Capacity Tracker →
+              </Link>
+            </p>
+          </div>
+        </div>
+        <Separator />
+      </>
+    );
+  }
+
+  const averages = averagesPerCompetency(record);
+  const overall = averages.filter((a) => a.change != null);
+  const overallAvg = overall.length
+    ? overall.reduce((s, a) => s + (a.change ?? 0), 0) / overall.length
+    : null;
+
+  return (
+    <>
+      <div className="flex items-start gap-2">
+        <TrendingUp className="h-4 w-4 mt-1 text-muted-foreground" />
+        <div className="flex-1">
+          <p className="font-medium text-sm mb-1">Capacity Outcomes</p>
+          <p className="text-xs text-muted-foreground mb-2">
+            {record.participants.length} participant
+            {record.participants.length === 1 ? "" : "s"} assessed
+            {overallAvg != null && (
+              <span
+                className={`ml-2 font-medium ${
+                  overallAvg > 0 ? "text-primary" : overallAvg < 0 ? "text-destructive" : ""
+                }`}
+              >
+                {overallAvg > 0 ? "+" : ""}
+                {overallAvg.toFixed(2)} avg change
+              </span>
+            )}
+          </p>
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {averages.map(({ competency, change }) => (
+              <Badge key={competency} variant="outline" className="text-[11px] font-normal">
+                {competency}
+                {change != null && (
+                  <span
+                    className={
+                      change > 0
+                        ? "ml-1 text-primary"
+                        : change < 0
+                        ? "ml-1 text-destructive"
+                        : "ml-1"
+                    }
+                  >
+                    {change > 0 ? `+${change.toFixed(2)}` : change.toFixed(2)}
+                  </span>
+                )}
+              </Badge>
+            ))}
+          </div>
+          <Link to="/capacity" className="text-xs text-primary hover:underline">
+            View in Capacity Tracker →
+          </Link>
+        </div>
+      </div>
+      <Separator />
+    </>
+  );
+}
