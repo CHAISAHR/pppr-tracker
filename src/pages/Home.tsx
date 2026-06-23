@@ -70,19 +70,19 @@ export default function Home() {
             backgroundSize: "24px 24px",
           }}
         />
-        <div className="max-w-6xl mx-auto px-6 py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-6 py-20 md:py-28 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6 border border-primary/20">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             Monitoring &amp; Evaluation Platform
           </div>
-          <h1 className="font-heading text-4xl md:text-6xl font-bold tracking-tight leading-[1.05] text-foreground max-w-4xl">
+          <h1 className="font-heading text-4xl md:text-6xl font-bold tracking-tight leading-[1.05] text-foreground max-w-4xl mx-auto">
             One place to track every activity, indicator and event across our partner network.
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             The M&amp;E Reporting Tool brings together {orgs.length}+ organisations to plan, monitor
             and report on shared programmes &mdash; transparently and in real time.
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-9 flex flex-wrap gap-3 justify-center">
             <Button size="lg" className="gap-2" onClick={() => navigate(user ? "/activity-tracker" : "/auth")}>
               {user ? "Open Activity Tracker" : "Sign in to get started"}
               <ArrowRight className="h-4 w-4" />
