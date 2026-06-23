@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings } from "lucide-react";
+import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -17,7 +17,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
 const items = [
-  { title: "Activity Tracker", url: "/", icon: Home },
+  { title: "Home", url: "/", icon: Home },
+  { title: "Activity Tracker", url: "/activity-tracker", icon: BarChart3 },
   { title: "Indicator Tracker", url: "/performance", icon: TrendingUp },
   { title: "Event Schedule", url: "/meetings", icon: Calendar },
 ];
