@@ -6,14 +6,14 @@ import { ArrowRight, BarChart3, Calendar, Target, Building2 } from "lucide-react
 import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 
-const FALLBACK_ORGS = [
-  "Department of Health", "Western Cape Government", "City of Cape Town",
-  "Stellenbosch University", "University of Cape Town", "SA Medical Research Council",
-  "National Treasury", "Statistics SA", "Department of Education",
-  "Gauteng Provincial Govt", "KZN Department of Social Dev", "Eastern Cape DOH",
-  "Free State Province", "Limpopo Province", "North West Province",
-  "Mpumalanga Province", "Northern Cape Province", "SA Local Govt Assoc",
-  "National School of Govt", "DPME", "DBSA", "SALGA", "HSRC", "CSIR",
+// Partner categories are derived positionally from the Admin > Organisations list:
+// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
+// remainder = Delivery Partners. Edit the order on the Organisations admin page to change groupings.
+const CATEGORY_SLICES: { label: string; take: number }[] = [
+  { label: "Funder", take: 1 },
+  { label: "Government Departments", take: 3 },
+  { label: "Implementing Entities", take: 3 },
+  { label: "Delivery Partners", take: Infinity },
 ];
 
 // Deterministic colour swatch per organisation (uses theme tokens).
