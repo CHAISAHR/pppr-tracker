@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Meetings from "./pages/Meetings";
 import Performance from "./pages/Performance";
 import Users from "./pages/Users";
