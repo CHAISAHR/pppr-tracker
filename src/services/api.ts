@@ -794,6 +794,106 @@ class ApiService {
       throw new Error('Failed to delete indicator');
     }
   }
+
+  // ============ User Access Requests ============
+  async requestAccess(data: RegisterData): Promise<{ message: string }> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const stored = localStorage.getItem('mock_user_requests');
+      const requests = stored ? JSON.parse(stored) : [];
+      if (requests.some((r: any) => r.email === data.email && r.status === 'pending')) {
+        throw new Error('A pending request for this email already exists');
+      }
+      requests.unshift({
+        id: crypto.randomUUID(),
+        name: data.name,
+        email: data.email,
+        organization: data.organization || null,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+        password: data.password,
+      });
+      localStorage.setItem('mock_user_requests', JSON.stringify(requests));
+      return { message: 'Request submitted. An administrator will review it shortly.' };
+    }
+    const response = await fetch(`${BASE_URL}/user-requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to submit request');
+    }
+    return response.json();
+  }
+
+  async getUserRequests(): Promise<any[]> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      const stored = localStorage.getItem('mock_user_requests');
+      const requests = stored ? JSON.parse(stored) : [];
+      return requests.filter((r: any) => r.status === 'pending');
+    }
+    const response = await fetch(`${BASE_URL}/user-requests`, { headers: this.getAuthHeaders() });
+    if (!response.ok) throw new Error('Failed to fetch user requests');
+    return response.json();
+  }
+
+  async getUserRequestsCount(): Promise<number> {
+    if (MOCK_MODE) {
+      const stored = localStorage.getItem('mock_user_requests');
+      const requests = stored ? JSON.parse(stored) : [];
+      return requests.filter((r: any) => r.status === 'pending').length;
+    }
+    const response = await fetch(`${BASE_URL}/user-requests/count`, { headers: this.getAuthHeaders() });
+    if (!response.ok) return 0;
+    const data = await response.json();
+    return data.count ?? 0;
+  }
+
+  async approveUserRequest(id: string, role: 'admin' | 'user' = 'user'): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      const stored = localStorage.getItem('mock_user_requests');
+      const requests = stored ? JSON.parse(stored) : [];
+      const idx = requests.findIndex((r: any) => r.id === id);
+      if (idx !== -1) {
+        requests[idx].status = 'approved';
+        requests[idx].role = role;
+        localStorage.setItem('mock_user_requests', JSON.stringify(requests));
+      }
+      return;
+    }
+    const response = await fetch(`${BASE_URL}/user-requests/${id}/approve`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ role }),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to approve request');
+    }
+  }
+
+  async rejectUserRequest(id: string): Promise<void> {
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      const stored = localStorage.getItem('mock_user_requests');
+      const requests = stored ? JSON.parse(stored) : [];
+      const idx = requests.findIndex((r: any) => r.id === id);
+      if (idx !== -1) {
+        requests[idx].status = 'rejected';
+        localStorage.setItem('mock_user_requests', JSON.stringify(requests));
+      }
+      return;
+    }
+    const response = await fetch(`${BASE_URL}/user-requests/${id}/reject`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to reject request');
+  }
 }
 
 export const api = new ApiService();
