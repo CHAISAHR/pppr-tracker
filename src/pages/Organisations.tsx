@@ -172,7 +172,7 @@ const Organisations = () => {
             Manage organisations and view attendee data
           </p>
         </div>
-        <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "" }); setAddOpen(true); }}>
+        <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "" }); setLogoPreview(undefined); setAddOpen(true); }}>
           <Plus className="h-4 w-4" />
           Add Organisation
         </Button>
