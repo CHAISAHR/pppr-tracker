@@ -321,6 +321,12 @@ const Organisations = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
+            <LogoField
+              currentName={formData.name}
+              preview={logoPreview}
+              onFile={handleLogoChange}
+              onClear={() => setLogoPreview("")}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOrg(null)}>Cancel</Button>
