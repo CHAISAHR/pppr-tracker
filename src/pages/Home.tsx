@@ -75,7 +75,7 @@ export default function Home() {
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             Monitoring &amp; Evaluation Platform
           </div>
-          <h1 className="font-heading text-4xl md:text-6xl font-bold tracking-tight leading-[1.05] text-foreground max-w-4xl mx-auto">
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] text-foreground max-w-4xl mx-auto">
             One place to track every activity, indicator and event across our partner network.
           </h1>
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
