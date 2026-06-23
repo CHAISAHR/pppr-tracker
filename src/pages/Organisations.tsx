@@ -120,11 +120,11 @@ const Organisations = () => {
       if (editOrg.name !== formData.name) {
         const existing = getLogo(editOrg.name);
         if (existing) {
-          removeLogo(editOrg.name);
-          if (logoPreview === undefined) setLogo(formData.name, existing);
+          await removeLogo(editOrg.name);
+          if (logoPreview === undefined) await setLogo(formData.name, existing);
         }
       }
-      persistLogo(formData.name);
+      await persistLogo(formData.name);
       setOrganisations(organisations.map(o => o.id === editOrg.id ? { ...o, ...formData } : o));
       setEditOrg(null);
       setFormData({ name: "", description: "" });
