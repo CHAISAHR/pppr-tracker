@@ -20,11 +20,11 @@ const items = [
   { title: "Home", url: "/", icon: Home },
   { title: "Activity Tracker", url: "/activity-tracker", icon: BarChart3 },
   { title: "Indicator Tracker", url: "/performance", icon: TrendingUp },
+  { title: "Capacity Tracker", url: "/capacity", icon: GraduationCap },
   { title: "Event Schedule", url: "/meetings", icon: Calendar },
 ];
 
 const adminItems = [
-  { title: "Capacity Tracker", url: "/capacity", icon: GraduationCap },
   { title: "Documents", url: "/documents", icon: FileText },
   { title: "Users", url: "/users", icon: Users },
   { title: "Organisations", url: "/organisations", icon: Building2 },
