@@ -80,7 +80,7 @@ const initialProjects: Project[] = [
 ];
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
