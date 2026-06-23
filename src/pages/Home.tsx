@@ -120,7 +120,7 @@ export default function Home() {
         <div className="mb-10">
           <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight mb-3">What the tool does</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Three connected modules that help partners plan, track and report on shared priorities.
+            Four connected modules that help partners plan, track and report on shared priorities.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-5 text-left">
