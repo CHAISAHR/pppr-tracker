@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Calendar, Target, Building2 } from "lucide-react";
 import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
-import { getLogo } from "@/lib/orgLogos";
+import { getLogo, loadLogos } from "@/lib/orgLogos";
 
 // Partner categories are derived positionally from the Admin > Organisations list:
 // 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
