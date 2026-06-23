@@ -7,7 +7,7 @@ import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 // Partner categories are derived positionally from the Admin > Organisations list:
-// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Partners,
+// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
 // remainder = Delivery Partners. Edit the order on the Organisations admin page to change groupings.
 const CATEGORY_SLICES: { label: string; take: number }[] = [
   { label: "Funder", take: 1 },
