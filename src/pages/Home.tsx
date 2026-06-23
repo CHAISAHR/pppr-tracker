@@ -124,17 +124,15 @@ export default function Home() {
       {/* Partner organisations */}
       <section className="border-t border-border/60 bg-card/40">
         <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-          <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
-            <div>
-              <div className="inline-flex items-center gap-2 text-primary text-xs font-medium uppercase tracking-wider mb-3">
-                <Building2 className="h-3.5 w-3.5" />
-                Our partners
-              </div>
-              <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight">
-                {orgs.length}+ organisations reporting together
-              </h2>
+          <div className="flex flex-col items-center text-center mb-10">
+            <div className="inline-flex items-center gap-2 text-primary text-xs font-medium uppercase tracking-wider mb-3">
+              <Building2 className="h-3.5 w-3.5" />
+              Our partners
             </div>
-            <p className="text-muted-foreground max-w-md text-sm">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-3">
+              {orgs.length}+ organisations reporting together
+            </h2>
+            <p className="text-muted-foreground max-w-2xl text-sm">
               National departments, provincial governments, universities and research bodies all
               contribute to a shared evidence base.
             </p>
