@@ -45,6 +45,7 @@ export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [orgs, setOrgs] = useState<string[]>([]);
+  const [, setLogoTick] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -58,6 +59,9 @@ export default function Home() {
         setOrgs([]);
       }
     })();
+    const onChange = () => setLogoTick((t) => t + 1);
+    window.addEventListener("org-logos-changed", onChange);
+    return () => window.removeEventListener("org-logos-changed", onChange);
   }, []);
 
   const groups = (() => {
