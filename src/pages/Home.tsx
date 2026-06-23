@@ -12,7 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const CATEGORY_SLICES: { label: string; take: number }[] = [
   { label: "Funder", take: 1 },
   { label: "Government Departments", take: 3 },
-  { label: "Implementing Partners", take: 3 },
+  { label: "Implementing Entities", take: 3 },
   { label: "Delivery Partners", take: Infinity },
 ];
 
