@@ -1,59 +1,61 @@
-// Shared organisation logos backed by the public.org_logos table.
-// Logos persist server-side and sync across browsers via realtime.
-// Reads are sync from an in-memory cache populated on initLogos().
+// Shared organisation logos backed by the Railway backend (table: org_logos).
+// Reads are sync from an in-memory cache populated on loadLogos().
 
-import { supabase } from "@/integrations/supabase/client";
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-app.railway.app/api';
+const MOCK_MODE = !import.meta.env.VITE_API_URL;
+const MOCK_KEY = 'mock_org_logos';
+
+function authHeaders(): HeadersInit {
+  const token = localStorage.getItem('auth_token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+}
 
 type LogoMap = Record<string, string>;
 
 const cache: LogoMap = {};
 let loaded = false;
 let loadingPromise: Promise<void> | null = null;
-let realtimeBound = false;
 
 function emitChange() {
-  window.dispatchEvent(new CustomEvent("org-logos-changed"));
+  window.dispatchEvent(new CustomEvent('org-logos-changed'));
 }
 
-function bindRealtime() {
-  if (realtimeBound) return;
-  realtimeBound = true;
-  supabase
-    .channel("org_logos_changes")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "org_logos" },
-      (payload) => {
-        const newRow = payload.new as { name?: string; data_url?: string } | null;
-        const oldRow = payload.old as { name?: string } | null;
-        if (payload.eventType === "DELETE") {
-          if (oldRow?.name) delete cache[oldRow.name];
-        } else if (newRow?.name && newRow.data_url) {
-          cache[newRow.name] = newRow.data_url;
-        }
-        emitChange();
-      }
-    )
-    .subscribe();
+function readMock(): LogoMap {
+  try {
+    const raw = localStorage.getItem(MOCK_KEY);
+    return raw ? (JSON.parse(raw) as LogoMap) : {};
+  } catch {
+    return {};
+  }
+}
+function writeMock(map: LogoMap) {
+  localStorage.setItem(MOCK_KEY, JSON.stringify(map));
 }
 
 export async function loadLogos(force = false): Promise<void> {
   if (loaded && !force) return;
   if (loadingPromise) return loadingPromise;
   loadingPromise = (async () => {
-    const { data, error } = await supabase
-      .from("org_logos")
-      .select("name, data_url");
-    if (error) {
-      console.warn("Failed to load org logos", error);
-      return;
+    try {
+      if (MOCK_MODE) {
+        const map = readMock();
+        for (const [k, v] of Object.entries(map)) cache[k] = v;
+      } else {
+        const res = await fetch(`${BASE_URL}/org-logos`, { headers: authHeaders() });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rows = (await res.json()) as Array<{ name: string; data_url: string }>;
+        for (const row of rows) {
+          if (row?.name && row?.data_url) cache[row.name] = row.data_url;
+        }
+      }
+      loaded = true;
+      emitChange();
+    } catch (err) {
+      console.warn('Failed to load org logos', err);
     }
-    for (const row of data ?? []) {
-      if (row?.name && row?.data_url) cache[row.name] = row.data_url;
-    }
-    loaded = true;
-    bindRealtime();
-    emitChange();
   })();
   try {
     await loadingPromise;
@@ -71,17 +73,34 @@ export function getAllLogos(): LogoMap {
 }
 
 export async function setLogo(name: string, dataUrl: string): Promise<void> {
-  const { error } = await supabase
-    .from("org_logos")
-    .upsert({ name, data_url: dataUrl }, { onConflict: "name" });
-  if (error) throw error;
+  if (MOCK_MODE) {
+    const map = readMock();
+    map[name] = dataUrl;
+    writeMock(map);
+  } else {
+    const res = await fetch(`${BASE_URL}/org-logos/${encodeURIComponent(name)}`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify({ data_url: dataUrl }),
+    });
+    if (!res.ok) throw new Error(`Failed to save logo (${res.status})`);
+  }
   cache[name] = dataUrl;
   emitChange();
 }
 
 export async function removeLogo(name: string): Promise<void> {
-  const { error } = await supabase.from("org_logos").delete().eq("name", name);
-  if (error) throw error;
+  if (MOCK_MODE) {
+    const map = readMock();
+    delete map[name];
+    writeMock(map);
+  } else {
+    const res = await fetch(`${BASE_URL}/org-logos/${encodeURIComponent(name)}`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+    });
+    if (!res.ok) throw new Error(`Failed to delete logo (${res.status})`);
+  }
   delete cache[name];
   emitChange();
 }
