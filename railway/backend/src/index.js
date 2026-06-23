@@ -9,6 +9,7 @@ const workshopsRoutes = require('./routes/workshops');
 const indicatorsRoutes = require('./routes/indicators');
 const subActivitiesRoutes = require('./routes/subActivities');
 const organisationsRoutes = require('./routes/organisations');
+const userRequestsRoutes = require('./routes/userRequests');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use('/api/workshops', workshopsRoutes);
 app.use('/api/indicators', indicatorsRoutes);
 app.use('/api/sub-activities', subActivitiesRoutes);
 app.use('/api/organisations', organisationsRoutes);
+app.use('/api/user-requests', userRequestsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
