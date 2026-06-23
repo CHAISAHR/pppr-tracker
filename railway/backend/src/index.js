@@ -10,6 +10,8 @@ const indicatorsRoutes = require('./routes/indicators');
 const subActivitiesRoutes = require('./routes/subActivities');
 const organisationsRoutes = require('./routes/organisations');
 const userRequestsRoutes = require('./routes/userRequests');
+const capacityAssessmentsRoutes = require('./routes/capacityAssessments');
+const orgLogosRoutes = require('./routes/orgLogos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
