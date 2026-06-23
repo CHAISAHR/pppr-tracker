@@ -58,15 +58,23 @@ const Organisations = () => {
     setLogoPreview(dataUrl);
   };
 
-  const persistLogo = (name: string) => {
+  const persistLogo = async (name: string) => {
     if (logoPreview === undefined) return;
-    if (logoPreview === "") removeLogo(name);
-    else setLogo(name, logoPreview);
-    setLogoTick((t) => t + 1);
+    try {
+      if (logoPreview === "") await removeLogo(name);
+      else await setLogo(name, logoPreview);
+      setLogoTick((t) => t + 1);
+    } catch (e: any) {
+      toast({ title: "Logo not saved", description: e?.message || "Sign in required to upload logos.", variant: "destructive" });
+    }
   };
 
   useEffect(() => {
     loadOrganisations();
+    loadLogos();
+    const onChange = () => setLogoTick((t) => t + 1);
+    window.addEventListener("org-logos-changed", onChange);
+    return () => window.removeEventListener("org-logos-changed", onChange);
   }, []);
 
   const loadOrganisations = async () => {
