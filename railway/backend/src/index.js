@@ -29,7 +29,7 @@ app.locals.pool = pool;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
 
 // Routes
 app.use('/api/auth', authRoutes);
