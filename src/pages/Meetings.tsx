@@ -95,7 +95,7 @@ const Meetings = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
             {sortedMeetings.map((meeting) => (
               <Card
                 key={meeting.id}
