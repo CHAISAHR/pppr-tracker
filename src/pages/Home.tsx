@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, BarChart3, Calendar, Target, Building2 } from "lucide-react";
+import { ArrowRight, BarChart3, Calendar, Target, TrendingUp, Building2 } from "lucide-react";
 import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { getLogo, loadLogos } from "@/lib/orgLogos";
@@ -119,14 +119,15 @@ export default function Home() {
         <div className="mb-10">
           <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight mb-3">How it works</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Three connected modules that help partners plan, track and report on shared priorities.
+            Four connected modules that help partners plan, track and report on shared priorities.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-5 text-left">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
           {[
             { icon: BarChart3, title: "Activity Tracker", desc: "Capture every project activity, delivery partner and milestone in a single source of truth." },
             { icon: Target, title: "Indicator Tracker", desc: "Quantitative metrics with Q1–Q4 roll-up, free-text targets and external evidence links." },
             { icon: Calendar, title: "Event Schedule", desc: "Plan workshops and meetings, run pre/post surveys and generate QR sign-ins." },
+            { icon: TrendingUp, title: "Capacity Tracker", desc: "Track participant capacity outcomes before and after training events." },
           ].map(({ icon: Icon, title, desc }) => (
             <Card key={title} className="p-6 border-border/60 hover:border-primary/40 transition-colors">
               <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
