@@ -41,6 +41,8 @@ app.use('/api/indicators', indicatorsRoutes);
 app.use('/api/sub-activities', subActivitiesRoutes);
 app.use('/api/organisations', organisationsRoutes);
 app.use('/api/user-requests', userRequestsRoutes);
+app.use('/api/capacity-assessments', capacityAssessmentsRoutes);
+app.use('/api/org-logos', orgLogosRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
