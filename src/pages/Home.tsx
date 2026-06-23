@@ -126,7 +126,7 @@ export default function Home() {
           {[
             { icon: BarChart3, title: "Activity Tracker", desc: "Capture every project activity, delivery partner and milestone in a single source of truth." },
             { icon: Target, title: "Indicator Tracker", desc: "Quantitative metrics with Q1–Q4 roll-up, free-text targets and external evidence links." },
-            { icon: Calendar, title: "Event Schedule", desc: "Plan workshops and meetings, run pre/post surveys and generate QR sign-ins." },
+            { icon: Calendar, title: "Event Schedule", desc: "Plan workshops and meetings, and help partners coordinate their activities and events." },
             { icon: TrendingUp, title: "Capacity Tracker", desc: "Track participant capacity outcomes before and after training events." },
           ].map(({ icon: Icon, title, desc }) => (
             <Card key={title} className="p-6 border-border/60 hover:border-primary/40 transition-colors">
