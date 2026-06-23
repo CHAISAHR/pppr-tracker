@@ -103,6 +103,7 @@ function AppContent() {
               <Route path="/organisations" element={<ProtectedRoute><Organisations /></ProtectedRoute>} />
               <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
               <Route path="/administration" element={<ProtectedRoute><Administration /></ProtectedRoute>} />
+              <Route path="/documents" element={<ProtectedRoute requireAdmin><Documents /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
