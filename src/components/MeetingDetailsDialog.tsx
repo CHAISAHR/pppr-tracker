@@ -3,13 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle, QrCode, Paperclip, TrendingUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
-
-export interface CapacityAssessment {
-  id: string;
-  participantName: string;
-  preScores: Record<string, number>;
-  postScores: Record<string, number>;
-}
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  averagesPerCompetency,
+  getAllRows,
+  groupByEvent,
+  loadCapacity,
+  type EventCapacity,
+} from "@/lib/capacity";
 
 export interface Meeting {
   id: string;
@@ -31,8 +33,6 @@ export interface Meeting {
   preSurveyQrCode?: string;
   postSurveyQrCode?: string;
   attachments?: string;
-  competencies?: string[];
-  capacityAssessments?: CapacityAssessment[];
 }
 
 interface MeetingDetailsDialogProps {
