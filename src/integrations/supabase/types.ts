@@ -191,6 +191,24 @@ export type Database = {
         }
         Relationships: []
       }
+      org_logos: {
+        Row: {
+          data_url: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          data_url: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          data_url?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sub_activities: {
         Row: {
           created_at: string
