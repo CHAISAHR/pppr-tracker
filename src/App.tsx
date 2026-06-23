@@ -25,6 +25,7 @@ import Performance from "./pages/Performance";
 import Users from "./pages/Users";
 import Administration from "./pages/Administration";
 import Organisations from "./pages/Organisations";
+import Documents from "./pages/Documents";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
