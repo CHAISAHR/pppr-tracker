@@ -123,7 +123,7 @@ export default function Home() {
             Four connected modules that help partners plan, track and report on shared priorities.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-5 text-left">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
           {[
             { icon: BarChart3, title: "Activity Tracker", desc: "Capture every project activity, delivery partner and milestone in a single source of truth." },
             { icon: Target, title: "Indicator Tracker", desc: "Quantitative metrics with Q1–Q4 roll-up, free-text targets and external evidence links." },
