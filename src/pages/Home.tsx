@@ -6,14 +6,14 @@ import { ArrowRight, BarChart3, Calendar, Target, Building2 } from "lucide-react
 import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 
-const FALLBACK_ORGS = [
-  "Department of Health", "Western Cape Government", "City of Cape Town",
-  "Stellenbosch University", "University of Cape Town", "SA Medical Research Council",
-  "National Treasury", "Statistics SA", "Department of Education",
-  "Gauteng Provincial Govt", "KZN Department of Social Dev", "Eastern Cape DOH",
-  "Free State Province", "Limpopo Province", "North West Province",
-  "Mpumalanga Province", "Northern Cape Province", "SA Local Govt Assoc",
-  "National School of Govt", "DPME", "DBSA", "SALGA", "HSRC", "CSIR",
+// Partner categories are derived positionally from the Admin > Organisations list:
+// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
+// remainder = Delivery Partners. Edit the order on the Organisations admin page to change groupings.
+const CATEGORY_SLICES: { label: string; take: number }[] = [
+  { label: "Funder", take: 1 },
+  { label: "Government Departments", take: 3 },
+  { label: "Implementing Entities", take: 3 },
+  { label: "Delivery Partners", take: Infinity },
 ];
 
 // Deterministic colour swatch per organisation (uses theme tokens).
@@ -43,7 +43,7 @@ function hashIdx(s: string, mod: number) {
 export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [orgs, setOrgs] = useState<string[]>(FALLBACK_ORGS);
+  const [orgs, setOrgs] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -52,12 +52,25 @@ export default function Home() {
         const names: string[] = (data || [])
           .map((o: any) => o?.name)
           .filter((n: string) => !!n);
-        if (names.length >= 6) setOrgs(names);
+        setOrgs(names);
       } catch {
-        /* keep fallback */
+        setOrgs([]);
       }
     })();
   }, []);
+
+  const groups = (() => {
+    const out: { label: string; items: string[] }[] = [];
+    let i = 0;
+    for (const { label, take } of CATEGORY_SLICES) {
+      const end = take === Infinity ? orgs.length : Math.min(i + take, orgs.length);
+      const items = orgs.slice(i, end);
+      if (items.length) out.push({ label, items });
+      i = end;
+      if (i >= orgs.length) break;
+    }
+    return out;
+  })();
 
   return (
     <div className="min-h-full bg-gradient-to-b from-background via-background to-secondary/30">
@@ -130,33 +143,52 @@ export default function Home() {
               Our partners
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-3">
-              {orgs.length}+ organisations reporting together
+              {orgs.length > 0 ? `${orgs.length} organisations reporting together` : "Our partner network"}
             </h2>
             <p className="text-muted-foreground max-w-2xl text-sm">
-              National departments, provincial governments, universities and research bodies all
-              contribute to a shared evidence base.
+              A funder, government departments, implementing entities and delivery partners
+              contributing to a shared evidence base.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {orgs.map((name) => {
-              const swatch = SWATCHES[hashIdx(name, SWATCHES.length)];
-              return (
-                <div
-                  key={name}
-                  title={name}
-                  className={`aspect-[4/3] rounded-xl border ${swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
-                >
-                  <span className="font-heading text-xl font-bold leading-none">
-                    {initialsOf(name) || "•"}
-                  </span>
-                  <span className="mt-2 text-[10px] font-medium opacity-80 line-clamp-2 leading-tight">
-                    {name}
-                  </span>
+          {orgs.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground">
+              Partner organisations will appear here once added in the Administration panel.
+            </p>
+          ) : (
+            <div className="space-y-10">
+              {groups.map(({ label, items }) => (
+                <div key={label}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-foreground">
+                      {label}
+                    </h3>
+                    <span className="text-xs text-muted-foreground">({items.length})</span>
+                    <div className="flex-1 h-px bg-border/60" />
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {items.map((name) => {
+                      const swatch = SWATCHES[hashIdx(name, SWATCHES.length)];
+                      return (
+                        <div
+                          key={name}
+                          title={name}
+                          className={`aspect-[4/3] rounded-xl border ${swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
+                        >
+                          <span className="font-heading text-xl font-bold leading-none">
+                            {initialsOf(name) || "•"}
+                          </span>
+                          <span className="mt-2 text-[10px] font-medium opacity-80 line-clamp-2 leading-tight">
+                            {name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
