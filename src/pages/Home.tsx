@@ -161,8 +161,9 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-border/60">
-        <div className="max-w-6xl mx-auto px-6 py-8 text-xs text-muted-foreground flex flex-wrap items-center justify-between gap-3">
+        <div className="max-w-6xl mx-auto px-6 py-8 text-xs text-muted-foreground text-center">
           <span>© {new Date().getFullYear()} M&amp;E Reporting Tool</span>
+          <span className="mx-2">·</span>
           <span>Built for transparent, collaborative reporting.</span>
         </div>
       </footer>
