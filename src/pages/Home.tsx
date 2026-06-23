@@ -117,7 +117,7 @@ export default function Home() {
       {/* What it does */}
       <section className="max-w-6xl mx-auto px-6 py-16 md:py-20 text-center">
         <div className="mb-10">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight mb-3">What the tool does</h2>
+          <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight mb-3">How it works</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Three connected modules that help partners plan, track and report on shared priorities.
           </p>
