@@ -101,7 +101,7 @@ function AppContent() {
               <Route path="/activity-tracker" element={<ProtectedRoute><Index /></ProtectedRoute>} />
               <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
               <Route path="/meetings" element={<ProtectedRoute><Meetings /></ProtectedRoute>} />
-              <Route path="/capacity" element={<ProtectedRoute><Capacity /></ProtectedRoute>} />
+              <Route path="/capacity" element={<ProtectedRoute requireAdmin><Capacity /></ProtectedRoute>} />
               <Route path="/organisations" element={<ProtectedRoute><Organisations /></ProtectedRoute>} />
               <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
               <Route path="/administration" element={<ProtectedRoute><Administration /></ProtectedRoute>} />
