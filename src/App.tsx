@@ -7,6 +7,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { PendingRequestsBell } from "@/components/PendingRequestsBell";
 import { Button } from "@/components/ui/button";
 import { LogIn, User, LogOut } from "lucide-react";
 import {
@@ -29,7 +30,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function AppContent() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -58,33 +59,36 @@ function AppContent() {
                 Login / Sign Up
               </Button>
             ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2 hover:bg-muted">
-                    <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="h-3.5 w-3.5 text-primary" />
-                    </div>
-                    <span className="hidden sm:inline text-sm font-medium">{user.name || user.email}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
-                  <DropdownMenuLabel className="font-medium">My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-sm text-muted-foreground" disabled>
-                    {user.email}
-                  </DropdownMenuItem>
-                  {user.role && (
+              <div className="flex items-center gap-1">
+                {isAdmin() && <PendingRequestsBell />}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2 hover:bg-muted">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <span className="hidden sm:inline text-sm font-medium">{user.name || user.email}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
+                    <DropdownMenuLabel className="font-medium">My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-sm text-muted-foreground" disabled>
-                      Role: <span className="capitalize ml-1">{user.role}</span>
+                      {user.email}
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    {user.role && (
+                      <DropdownMenuItem className="text-sm text-muted-foreground" disabled>
+                        Role: <span className="capitalize ml-1">{user.role}</span>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             )}
           </header>
           <main className="flex-1 overflow-auto">

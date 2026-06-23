@@ -54,7 +54,7 @@ interface IndicatorsTabProps {
 }
 
 export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(null);
@@ -434,9 +434,11 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
                         <Button variant="ghost" size="sm" onClick={() => setEditingIndicator(ind)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => handleDelete(ind.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        {isAdmin() && (
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete(ind.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   )}

@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/services/api";
 import { Settings, Plus, Edit2, Trash2, Activity, TrendingUp, Calendar, Search } from "lucide-react";
+import { UserRequestsPanel } from "@/components/UserRequestsPanel";
 
 // ============= Activities Admin Tab =============
 function ActivitiesAdmin() {
@@ -566,6 +567,10 @@ export default function Administration() {
           <p className="text-muted-foreground">Create, update, and delete records across all modules</p>
         </div>
       </div>
+
+      <UserRequestsPanel />
+
+
 
       <Tabs defaultValue="activities" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">

@@ -20,10 +20,10 @@ const items = [
   { title: "Activity Tracker", url: "/", icon: Home },
   { title: "Indicator Tracker", url: "/performance", icon: TrendingUp },
   { title: "Event Schedule", url: "/meetings", icon: Calendar },
-  { title: "Administration", url: "/administration", icon: Settings },
 ];
 
 const adminItems = [
+  { title: "Administration", url: "/administration", icon: Settings },
   { title: "Users", url: "/users", icon: Users },
   { title: "Organisations", url: "/organisations", icon: Building2 },
 ];

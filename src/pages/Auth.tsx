@@ -55,21 +55,21 @@ export default function Auth() {
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      await register({ email, password, name, organization });
+      const result = await api.requestAccess({ email, password, name, organization });
       toast({
-        title: "Success",
-        description: "Account created successfully",
+        title: "Request sent",
+        description: result.message || "An administrator will review your request shortly.",
       });
-      navigate('/');
+      setName(''); setEmail(''); setPassword(''); setOrganization('');
+      setIsLogin(true);
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Registration failed",
+        description: error instanceof Error ? error.message : "Failed to submit request",
         variant: "destructive",
       });
     } finally {
@@ -88,48 +88,66 @@ export default function Auth() {
           <CardDescription>Sign in to manage your projects</CardDescription>
         </CardHeader>
         
-        <form onSubmit={handleLogin}>
-          <CardContent className="space-y-4 pt-6">
-            <div className="space-y-2">
-              <Label htmlFor="login-email">Email</Label>
-              <Input
-                id="login-email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password">Password</Label>
-              <Input
-                id="login-password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </Button>
-            <Button
-              type="button"
-              variant="link"
-              className="text-sm text-muted-foreground"
-              onClick={() => setForgotOpen(true)}
-            >
-              Forgot password?
-            </Button>
-            <p className="text-xs text-muted-foreground text-center">
-              Don't have an account? Contact your administrator to request access.
-            </p>
-          </CardFooter>
-        </form>
+        <Tabs value={isLogin ? "login" : "request"} onValueChange={(v) => setIsLogin(v === "login")}>
+          <TabsList className="grid w-full grid-cols-2 px-6">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="request">Request Access</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="login" className="mt-0">
+            <form onSubmit={handleLogin}>
+              <CardContent className="space-y-4 pt-6">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Password</Label>
+                  <Input id="login-password" type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3">
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Logging in..." : "Login"}
+                </Button>
+                <Button type="button" variant="link" className="text-sm text-muted-foreground" onClick={() => setForgotOpen(true)}>
+                  Forgot password?
+                </Button>
+              </CardFooter>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="request" className="mt-0">
+            <form onSubmit={handleRequest}>
+              <CardContent className="space-y-4 pt-6">
+                <p className="text-xs text-muted-foreground bg-muted/40 rounded-md p-3 border">
+                  Your request will be reviewed by an administrator. You'll be able to log in once approved.
+                </p>
+                <div className="space-y-2">
+                  <Label htmlFor="req-name">Full Name</Label>
+                  <Input id="req-name" value={name} onChange={(e) => setName(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="req-email">Email</Label>
+                  <Input id="req-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="req-password">Choose a Password</Label>
+                  <Input id="req-password" type="password" placeholder="Minimum 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="req-org">Organisation (optional)</Label>
+                  <Input id="req-org" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Submitting..." : "Request Access"}
+                </Button>
+              </CardFooter>
+            </form>
+          </TabsContent>
+        </Tabs>
       </Card>
 
       <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
