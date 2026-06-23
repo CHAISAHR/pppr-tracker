@@ -101,7 +101,7 @@ const Organisations = () => {
     }
     try {
       const newOrg = await api.createOrganisation(formData);
-      persistLogo(formData.name);
+      await persistLogo(formData.name);
       setOrganisations([...organisations, newOrg]);
       setAddOpen(false);
       setFormData({ name: "", description: "" });
