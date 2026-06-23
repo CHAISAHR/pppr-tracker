@@ -194,3 +194,28 @@ CREATE TABLE IF NOT EXISTS user_requests (
 
 CREATE INDEX idx_user_requests_status ON user_requests(status);
 CREATE INDEX idx_user_requests_email ON user_requests(email);
+
+-- 11. Capacity Assessments table (Capacity Tracker)
+CREATE TABLE IF NOT EXISTS capacity_assessments (
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  event_id CHAR(36) NULL,
+  event_focus_area VARCHAR(255) NOT NULL,
+  event_date DATE NULL,
+  participant_name VARCHAR(255) NOT NULL,
+  competency VARCHAR(255) NOT NULL,
+  pre_score INT NULL,
+  post_score INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_capacity_event_id ON capacity_assessments(event_id);
+CREATE INDEX idx_capacity_event_date ON capacity_assessments(event_date);
+
+-- 12. Organisation Logos table (partner logos)
+CREATE TABLE IF NOT EXISTS org_logos (
+  name VARCHAR(255) PRIMARY KEY,
+  data_url LONGTEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
