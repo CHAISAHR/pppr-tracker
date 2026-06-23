@@ -23,7 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Building2, Plus, Edit2, Trash2, Upload, X } from "lucide-react";
-import { getLogo, setLogo, removeLogo, fileToDataUrl } from "@/lib/orgLogos";
+import { getLogo, setLogo, removeLogo, fileToDataUrl, loadLogos } from "@/lib/orgLogos";
 
 interface Organisation {
   id: string | null;
@@ -58,15 +58,23 @@ const Organisations = () => {
     setLogoPreview(dataUrl);
   };
 
-  const persistLogo = (name: string) => {
+  const persistLogo = async (name: string) => {
     if (logoPreview === undefined) return;
-    if (logoPreview === "") removeLogo(name);
-    else setLogo(name, logoPreview);
-    setLogoTick((t) => t + 1);
+    try {
+      if (logoPreview === "") await removeLogo(name);
+      else await setLogo(name, logoPreview);
+      setLogoTick((t) => t + 1);
+    } catch (e: any) {
+      toast({ title: "Logo not saved", description: e?.message || "Sign in required to upload logos.", variant: "destructive" });
+    }
   };
 
   useEffect(() => {
     loadOrganisations();
+    loadLogos();
+    const onChange = () => setLogoTick((t) => t + 1);
+    window.addEventListener("org-logos-changed", onChange);
+    return () => window.removeEventListener("org-logos-changed", onChange);
   }, []);
 
   const loadOrganisations = async () => {
@@ -93,7 +101,7 @@ const Organisations = () => {
     }
     try {
       const newOrg = await api.createOrganisation(formData);
-      persistLogo(formData.name);
+      await persistLogo(formData.name);
       setOrganisations([...organisations, newOrg]);
       setAddOpen(false);
       setFormData({ name: "", description: "" });
@@ -112,11 +120,11 @@ const Organisations = () => {
       if (editOrg.name !== formData.name) {
         const existing = getLogo(editOrg.name);
         if (existing) {
-          removeLogo(editOrg.name);
-          if (logoPreview === undefined) setLogo(formData.name, existing);
+          await removeLogo(editOrg.name);
+          if (logoPreview === undefined) await setLogo(formData.name, existing);
         }
       }
-      persistLogo(formData.name);
+      await persistLogo(formData.name);
       setOrganisations(organisations.map(o => o.id === editOrg.id ? { ...o, ...formData } : o));
       setEditOrg(null);
       setFormData({ name: "", description: "" });
@@ -131,7 +139,7 @@ const Organisations = () => {
     try {
       const org = organisations.find(o => o.id === id);
       await api.deleteOrganisation(id);
-      if (org?.name) removeLogo(org.name);
+      if (org?.name) await removeLogo(org.name).catch(() => {});
       setOrganisations(organisations.filter(o => o.id !== id));
       setLogoTick(t => t + 1);
       toast({ title: "Success", description: "Organisation deleted successfully" });
