@@ -22,7 +22,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Building2, Plus, Edit2, Trash2 } from "lucide-react";
+import { Building2, Plus, Edit2, Trash2, Upload, X } from "lucide-react";
+import { getLogo, setLogo, removeLogo, fileToDataUrl } from "@/lib/orgLogos";
 
 interface Organisation {
   id: string | null;
@@ -40,6 +41,29 @@ const Organisations = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [editOrg, setEditOrg] = useState<Organisation | null>(null);
   const [formData, setFormData] = useState({ name: "", description: "" });
+  const [logoPreview, setLogoPreview] = useState<string | undefined>(undefined);
+  const [logoTick, setLogoTick] = useState(0);
+
+  const handleLogoChange = async (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Invalid file", description: "Please choose an image.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      toast({ title: "File too large", description: "Logo must be under 1 MB.", variant: "destructive" });
+      return;
+    }
+    const dataUrl = await fileToDataUrl(file);
+    setLogoPreview(dataUrl);
+  };
+
+  const persistLogo = (name: string) => {
+    if (logoPreview === undefined) return;
+    if (logoPreview === "") removeLogo(name);
+    else setLogo(name, logoPreview);
+    setLogoTick((t) => t + 1);
+  };
 
   useEffect(() => {
     loadOrganisations();
@@ -69,9 +93,11 @@ const Organisations = () => {
     }
     try {
       const newOrg = await api.createOrganisation(formData);
+      persistLogo(formData.name);
       setOrganisations([...organisations, newOrg]);
       setAddOpen(false);
       setFormData({ name: "", description: "" });
+      setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation created successfully" });
     } catch (error: any) {
       toast({ title: "Error", description: error.message || "Failed to create organisation", variant: "destructive" });
@@ -82,9 +108,19 @@ const Organisations = () => {
     if (!editOrg?.id) return;
     try {
       await api.updateOrganisation(editOrg.id, formData);
+      // If the name changed, move the logo across
+      if (editOrg.name !== formData.name) {
+        const existing = getLogo(editOrg.name);
+        if (existing) {
+          removeLogo(editOrg.name);
+          if (logoPreview === undefined) setLogo(formData.name, existing);
+        }
+      }
+      persistLogo(formData.name);
       setOrganisations(organisations.map(o => o.id === editOrg.id ? { ...o, ...formData } : o));
       setEditOrg(null);
       setFormData({ name: "", description: "" });
+      setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation updated successfully" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to update organisation", variant: "destructive" });
@@ -93,8 +129,11 @@ const Organisations = () => {
 
   const handleDelete = async (id: string) => {
     try {
+      const org = organisations.find(o => o.id === id);
       await api.deleteOrganisation(id);
+      if (org?.name) removeLogo(org.name);
       setOrganisations(organisations.filter(o => o.id !== id));
+      setLogoTick(t => t + 1);
       toast({ title: "Success", description: "Organisation deleted successfully" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to delete organisation", variant: "destructive" });
@@ -104,7 +143,9 @@ const Organisations = () => {
   const openEdit = (org: Organisation) => {
     setEditOrg(org);
     setFormData({ name: org.name, description: org.description || "" });
+    setLogoPreview(undefined);
   };
+
 
   if (!isAdmin()) {
     return (
@@ -131,7 +172,7 @@ const Organisations = () => {
             Manage organisations and view attendee data
           </p>
         </div>
-        <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "" }); setAddOpen(true); }}>
+        <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "" }); setLogoPreview(undefined); setAddOpen(true); }}>
           <Plus className="h-4 w-4" />
           Add Organisation
         </Button>
@@ -155,6 +196,7 @@ const Organisations = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-16">Logo</TableHead>
                   <TableHead>Organisation Name</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead className="text-right">Attendees</TableHead>
@@ -162,8 +204,21 @@ const Organisations = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {organisations.map((org, index) => (
+                {organisations.map((org, index) => {
+                  // logoTick forces re-render when logos change
+                  void logoTick;
+                  const logo = getLogo(org.name);
+                  return (
                   <TableRow key={org.id || index}>
+                    <TableCell>
+                      {logo ? (
+                        <img src={logo} alt={org.name} className="h-10 w-10 rounded-md object-contain bg-muted border border-border" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-md bg-muted border border-border flex items-center justify-center text-[10px] text-muted-foreground">
+                          —
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium">{org.name}</TableCell>
                     <TableCell className="text-muted-foreground">{org.description || '-'}</TableCell>
                     <TableCell className="text-right">{org.attendee_count ?? org.count ?? 0}</TableCell>
@@ -194,7 +249,8 @@ const Organisations = () => {
                       )}
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           )}
@@ -227,6 +283,12 @@ const Organisations = () => {
                 placeholder="Optional description"
               />
             </div>
+            <LogoField
+              currentName={formData.name}
+              preview={logoPreview}
+              onFile={handleLogoChange}
+              onClear={() => setLogoPreview("")}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
@@ -259,6 +321,12 @@ const Organisations = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
+            <LogoField
+              currentName={formData.name}
+              preview={logoPreview}
+              onFile={handleLogoChange}
+              onClear={() => setLogoPreview("")}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOrg(null)}>Cancel</Button>
@@ -271,3 +339,52 @@ const Organisations = () => {
 };
 
 export default Organisations;
+
+function LogoField({
+  currentName,
+  preview,
+  onFile,
+  onClear,
+}: {
+  currentName: string;
+  preview: string | undefined;
+  onFile: (file: File | undefined) => void;
+  onClear: () => void;
+}) {
+  // Show: staged preview > saved logo > placeholder
+  const saved = currentName ? getLogo(currentName) : undefined;
+  const shown = preview !== undefined ? (preview || undefined) : saved;
+  return (
+    <div className="space-y-2">
+      <Label>Logo</Label>
+      <div className="flex items-center gap-3">
+        <div className="h-14 w-14 rounded-md border border-border bg-muted flex items-center justify-center overflow-hidden">
+          {shown ? (
+            <img src={shown} alt="Logo preview" className="h-full w-full object-contain" />
+          ) : (
+            <Building2 className="h-5 w-5 text-muted-foreground" />
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="inline-flex">
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(e) => onFile(e.target.files?.[0])}
+            />
+            <span className="inline-flex items-center gap-2 h-9 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent cursor-pointer">
+              <Upload className="h-4 w-4" /> Upload
+            </span>
+          </label>
+          {shown && (
+            <Button type="button" variant="ghost" size="sm" onClick={onClear} className="gap-1">
+              <X className="h-4 w-4" /> Remove
+            </Button>
+          )}
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">PNG, JPG or SVG. Max 1 MB.</p>
+    </div>
+  );
+}

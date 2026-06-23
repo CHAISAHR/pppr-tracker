@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Calendar, Target, Building2 } from "lucide-react";
 import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { getLogo } from "@/lib/orgLogos";
 
 // Partner categories are derived positionally from the Admin > Organisations list:
 // 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
@@ -44,6 +45,7 @@ export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [orgs, setOrgs] = useState<string[]>([]);
+  const [, setLogoTick] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -57,6 +59,9 @@ export default function Home() {
         setOrgs([]);
       }
     })();
+    const onChange = () => setLogoTick((t) => t + 1);
+    window.addEventListener("org-logos-changed", onChange);
+    return () => window.removeEventListener("org-logos-changed", onChange);
   }, []);
 
   const groups = (() => {
@@ -164,16 +169,21 @@ export default function Home() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     {items.map((name) => {
                       const swatch = SWATCHES[hashIdx(name, SWATCHES.length)];
+                      const logo = getLogo(name);
                       return (
                         <div
                           key={name}
                           title={name}
-                          className={`aspect-[4/3] rounded-xl border ${swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
+                          className={`aspect-[4/3] rounded-xl border ${logo ? "bg-card border-border" : swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
                         >
-                          <span className="font-heading text-xl font-bold leading-none">
-                            {initialsOf(name) || "•"}
-                          </span>
-                          <span className="mt-2 text-[10px] font-medium opacity-80 line-clamp-2 leading-tight">
+                          {logo ? (
+                            <img src={logo} alt={name} className="max-h-[60%] max-w-[80%] object-contain" />
+                          ) : (
+                            <span className="font-heading text-xl font-bold leading-none">
+                              {initialsOf(name) || "•"}
+                            </span>
+                          )}
+                          <span className={`mt-2 text-[10px] font-medium ${logo ? "text-muted-foreground" : "opacity-80"} line-clamp-2 leading-tight`}>
                             {name}
                           </span>
                         </div>
