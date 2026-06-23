@@ -221,6 +221,35 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
             </>
           )}
 
+          {meeting.attachments && meeting.attachments.trim() && (
+            <>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <Paperclip className="h-4 w-4 mt-1 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm mb-2">Attachments</p>
+                    <ul className="space-y-1">
+                      {meeting.attachments.split('\n').map(l => l.trim()).filter(Boolean).map((line, idx) => {
+                        const [labelOrUrl, maybeUrl] = line.split('|').map(s => s.trim());
+                        const url = maybeUrl || labelOrUrl;
+                        const label = maybeUrl ? labelOrUrl : labelOrUrl;
+                        return (
+                          <li key={idx}>
+                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline inline-flex items-center gap-1.5">
+                              <LinkIcon className="h-3 w-3" />
+                              {label}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
+
           <div className="space-y-2">
             <div className="flex items-start gap-2">
               <Building2 className="h-4 w-4 mt-1 text-muted-foreground" />
