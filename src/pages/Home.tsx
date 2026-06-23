@@ -143,33 +143,52 @@ export default function Home() {
               Our partners
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-3">
-              {orgs.length}+ organisations reporting together
+              {orgs.length > 0 ? `${orgs.length} organisations reporting together` : "Our partner network"}
             </h2>
             <p className="text-muted-foreground max-w-2xl text-sm">
-              National departments, provincial governments, universities and research bodies all
-              contribute to a shared evidence base.
+              A funder, government departments, implementing entities and delivery partners
+              contributing to a shared evidence base.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {orgs.map((name) => {
-              const swatch = SWATCHES[hashIdx(name, SWATCHES.length)];
-              return (
-                <div
-                  key={name}
-                  title={name}
-                  className={`aspect-[4/3] rounded-xl border ${swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
-                >
-                  <span className="font-heading text-xl font-bold leading-none">
-                    {initialsOf(name) || "•"}
-                  </span>
-                  <span className="mt-2 text-[10px] font-medium opacity-80 line-clamp-2 leading-tight">
-                    {name}
-                  </span>
+          {orgs.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground">
+              Partner organisations will appear here once added in the Administration panel.
+            </p>
+          ) : (
+            <div className="space-y-10">
+              {groups.map(({ label, items }) => (
+                <div key={label}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-foreground">
+                      {label}
+                    </h3>
+                    <span className="text-xs text-muted-foreground">({items.length})</span>
+                    <div className="flex-1 h-px bg-border/60" />
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {items.map((name) => {
+                      const swatch = SWATCHES[hashIdx(name, SWATCHES.length)];
+                      return (
+                        <div
+                          key={name}
+                          title={name}
+                          className={`aspect-[4/3] rounded-xl border ${swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
+                        >
+                          <span className="font-heading text-xl font-bold leading-none">
+                            {initialsOf(name) || "•"}
+                          </span>
+                          <span className="mt-2 text-[10px] font-medium opacity-80 line-clamp-2 leading-tight">
+                            {name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
