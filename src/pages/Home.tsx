@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, BarChart3, Calendar, Target, Building2 } from "lucide-react";
+import { ArrowRight, BarChart3, Calendar, Target, TrendingUp, Building2 } from "lucide-react";
 import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { getLogo, loadLogos } from "@/lib/orgLogos";
