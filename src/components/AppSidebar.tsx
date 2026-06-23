@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3, FileText } from "lucide-react";
+import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3, FileText, GraduationCap } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -21,6 +21,7 @@ const items = [
   { title: "Activity Tracker", url: "/activity-tracker", icon: BarChart3 },
   { title: "Indicator Tracker", url: "/performance", icon: TrendingUp },
   { title: "Event Schedule", url: "/meetings", icon: Calendar },
+  { title: "Capacity Tracker", url: "/capacity", icon: GraduationCap },
 ];
 
 const adminItems = [
