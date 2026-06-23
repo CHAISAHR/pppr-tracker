@@ -97,8 +97,14 @@ export default function Home() {
       </section>
 
       {/* What it does */}
-      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
-        <div className="grid md:grid-cols-3 gap-5">
+      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20 text-center">
+        <div className="mb-10">
+          <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight mb-3">What the tool does</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Three connected modules that help partners plan, track and report on shared priorities.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-5 text-left">
           {[
             { icon: BarChart3, title: "Activity Tracker", desc: "Capture every project activity, delivery partner and milestone in a single source of truth." },
             { icon: Target, title: "Indicator Tracker", desc: "Quantitative metrics with Q1–Q4 roll-up, free-text targets and external evidence links." },
