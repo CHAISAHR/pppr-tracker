@@ -209,8 +209,8 @@ const Index = () => {
                 <Plus className="h-4 w-4" />
                 Add Activity
               </Button>
-              <ExcelTemplate />
-              <ExcelUpload onUpload={handleExcelUpload} />
+              {isAdmin() && <ExcelTemplate />}
+              {isAdmin() && <ExcelUpload onUpload={handleExcelUpload} />}
               <ExcelExport projects={filteredProjects} />
             </div>
           )}
