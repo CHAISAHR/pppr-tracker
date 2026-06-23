@@ -169,16 +169,21 @@ export default function Home() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     {items.map((name) => {
                       const swatch = SWATCHES[hashIdx(name, SWATCHES.length)];
+                      const logo = getLogo(name);
                       return (
                         <div
                           key={name}
                           title={name}
-                          className={`aspect-[4/3] rounded-xl border ${swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
+                          className={`aspect-[4/3] rounded-xl border ${logo ? "bg-card border-border" : swatch} flex flex-col items-center justify-center p-3 text-center transition-transform hover:-translate-y-0.5`}
                         >
-                          <span className="font-heading text-xl font-bold leading-none">
-                            {initialsOf(name) || "•"}
-                          </span>
-                          <span className="mt-2 text-[10px] font-medium opacity-80 line-clamp-2 leading-tight">
+                          {logo ? (
+                            <img src={logo} alt={name} className="max-h-[60%] max-w-[80%] object-contain" />
+                          ) : (
+                            <span className="font-heading text-xl font-bold leading-none">
+                              {initialsOf(name) || "•"}
+                            </span>
+                          )}
+                          <span className={`mt-2 text-[10px] font-medium ${logo ? "text-muted-foreground" : "opacity-80"} line-clamp-2 leading-tight`}>
                             {name}
                           </span>
                         </div>
