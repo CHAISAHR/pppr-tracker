@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import type { Meeting } from "./MeetingDetailsDialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { CapacityAssessmentsEditor } from "./CapacityAssessmentsEditor";
 
 interface EditMeetingDialogProps {
   meeting: Meeting | null;
@@ -37,8 +36,6 @@ const emptyMeeting: Meeting = {
   preSurveyQrCode: "",
   postSurveyQrCode: "",
   attachments: "",
-  competencies: [],
-  capacityAssessments: [],
 };
 export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditMeetingDialogProps) => {
   const [formData, setFormData] = useState<Meeting>({ ...emptyMeeting });
@@ -212,27 +209,6 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
             <Input id="edit-deliveryPartners" placeholder="Partner 1; Partner 2" value={formData.deliveryPartners.join('; ')} onChange={(e) => handleArrayChange("deliveryPartners", e.target.value)} />
           </div>
 
-          <div className="border rounded-md p-4 space-y-3">
-            <p className="text-sm font-medium">Capacity Outcomes (before/after training)</p>
-            <div className="space-y-2">
-              <Label htmlFor="edit-competencies">Competencies assessed (separate with ;)</Label>
-              <Input
-                id="edit-competencies"
-                placeholder="Knowledge; Confidence; Skills"
-                value={(formData.competencies ?? []).join('; ')}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  competencies: e.target.value.split(';').map(c => c.trim()).filter(Boolean),
-                })}
-              />
-              <p className="text-xs text-muted-foreground">Each participant is scored 1-5 on these competencies before and after training.</p>
-            </div>
-            <CapacityAssessmentsEditor
-              competencies={formData.competencies ?? []}
-              assessments={formData.capacityAssessments ?? []}
-              onChange={(capacityAssessments) => setFormData({ ...formData, capacityAssessments })}
-            />
-          </div>
         </div>
 
         <DialogFooter>

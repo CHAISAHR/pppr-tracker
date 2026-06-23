@@ -3,13 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Target, Building2, Users, Mail, Phone, Link as LinkIcon, UserCircle, QrCode, Paperclip, TrendingUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
-
-export interface CapacityAssessment {
-  id: string;
-  participantName: string;
-  preScores: Record<string, number>;
-  postScores: Record<string, number>;
-}
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  averagesPerCompetency,
+  getAllRows,
+  groupByEvent,
+  loadCapacity,
+  type EventCapacity,
+} from "@/lib/capacity";
 
 export interface Meeting {
   id: string;
@@ -31,8 +33,6 @@ export interface Meeting {
   preSurveyQrCode?: string;
   postSurveyQrCode?: string;
   attachments?: string;
-  competencies?: string[];
-  capacityAssessments?: CapacityAssessment[];
 }
 
 interface MeetingDetailsDialogProps {
@@ -258,90 +258,8 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
               <Separator />
             </>
           )}
-          {(meeting.competencies?.filter(Boolean).length ?? 0) > 0 && (
-            <>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2">
-                  <TrendingUp className="h-4 w-4 mt-1 text-muted-foreground" />
-                  <div className="flex-1">
-                    <p className="font-medium text-sm mb-2">Capacity Outcomes</p>
-                    {(() => {
-                      const comps = (meeting.competencies ?? []).filter(Boolean);
-                      const assessments = meeting.capacityAssessments ?? [];
-                      const averages = comps.map((c) => {
-                        const pres = assessments.map(a => a.preScores[c]).filter((v): v is number => v != null);
-                        const posts = assessments.map(a => a.postScores[c]).filter((v): v is number => v != null);
-                        const avg = (arr: number[]) => arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : null;
-                        const pre = avg(pres);
-                        const post = avg(posts);
-                        return { c, pre, post, change: pre != null && post != null ? post - pre : null };
-                      });
-                      return (
-                        <>
-                          <div className="overflow-x-auto mb-3">
-                            <table className="w-full text-xs">
-                              <thead>
-                                <tr className="text-muted-foreground">
-                                  <th className="text-left font-medium pb-1">Competency</th>
-                                  <th className="text-right font-medium pb-1">Avg before</th>
-                                  <th className="text-right font-medium pb-1">Avg after</th>
-                                  <th className="text-right font-medium pb-1">Change</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {averages.map(({ c, pre, post, change }) => (
-                                  <tr key={c} className="border-t">
-                                    <td className="py-1.5">{c}</td>
-                                    <td className="py-1.5 text-right">{pre?.toFixed(2) ?? "—"}</td>
-                                    <td className="py-1.5 text-right">{post?.toFixed(2) ?? "—"}</td>
-                                    <td className={`py-1.5 text-right font-medium ${
-                                      change == null ? "text-muted-foreground" : change > 0 ? "text-primary" : change < 0 ? "text-destructive" : ""
-                                    }`}>
-                                      {change == null ? "—" : change > 0 ? `+${change.toFixed(2)}` : change.toFixed(2)}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                          {assessments.length === 0 ? (
-                            <p className="text-xs text-muted-foreground">No participants assessed yet.</p>
-                          ) : (
-                            <details className="text-xs">
-                              <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                                Show {assessments.length} participant{assessments.length === 1 ? "" : "s"}
-                              </summary>
-                              <div className="mt-2 space-y-2">
-                                {assessments.map((a) => (
-                                  <div key={a.id} className="border rounded p-2">
-                                    <p className="font-medium mb-1">{a.participantName || "(unnamed)"}</p>
-                                    <div className="flex flex-wrap gap-1.5">
-                                      {comps.map((c) => {
-                                        const pre = a.preScores[c];
-                                        const post = a.postScores[c];
-                                        const d = pre != null && post != null ? post - pre : null;
-                                        return (
-                                          <Badge key={c} variant="outline" className="text-[10px] font-normal">
-                                            {c}: {pre ?? "—"} → {post ?? "—"}
-                                            {d != null && <span className={d > 0 ? "ml-1 text-primary" : d < 0 ? "ml-1 text-destructive" : "ml-1"}>({d > 0 ? `+${d}` : d})</span>}
-                                          </Badge>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </details>
-                          )}
-                        </>
-                      );
-                    })()}
-                  </div>
-                </div>
-              </div>
-              <Separator />
-            </>
-          )}
+          <CapacitySummary meetingId={meeting.id} />
+
 
           <div className="space-y-2">
             <div className="flex items-start gap-2">
@@ -381,3 +299,92 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
     </Dialog>
   );
 };
+
+function CapacitySummary({ meetingId }: { meetingId: string }) {
+  const [record, setRecord] = useState<EventCapacity | undefined>();
+
+  useEffect(() => {
+    const refresh = () => {
+      const evt = groupByEvent(getAllRows()).find((e) => e.eventId === meetingId);
+      setRecord(evt);
+    };
+    void loadCapacity().then(refresh);
+    window.addEventListener("capacity-changed", refresh);
+    return () => window.removeEventListener("capacity-changed", refresh);
+  }, [meetingId]);
+
+  if (!record) {
+    return (
+      <>
+        <div className="flex items-start gap-2 text-sm">
+          <TrendingUp className="h-4 w-4 mt-0.5 text-muted-foreground" />
+          <div className="flex-1">
+            <p className="font-medium text-sm mb-1">Capacity Outcomes</p>
+            <p className="text-xs text-muted-foreground">
+              No capacity data recorded.{" "}
+              <Link to="/capacity" className="text-primary hover:underline">
+                Add in Capacity Tracker →
+              </Link>
+            </p>
+          </div>
+        </div>
+        <Separator />
+      </>
+    );
+  }
+
+  const averages = averagesPerCompetency(record);
+  const overall = averages.filter((a) => a.change != null);
+  const overallAvg = overall.length
+    ? overall.reduce((s, a) => s + (a.change ?? 0), 0) / overall.length
+    : null;
+
+  return (
+    <>
+      <div className="flex items-start gap-2">
+        <TrendingUp className="h-4 w-4 mt-1 text-muted-foreground" />
+        <div className="flex-1">
+          <p className="font-medium text-sm mb-1">Capacity Outcomes</p>
+          <p className="text-xs text-muted-foreground mb-2">
+            {record.participants.length} participant
+            {record.participants.length === 1 ? "" : "s"} assessed
+            {overallAvg != null && (
+              <span
+                className={`ml-2 font-medium ${
+                  overallAvg > 0 ? "text-primary" : overallAvg < 0 ? "text-destructive" : ""
+                }`}
+              >
+                {overallAvg > 0 ? "+" : ""}
+                {overallAvg.toFixed(2)} avg change
+              </span>
+            )}
+          </p>
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {averages.map(({ competency, change }) => (
+              <Badge key={competency} variant="outline" className="text-[11px] font-normal">
+                {competency}
+                {change != null && (
+                  <span
+                    className={
+                      change > 0
+                        ? "ml-1 text-primary"
+                        : change < 0
+                        ? "ml-1 text-destructive"
+                        : "ml-1"
+                    }
+                  >
+                    {change > 0 ? `+${change.toFixed(2)}` : change.toFixed(2)}
+                  </span>
+                )}
+              </Badge>
+            ))}
+          </div>
+          <Link to="/capacity" className="text-xs text-primary hover:underline">
+            View in Capacity Tracker →
+          </Link>
+        </div>
+      </div>
+      <Separator />
+    </>
+  );
+}

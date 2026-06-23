@@ -1,71 +1,73 @@
-## Goal
-Formalize the two-role model (Admin / User), restrict destructive and organisation-management actions to Admins, and introduce an admin-approved sign-up flow with a Facebook-style notification ribbon showing pending user requests.
+# Capacity Tracker module
 
-## 1. Backend (railway/backend, MySQL/Express)
+Promote before/after capacity tracking from an embedded section on Event Schedule into a standalone module with its own page, sidebar entry, and shared storage (so all users see the same data).
 
-**New table `user_requests`** (migration in `railway/schema.sql`):
-- id, name, email (unique), password_hash, organization, status (`pending`/`approved`/`rejected`), requested_at, reviewed_at, reviewed_by
+## What the user gets
 
-**New routes `/api/user-requests`:**
-- `POST /` — public; create a pending request (replaces direct register)
-- `GET /` — admin only; list pending requests
-- `GET /count` — admin only; pending count (for ribbon polling)
-- `POST /:id/approve` — admin only; creates user in `users` table, marks request approved
-- `POST /:id/reject` — admin only; marks rejected
+A new **Capacity Tracker** item in the left sidebar (between Event Schedule and Organisations). It opens a page listing all capacity assessments, each linked to an event. From there users can:
 
-**Keep `/api/auth/register`** but mark it unused, OR have it write into `user_requests` instead. We will route it to `user_requests`.
+- See a summary table of every tracked event: event name, date, # participants, average change per competency.
+- Click an event to open a details dialog showing per-participant before/after scores and computed change.
+- Add a new capacity record: pick an existing event (from Event Schedule), define competencies for that event, and add participants with 1-5 scores before and after.
+- Edit or delete records (admin or the record's creator).
+- Export the data to Excel (admin only), matching the pattern used by other trackers.
 
-## 2. Frontend permissions
+On the Event Schedule page, the inline "Capacity Outcomes" editor is removed. Instead each event card/details dialog shows a small read-only summary ("3 participants assessed, +0.8 avg change") with a link that jumps to the Capacity Tracker filtered to that event.
 
-`src/services/api.ts` — add `userRequests` API methods + `requestAccess` (no auto-login).
+## Structure
 
-**Auth page** — re-introduce a "Request Access" tab (replaces the Register tab I removed earlier). Submitting shows "Your request has been sent to an admin for approval." No session is created.
+```text
+Sidebar
+  ├── Activity Tracker
+  ├── Indicator Tracker
+  ├── Event Schedule          ← capacity editor removed, summary + link added
+  ├── Capacity Tracker        ← NEW
+  ├── Organisations
+  └── Administration
+```
 
-**Permission gates (admin-only via `isAdmin()`):**
-- Delete buttons in `ProjectTable`, `IndicatorsTab`, `MeetingTable`, `WorkshopTable`
-- All CRUD in `Organisations` page (add/edit/delete) — Users get read-only
-- Already done: Excel import/templates on trackers, User Management, Administration
+## Technical details
 
-**Kept for General Users:**
-- View Activity Tracker, Indicator Tracker, Event Schedule
-- Add new Activities & Indicators
-- Edit records where `deliveryPartner` matches their `organization` (existing `canEditProject`)
-- Access Events/Meetings module
+**Routing & nav**
+- New route `/capacity` → `src/pages/Capacity.tsx`.
+- Add nav entry in `src/components/AppSidebar.tsx` and route in `src/App.tsx`.
 
-## 3. Notification Ribbon (Facebook-style)
+**Storage (shared across users/devices)**
+- New Lovable Cloud table `public.capacity_assessments`:
+  - `id uuid pk`
+  - `event_id text` (references the meeting id stored client-side; nullable so records survive event deletion)
+  - `event_focus_area text` (denormalised label so the row is readable even if the event is gone)
+  - `event_date date`
+  - `participant_name text not null`
+  - `competency text not null`
+  - `pre_score smallint check 1..5`
+  - `post_score smallint check 1..5`
+  - `created_by uuid` (auth.uid)
+  - `created_at`, `updated_at` timestamps
+- RLS: anyone authenticated can read; insert/update/delete restricted to admins or `created_by = auth.uid()`. GRANTs to `authenticated` and `service_role`; `SELECT` to `anon` so public read-only viewers see the same data as other trackers.
+- One row per (participant × competency × event) keeps schema simple and exports clean. The page assembles rows into per-participant cards in the UI.
 
-New `PendingRequestsBell` component shown in the top header **only when `isAdmin()`**:
-- Bell icon with a red rounded badge showing pending count (hidden when 0; "9+" when >9)
-- Click opens a dropdown listing recent pending requests with name/email/org and "Approve" / "Reject" buttons
-- "View all" link → `/administration` (new "User Requests" section)
-- Polls `/api/user-requests/count` every 30 s; refreshes count on approve/reject
+**New files**
+- `src/pages/Capacity.tsx` — list, filters (event, competency), summary table.
+- `src/components/capacity/AddCapacityRecordDialog.tsx` — pick event, define competencies, add participants.
+- `src/components/capacity/EditCapacityRecordDialog.tsx`
+- `src/components/capacity/CapacityDetailsDialog.tsx` — per-participant table reused from current `CapacityAssessmentsEditor` view logic.
+- `src/components/capacity/CapacityExcelExport.tsx`
+- `src/lib/capacity.ts` — Supabase CRUD helpers + realtime subscription emitting `capacity-changed`.
 
-**Administration page** — add a "User Requests" panel above existing sections showing the full pending list with approve/reject actions.
+**Files edited**
+- `src/components/MeetingDetailsDialog.tsx` — replace the inline outcomes section with a compact summary + "View in Capacity Tracker" link. Drop `competencies` / `capacityAssessments` fields from the `Meeting` type.
+- `src/components/AddMeetingDialog.tsx`, `src/components/EditMeetingDialog.tsx` — remove the capacity editor block and related form state.
+- `src/components/AppSidebar.tsx`, `src/App.tsx` — add nav + route.
 
-## 4. Tech notes
+**Files removed**
+- `src/components/CapacityAssessmentsEditor.tsx` (logic moves into the new capacity dialogs).
 
-- The backend is MySQL on Railway, not Supabase — no Supabase migration. The schema change goes in `railway/schema.sql` with a clear "run this in MySQL Workbench" comment, and a sibling `railway/migrations/2026-06-23-user-requests.sql` for the incremental change.
-- Mock mode (`MOCK_MODE`) will also implement the request flow against `localStorage` so the UI works without the Railway backend.
-- Header layout in `src/App.tsx` gets the bell to the left of the user dropdown.
-
-## Files to add
-- `railway/backend/src/routes/userRequests.js`
-- `railway/migrations/2026-06-23-user-requests.sql`
-- `src/components/PendingRequestsBell.tsx`
-- `src/components/UserRequestsPanel.tsx`
-
-## Files to edit
-- `railway/backend/src/index.js` (mount new route), `railway/schema.sql`
-- `src/services/api.ts` (request endpoints + mock impl)
-- `src/pages/Auth.tsx` (Request Access tab)
-- `src/App.tsx` (bell in header)
-- `src/pages/Administration.tsx` (requests panel)
-- `src/pages/Organisations.tsx` (admin-only CRUD)
-- `src/components/ProjectTable.tsx`, `src/components/performance/IndicatorsTab.tsx`, meeting/workshop tables (gate delete)
+**Migration of existing data**
+- Capacity data added so far lives only in `localStorage` under `meetings` on individual browsers — there is no shared copy to migrate. On first load of the new module the table starts empty; existing meeting records keep their fields but the UI stops reading them.
 
 ## Out of scope
-- Email notifications to admins/users on request/approval
-- Self-service password change after approval (admin sets initial password during approval, or we generate one and surface it to the admin)
 
-## Open question (please confirm before I build)
-On approval, should the admin **set the password** in a dialog, or should the requester's submitted password be used as-is? Facebook-style flow usually keeps the requester's password; that's the simpler default.
+- Bulk Excel upload for capacity records (export only for now — can add later if needed).
+- Charts/visualisations beyond the average-change table.
+- Linking capacity records to attendance from `Organisations`.

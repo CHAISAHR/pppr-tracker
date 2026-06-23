@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      capacity_assessments: {
+        Row: {
+          competency: string
+          created_at: string
+          event_date: string | null
+          event_focus_area: string
+          event_id: string | null
+          id: string
+          participant_name: string
+          post_score: number | null
+          pre_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          competency: string
+          created_at?: string
+          event_date?: string | null
+          event_focus_area: string
+          event_id?: string | null
+          id?: string
+          participant_name: string
+          post_score?: number | null
+          pre_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          competency?: string
+          created_at?: string
+          event_date?: string | null
+          event_focus_area?: string
+          event_id?: string | null
+          id?: string
+          participant_name?: string
+          post_score?: number | null
+          pre_score?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       indicator_values: {
         Row: {
           actual_value: number | null
