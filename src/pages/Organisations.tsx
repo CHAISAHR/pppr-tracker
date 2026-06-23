@@ -41,6 +41,29 @@ const Organisations = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [editOrg, setEditOrg] = useState<Organisation | null>(null);
   const [formData, setFormData] = useState({ name: "", description: "" });
+  const [logoPreview, setLogoPreview] = useState<string | undefined>(undefined);
+  const [logoTick, setLogoTick] = useState(0);
+
+  const handleLogoChange = async (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Invalid file", description: "Please choose an image.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      toast({ title: "File too large", description: "Logo must be under 1 MB.", variant: "destructive" });
+      return;
+    }
+    const dataUrl = await fileToDataUrl(file);
+    setLogoPreview(dataUrl);
+  };
+
+  const persistLogo = (name: string) => {
+    if (logoPreview === undefined) return;
+    if (logoPreview === "") removeLogo(name);
+    else setLogo(name, logoPreview);
+    setLogoTick((t) => t + 1);
+  };
 
   useEffect(() => {
     loadOrganisations();
