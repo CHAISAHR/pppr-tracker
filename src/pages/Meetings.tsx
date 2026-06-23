@@ -109,7 +109,7 @@ const Meetings = () => {
                         <CardTitle className="text-lg group-hover:text-primary transition-colors truncate">
                           {meeting.focusArea}
                         </CardTitle>
-                        {isAdmin() && (
+                        {user && (
                           <Button
                             variant="ghost"
                             size="sm"
