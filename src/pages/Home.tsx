@@ -59,6 +59,7 @@ export default function Home() {
         setOrgs([]);
       }
     })();
+    loadLogos();
     const onChange = () => setLogoTick((t) => t + 1);
     window.addEventListener("org-logos-changed", onChange);
     return () => window.removeEventListener("org-logos-changed", onChange);
