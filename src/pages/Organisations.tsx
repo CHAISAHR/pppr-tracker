@@ -22,7 +22,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Building2, Plus, Edit2, Trash2 } from "lucide-react";
+import { Building2, Plus, Edit2, Trash2, Upload, X } from "lucide-react";
+import { getLogo, setLogo, removeLogo, fileToDataUrl, getAllLogos } from "@/lib/orgLogos";
 
 interface Organisation {
   id: string | null;
