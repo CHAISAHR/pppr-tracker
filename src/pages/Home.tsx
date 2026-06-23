@@ -43,7 +43,7 @@ function hashIdx(s: string, mod: number) {
 export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [orgs, setOrgs] = useState<string[]>(FALLBACK_ORGS);
+  const [orgs, setOrgs] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -52,12 +52,25 @@ export default function Home() {
         const names: string[] = (data || [])
           .map((o: any) => o?.name)
           .filter((n: string) => !!n);
-        if (names.length >= 6) setOrgs(names);
+        setOrgs(names);
       } catch {
-        /* keep fallback */
+        setOrgs([]);
       }
     })();
   }, []);
+
+  const groups = (() => {
+    const out: { label: string; items: string[] }[] = [];
+    let i = 0;
+    for (const { label, take } of CATEGORY_SLICES) {
+      const end = take === Infinity ? orgs.length : Math.min(i + take, orgs.length);
+      const items = orgs.slice(i, end);
+      if (items.length) out.push({ label, items });
+      i = end;
+      if (i >= orgs.length) break;
+    }
+    return out;
+  })();
 
   return (
     <div className="min-h-full bg-gradient-to-b from-background via-background to-secondary/30">
