@@ -283,6 +283,12 @@ const Organisations = () => {
                 placeholder="Optional description"
               />
             </div>
+            <LogoField
+              currentName={formData.name}
+              preview={logoPreview}
+              onFile={handleLogoChange}
+              onClear={() => setLogoPreview("")}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
