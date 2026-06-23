@@ -6,8 +6,10 @@ import { Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { WorkshopResponsesDialog } from "./WorkshopResponsesDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function WorkshopTable() {
+  const { isAdmin } = useAuth();
   const [workshops, setWorkshops] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWorkshop, setSelectedWorkshop] = useState<{ id: string; name: string } | null>(null);
@@ -93,14 +95,16 @@ export function WorkshopTable() {
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(workshop.id)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {isAdmin() && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(workshop.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
