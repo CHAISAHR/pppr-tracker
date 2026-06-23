@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3 } from "lucide-react";
+import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3, FileText } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
