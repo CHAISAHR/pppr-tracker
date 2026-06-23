@@ -95,10 +95,10 @@ export default function Home() {
             Monitoring &amp; Evaluation Reporting Platform
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] text-foreground max-w-4xl mx-auto">
-            Plan, monitor and report on your activities and indicators &mdash; transparently and in real time.
+            Plan, monitor and report on your activities and indicators in real time.
           </h1>
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            One platform to plan, monitor and report on activities and indicators &mdash; transparently, in real time.
+            One platform to plan, monitor and report on activities and indicators transparently, in real time.
           </p>
           <div className="mt-9 flex flex-wrap gap-3 justify-center">
             <Button size="lg" className="gap-2" onClick={() => navigate(user ? "/activity-tracker" : "/auth")}>
