@@ -339,3 +339,52 @@ const Organisations = () => {
 };
 
 export default Organisations;
+
+function LogoField({
+  currentName,
+  preview,
+  onFile,
+  onClear,
+}: {
+  currentName: string;
+  preview: string | undefined;
+  onFile: (file: File | undefined) => void;
+  onClear: () => void;
+}) {
+  // Show: staged preview > saved logo > placeholder
+  const saved = currentName ? getLogo(currentName) : undefined;
+  const shown = preview !== undefined ? (preview || undefined) : saved;
+  return (
+    <div className="space-y-2">
+      <Label>Logo</Label>
+      <div className="flex items-center gap-3">
+        <div className="h-14 w-14 rounded-md border border-border bg-muted flex items-center justify-center overflow-hidden">
+          {shown ? (
+            <img src={shown} alt="Logo preview" className="h-full w-full object-contain" />
+          ) : (
+            <Building2 className="h-5 w-5 text-muted-foreground" />
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="inline-flex">
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(e) => onFile(e.target.files?.[0])}
+            />
+            <span className="inline-flex items-center gap-2 h-9 px-3 rounded-md border border-input bg-background text-sm hover:bg-accent cursor-pointer">
+              <Upload className="h-4 w-4" /> Upload
+            </span>
+          </label>
+          {shown && (
+            <Button type="button" variant="ghost" size="sm" onClick={onClear} className="gap-1">
+              <X className="h-4 w-4" /> Remove
+            </Button>
+          )}
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">PNG, JPG or SVG. Max 1 MB.</p>
+    </div>
+  );
+}
