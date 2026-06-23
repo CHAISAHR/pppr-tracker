@@ -7,12 +7,12 @@ import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 // Partner categories are derived positionally from the Admin > Organisations list:
-// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
+// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Partners,
 // remainder = Delivery Partners. Edit the order on the Organisations admin page to change groupings.
 const CATEGORY_SLICES: { label: string; take: number }[] = [
   { label: "Funder", take: 1 },
   { label: "Government Departments", take: 3 },
-  { label: "Implementing Entities", take: 3 },
+  { label: "Implementing Partners", take: 3 },
   { label: "Delivery Partners", take: Infinity },
 ];
 
@@ -143,12 +143,8 @@ export default function Home() {
               Our partners
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-3">
-              {orgs.length > 0 ? `${orgs.length} organisations reporting together` : "Our partner network"}
+              Our partner network
             </h2>
-            <p className="text-muted-foreground max-w-2xl text-sm">
-              A funder, government departments, implementing entities and delivery partners
-              contributing to a shared evidence base.
-            </p>
           </div>
 
           {orgs.length === 0 ? (
@@ -163,7 +159,6 @@ export default function Home() {
                     <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-foreground">
                       {label}
                     </h3>
-                    <span className="text-xs text-muted-foreground">({items.length})</span>
                     <div className="flex-1 h-px bg-border/60" />
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
