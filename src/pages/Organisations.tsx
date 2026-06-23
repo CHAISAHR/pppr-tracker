@@ -139,7 +139,7 @@ const Organisations = () => {
     try {
       const org = organisations.find(o => o.id === id);
       await api.deleteOrganisation(id);
-      if (org?.name) removeLogo(org.name);
+      if (org?.name) await removeLogo(org.name).catch(() => {});
       setOrganisations(organisations.filter(o => o.id !== id));
       setLogoTick(t => t + 1);
       toast({ title: "Success", description: "Organisation deleted successfully" });
