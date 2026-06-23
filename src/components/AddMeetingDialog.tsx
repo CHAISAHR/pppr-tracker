@@ -6,9 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { Meeting } from "./MeetingDetailsDialog";
+import type { Meeting, CapacityAssessment } from "./MeetingDetailsDialog";
 import { Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { CapacityAssessmentsEditor } from "./CapacityAssessmentsEditor";
 
 interface AddMeetingDialogProps {
   onAdd: (meeting: Meeting) => void;
@@ -32,6 +33,8 @@ interface MeetingForm {
   postSurveyLink: string;
   preSurveyQrCode: string;
   postSurveyQrCode: string;
+  competencies: string;
+  capacityAssessments: CapacityAssessment[];
 }
 
 const emptyForm: MeetingForm = {
@@ -52,6 +55,8 @@ const emptyForm: MeetingForm = {
   postSurveyLink: "",
   preSurveyQrCode: "",
   postSurveyQrCode: "",
+  competencies: "",
+  capacityAssessments: [],
 };
 export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
   const [open, setOpen] = useState(false);
@@ -83,6 +88,8 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       postSurveyLink: form.postSurveyLink || undefined,
       preSurveyQrCode: form.preSurveyQrCode || undefined,
       postSurveyQrCode: form.postSurveyQrCode || undefined,
+      competencies: form.competencies.split(';').map(c => c.trim()).filter(Boolean),
+      capacityAssessments: form.capacityAssessments,
     };
     onAdd(meeting);
     setForm({ ...emptyForm });
@@ -223,6 +230,25 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
             <div className="space-y-2">
               <Label htmlFor="add-deliveryPartners">Delivery Partners (separate with ;)</Label>
               <Input id="add-deliveryPartners" placeholder="Partner 1; Partner 2" value={form.deliveryPartners} onChange={(e) => setForm({ ...form, deliveryPartners: e.target.value })} />
+            </div>
+
+            <div className="border rounded-md p-4 space-y-3">
+              <p className="text-sm font-medium">Capacity Outcomes (before/after training)</p>
+              <div className="space-y-2">
+                <Label htmlFor="add-competencies">Competencies assessed (separate with ;)</Label>
+                <Input
+                  id="add-competencies"
+                  placeholder="Knowledge; Confidence; Skills"
+                  value={form.competencies}
+                  onChange={(e) => setForm({ ...form, competencies: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">Each participant will be scored 1-5 on these competencies before and after training.</p>
+              </div>
+              <CapacityAssessmentsEditor
+                competencies={form.competencies.split(';').map(c => c.trim()).filter(Boolean)}
+                assessments={form.capacityAssessments}
+                onChange={(capacityAssessments) => setForm({ ...form, capacityAssessments })}
+              />
             </div>
           </div>
 
