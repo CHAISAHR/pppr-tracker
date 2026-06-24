@@ -229,6 +229,8 @@ export async function importCapacityRows(
     event_id: r.event_id ?? null,
     event_focus_area: r.event_focus_area ?? '',
     event_date: r.event_date ?? null,
+    focus_area: r.focus_area ?? null,
+    sector: r.sector ?? null,
     participant_name: r.participant_name ?? '',
     competency: r.competency ?? '',
     pre_score: r.pre_score ?? null,
