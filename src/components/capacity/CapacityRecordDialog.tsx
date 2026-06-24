@@ -131,7 +131,7 @@ export const CapacityRecordDialog = ({
       }
       eventId = meeting.id;
       eventName = meeting.focusArea;
-      date = meeting.meetingDate || null;
+      date = meeting.meetingDateFrom || meeting.meetingDate || null;
     }
 
     if (!eventName) {
@@ -206,7 +206,7 @@ export const CapacityRecordDialog = ({
                     const m = events.find((e) => e.id === v);
                     if (m) {
                       setManualLabel(m.focusArea);
-                      setManualDate(m.meetingDate || "");
+                      setManualDate(m.meetingDateFrom || m.meetingDate || "");
                     }
                   }
                 }}
@@ -219,7 +219,7 @@ export const CapacityRecordDialog = ({
                   {events.map((m) => (
                     <SelectItem key={m.id} value={m.id}>
                       {m.focusArea}
-                      {m.meetingDate ? ` — ${m.meetingDate}` : ""}
+                      {(m.meetingDateFrom || m.meetingDate) ? ` — ${m.meetingDateFrom || m.meetingDate}` : ""}
                     </SelectItem>
                   ))}
                   <SelectItem value="__custom__">Other / not in list…</SelectItem>

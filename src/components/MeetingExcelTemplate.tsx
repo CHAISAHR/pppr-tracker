@@ -9,7 +9,8 @@ export const MeetingExcelTemplate = () => {
     const templateData = [
       {
         "Quarter": "Q1 2025",
-        "Meeting Date": "2025-01-15",
+        "Date From": "2025-01-15",
+        "Date To": "2025-01-16",
         "Focus Area": "Project Kickoff Meeting",
         "Implementing Entities": "Entity 1; Entity 2; Entity 3",
         "Delivery Partners": "Partner 1; Partner 2",
@@ -18,22 +19,14 @@ export const MeetingExcelTemplate = () => {
       },
     ];
 
-    // Create workbook and worksheet
     const worksheet = XLSX.utils.json_to_sheet(templateData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Meetings");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Events");
 
-    // Set column widths
-    const columnWidths = [
-      { wch: 12 }, // Quarter
-      { wch: 15 }, // Meeting Date
-      { wch: 30 }, // Focus Area
-      { wch: 30 }, // Implementing Entities
-      { wch: 30 }, // Delivery Partners
-      { wch: 40 }, // Key Objectives
-      { wch: 12 }, // Format
+    worksheet["!cols"] = [
+      { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 30 },
+      { wch: 30 }, { wch: 30 }, { wch: 40 }, { wch: 12 },
     ];
-    worksheet["!cols"] = columnWidths;
 
     // Generate Excel file
     XLSX.writeFile(workbook, "meetings_template.xlsx");

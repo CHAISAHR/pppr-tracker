@@ -18,7 +18,10 @@ export interface Meeting {
   activityId: string;
   subActivityId: string;
   quarter: string;
-  meetingDate: string;
+  /** @deprecated use meetingDateFrom/meetingDateTo */
+  meetingDate?: string;
+  meetingDateFrom?: string;
+  meetingDateTo?: string;
   focusArea: string;
   implementingEntities: string[];
   deliveryPartners: string[];
@@ -34,6 +37,25 @@ export interface Meeting {
   postSurveyQrCode?: string;
   attachments?: string;
 }
+
+const fmtDate = (d?: string) =>
+  d
+    ? new Date(d).toLocaleDateString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+
+export const formatMeetingDateRange = (m: Meeting): string => {
+  const from = m.meetingDateFrom || m.meetingDate;
+  const to = m.meetingDateTo;
+  if (from && to && from !== to) return `${fmtDate(from)} – ${fmtDate(to)}`;
+  if (from) return fmtDate(from);
+  if (to) return fmtDate(to);
+  return "—";
+};
 
 interface MeetingDetailsDialogProps {
   meeting: Meeting | null;
@@ -78,15 +100,9 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">Meeting Date:</span>
-            <span>
-              {new Date(meeting.meetingDate).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </span>
+            <span>{formatMeetingDateRange(meeting)}</span>
           </div>
+
 
           <Separator />
 

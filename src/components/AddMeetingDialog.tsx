@@ -18,7 +18,8 @@ interface MeetingForm {
   activityId: string;
   subActivityId: string;
   quarter: string;
-  meetingDate: string;
+  meetingDateFrom: string;
+  meetingDateTo: string;
   focusArea: string;
   implementingEntities: string;
   deliveryPartners: string;
@@ -38,7 +39,8 @@ const emptyForm: MeetingForm = {
   activityId: "",
   subActivityId: "",
   quarter: "",
-  meetingDate: "",
+  meetingDateFrom: "",
+  meetingDateTo: "",
   focusArea: "",
   implementingEntities: "",
   deliveryPartners: "",
@@ -59,17 +61,13 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
   const { isAdmin } = useAuth();
 
   const handleAdd = () => {
-    if (!form.quarter || !form.meetingDate || !form.focusArea) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
     const meeting: Meeting = {
       id: crypto.randomUUID(),
       activityId: form.activityId,
       subActivityId: form.subActivityId,
       quarter: form.quarter,
-      meetingDate: form.meetingDate,
+      meetingDateFrom: form.meetingDateFrom || undefined,
+      meetingDateTo: form.meetingDateTo || undefined,
       focusArea: form.focusArea,
       implementingEntities: form.implementingEntities.split(';').map(e => e.trim()).filter(Boolean),
       deliveryPartners: form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean),
@@ -87,7 +85,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
     onAdd(meeting);
     setForm({ ...emptyForm });
     setOpen(false);
-    toast.success("Meeting added successfully");
+    toast.success("Event added successfully");
   };
 
   return (
@@ -115,24 +113,28 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="add-quarter">Quarter *</Label>
+                <Label htmlFor="add-quarter">Quarter</Label>
                 <Input id="add-quarter" placeholder="Q1 2025" value={form.quarter} onChange={(e) => setForm({ ...form, quarter: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="add-meetingDate">Meeting Date *</Label>
-                <Input id="add-meetingDate" type="date" value={form.meetingDate} onChange={(e) => setForm({ ...form, meetingDate: e.target.value })} />
+                <Label htmlFor="add-meetingDateFrom">Date From</Label>
+                <Input id="add-meetingDateFrom" type="date" value={form.meetingDateFrom} onChange={(e) => setForm({ ...form, meetingDateFrom: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-meetingDateTo">Date To</Label>
+                <Input id="add-meetingDateTo" type="date" value={form.meetingDateTo} onChange={(e) => setForm({ ...form, meetingDateTo: e.target.value })} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="add-focusArea">Focus Area *</Label>
+              <Label htmlFor="add-focusArea">Focus Area</Label>
               <Input id="add-focusArea" placeholder="Project Kickoff Meeting" value={form.focusArea} onChange={(e) => setForm({ ...form, focusArea: e.target.value })} />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="add-format">Format *</Label>
+              <Label htmlFor="add-format">Format</Label>
               <Select value={form.format} onValueChange={(value: string) => setForm({ ...form, format: value as Meeting["format"] })}>
                 <SelectTrigger id="add-format"><SelectValue /></SelectTrigger>
                 <SelectContent>
