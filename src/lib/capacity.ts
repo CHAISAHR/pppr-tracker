@@ -104,6 +104,8 @@ export function groupByEvent(rows: CapacityRow[] = cache): EventCapacity[] {
         eventId: row.event_id,
         eventFocusArea: row.event_focus_area,
         eventDate: row.event_date,
+        focusArea: row.focus_area,
+        sector: row.sector,
         competencies: [],
         participants: [],
       };
