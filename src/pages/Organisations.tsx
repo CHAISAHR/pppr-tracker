@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/dialog";
 import { Building2, Plus, Edit2, Trash2, Upload, X } from "lucide-react";
 import { getLogo, setLogo, removeLogo, fileToDataUrl, loadLogos } from "@/lib/orgLogos";
+import { OrganisationExcelTemplate } from "@/components/OrganisationExcelTemplate";
+import { OrganisationExcelUpload } from "@/components/OrganisationExcelUpload";
 
 interface Organisation {
   id: string | null;
@@ -183,10 +185,14 @@ const Organisations = () => {
             Manage organisations and view attendee data
           </p>
         </div>
-        <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "", types: [] }); setLogoPreview(undefined); setAddOpen(true); }}>
-          <Plus className="h-4 w-4" />
-          Add Organisation
-        </Button>
+        <div className="flex items-center gap-2">
+          <OrganisationExcelTemplate />
+          <OrganisationExcelUpload onComplete={loadOrganisations} />
+          <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "", types: [] }); setLogoPreview(undefined); setAddOpen(true); }}>
+            <Plus className="h-4 w-4" />
+            Add Organisation
+          </Button>
+        </div>
       </div>
 
       <Card>
