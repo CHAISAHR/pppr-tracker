@@ -31,6 +31,7 @@ interface Organisation {
   id: string | null;
   name: string;
   description?: string | null;
+  types?: string[];
   attendee_count?: number;
   count?: number;
 }
