@@ -19,6 +19,8 @@ export interface CapacityRow {
   event_id: string | null;
   event_focus_area: string;
   event_date: string | null;
+  focus_area: string | null;
+  sector: string | null;
   participant_name: string;
   competency: string;
   pre_score: number | null;
@@ -36,6 +38,8 @@ export interface EventCapacity {
   eventId: string | null;
   eventFocusArea: string;
   eventDate: string | null;
+  focusArea: string | null;
+  sector: string | null;
   competencies: string[];
   participants: ParticipantRecord[];
 }
@@ -100,6 +104,8 @@ export function groupByEvent(rows: CapacityRow[] = cache): EventCapacity[] {
         eventId: row.event_id,
         eventFocusArea: row.event_focus_area,
         eventDate: row.event_date,
+        focusArea: row.focus_area,
+        sector: row.sector,
         competencies: [],
         participants: [],
       };
@@ -128,6 +134,8 @@ export interface SaveInput {
   eventId: string | null;
   eventFocusArea: string;
   eventDate: string | null;
+  focusArea: string | null;
+  sector: string | null;
   competencies: string[];
   participants: Array<{
     participantName: string;
@@ -194,6 +202,8 @@ export async function saveEventCapacity(
         event_id: input.eventId,
         event_focus_area: input.eventFocusArea,
         event_date: input.eventDate,
+        focus_area: input.focusArea,
+        sector: input.sector,
         participant_name: name,
         competency,
         pre_score: pre ?? null,
@@ -219,6 +229,8 @@ export async function importCapacityRows(
     event_id: r.event_id ?? null,
     event_focus_area: r.event_focus_area ?? '',
     event_date: r.event_date ?? null,
+    focus_area: r.focus_area ?? null,
+    sector: r.sector ?? null,
     participant_name: r.participant_name ?? '',
     competency: r.competency ?? '',
     pre_score: r.pre_score ?? null,
