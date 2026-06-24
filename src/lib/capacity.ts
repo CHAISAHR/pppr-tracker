@@ -211,6 +211,24 @@ export async function deleteEventCapacity(rowIds: string[]): Promise<void> {
   await loadCapacity(true);
 }
 
+/** Bulk-insert raw rows (used by Excel import). No fields are required. */
+export async function importCapacityRows(
+  rows: Array<Partial<Omit<CapacityRow, 'id' | 'created_at' | 'updated_at'>>>,
+): Promise<number> {
+  const normalised = rows.map((r) => ({
+    event_id: r.event_id ?? null,
+    event_focus_area: r.event_focus_area ?? '',
+    event_date: r.event_date ?? null,
+    participant_name: r.participant_name ?? '',
+    competency: r.competency ?? '',
+    pre_score: r.pre_score ?? null,
+    post_score: r.post_score ?? null,
+  }));
+  await insertRows(normalised);
+  await loadCapacity(true);
+  return normalised.length;
+}
+
 export function rowIdsForEvent(evt: EventCapacity): string[] {
   return evt.participants.flatMap(p => Object.values(p.scores).map(s => s.id));
 }
