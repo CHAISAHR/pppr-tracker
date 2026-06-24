@@ -9,8 +9,8 @@ router.get('/', async (req, res) => {
   const pool = req.app.locals.pool;
   try {
     const [rows] = await pool.execute(
-      `SELECT id, event_id, event_focus_area, event_date, participant_name,
-              competency, pre_score, post_score, created_at, updated_at
+      `SELECT id, event_id, event_focus_area, event_date, focus_area, sector,
+              participant_name, competency, pre_score, post_score, created_at, updated_at
        FROM capacity_assessments
        ORDER BY event_date DESC, participant_name ASC`
     );
