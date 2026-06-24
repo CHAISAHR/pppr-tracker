@@ -134,7 +134,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="add-format">Format *</Label>
+              <Label htmlFor="add-format">Format</Label>
               <Select value={form.format} onValueChange={(value: string) => setForm({ ...form, format: value as Meeting["format"] })}>
                 <SelectTrigger id="add-format"><SelectValue /></SelectTrigger>
                 <SelectContent>

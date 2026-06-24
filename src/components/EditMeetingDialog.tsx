@@ -99,7 +99,7 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-format">Format *</Label>
+            <Label htmlFor="edit-format">Format</Label>
             <Select value={formData.format} onValueChange={(value: "Virtual" | "Hybrid" | "In-Person") => setFormData({ ...formData, format: value })}>
               <SelectTrigger id="edit-format"><SelectValue /></SelectTrigger>
               <SelectContent>
