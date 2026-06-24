@@ -44,18 +44,21 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
 
   useEffect(() => {
     if (meeting) {
-      setFormData({ ...emptyMeeting, ...meeting });
+      // Backfill from legacy single meetingDate if present
+      const legacy = meeting.meetingDate;
+      setFormData({
+        ...emptyMeeting,
+        ...meeting,
+        meetingDateFrom: meeting.meetingDateFrom ?? legacy ?? "",
+        meetingDateTo: meeting.meetingDateTo ?? "",
+      });
     }
   }, [meeting]);
 
   const handleSave = () => {
-    if (!formData.quarter || !formData.meetingDate || !formData.focusArea) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
     onSave(formData);
     onOpenChange(false);
-    toast.success("Meeting updated successfully");
+    toast.success("Event updated successfully");
   };
 
   const handleArrayChange = (field: "implementingEntities" | "deliveryPartners", value: string) => {
