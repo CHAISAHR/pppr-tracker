@@ -18,6 +18,8 @@ import {
 import { CapacityRecordDialog } from "@/components/capacity/CapacityRecordDialog";
 import { CapacityDetailsDialog } from "@/components/capacity/CapacityDetailsDialog";
 import { CapacityExcelExport } from "@/components/capacity/CapacityExcelExport";
+import { CapacityExcelTemplate } from "@/components/capacity/CapacityExcelTemplate";
+import { CapacityExcelUpload } from "@/components/capacity/CapacityExcelUpload";
 import {
   AlertDialog,
   AlertDialogAction,
