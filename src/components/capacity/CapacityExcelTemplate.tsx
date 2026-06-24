@@ -7,7 +7,7 @@ export const CapacityExcelTemplate = () => {
   const downloadTemplate = () => {
     const sample = [
       {
-        "Event Focus Area": "Example training event",
+        "Event Name": "Example training event",
         "Event Date": "2026-03-15",
         "Participant Name": "Jane Doe",
         "Competency": "Data Analysis",
@@ -15,7 +15,7 @@ export const CapacityExcelTemplate = () => {
         "Score After": 5,
       },
       {
-        "Event Focus Area": "Example training event",
+        "Event Name": "Example training event",
         "Event Date": "2026-03-15",
         "Participant Name": "Jane Doe",
         "Competency": "Report Writing",
