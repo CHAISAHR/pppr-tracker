@@ -18,7 +18,8 @@ interface MeetingForm {
   activityId: string;
   subActivityId: string;
   quarter: string;
-  meetingDate: string;
+  meetingDateFrom: string;
+  meetingDateTo: string;
   focusArea: string;
   implementingEntities: string;
   deliveryPartners: string;
@@ -38,7 +39,8 @@ const emptyForm: MeetingForm = {
   activityId: "",
   subActivityId: "",
   quarter: "",
-  meetingDate: "",
+  meetingDateFrom: "",
+  meetingDateTo: "",
   focusArea: "",
   implementingEntities: "",
   deliveryPartners: "",
