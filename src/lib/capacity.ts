@@ -202,6 +202,8 @@ export async function saveEventCapacity(
         event_id: input.eventId,
         event_focus_area: input.eventFocusArea,
         event_date: input.eventDate,
+        focus_area: input.focusArea,
+        sector: input.sector,
         participant_name: name,
         competency,
         pre_score: pre ?? null,
