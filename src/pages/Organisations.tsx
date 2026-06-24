@@ -233,6 +233,17 @@ const Organisations = () => {
                     </TableCell>
                     <TableCell className="font-medium">{org.name}</TableCell>
                     <TableCell className="text-muted-foreground">{org.description || '-'}</TableCell>
+                    <TableCell>
+                      {org.types && org.types.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {org.types.map(type => (
+                            <Badge key={type} variant="secondary" className="text-xs">{type}</Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">{org.attendee_count ?? org.count ?? 0}</TableCell>
                     <TableCell>
                       {org.id && (
