@@ -44,15 +44,14 @@ router.post('/', authenticateToken, async (req, res) => {
   try {
     await pool.execute(
       `INSERT INTO meetings
-        (id, title, description, meeting_date_from, meeting_date_to, date, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (id, title, description, meeting_date_from, meeting_date_to, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         title || null,
         description || null,
         from,
         to,
-        from, // keep legacy `date` populated for backward compatibility
         time || null,
         venue || null,
         meeting_type || null,
