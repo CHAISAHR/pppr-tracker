@@ -36,16 +36,18 @@ CREATE TABLE IF NOT EXISTS projects (
 -- 3. Meetings table
 CREATE TABLE IF NOT EXISTS meetings (
   id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
-  title VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NULL,
   description TEXT,
-  date DATE NOT NULL,
+  meeting_date_from DATE NULL,
+  meeting_date_to DATE NULL,
+  date DATE NULL, -- legacy single-date column, kept for backward compatibility
   time VARCHAR(50),
   venue VARCHAR(255),
   meeting_type VARCHAR(100),
   attendees JSON,
   minutes TEXT,
   action_items TEXT,
-  status VARCHAR(50) NOT NULL DEFAULT 'scheduled',
+  status VARCHAR(50) NULL DEFAULT 'scheduled',
   created_by CHAR(36),
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
