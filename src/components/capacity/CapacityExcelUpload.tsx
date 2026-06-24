@@ -45,7 +45,7 @@ export const CapacityExcelUpload = () => {
       }
 
       const mapped = rows.map((r) => ({
-        event_focus_area: String(r["Event Focus Area"] ?? r["event_focus_area"] ?? "").trim(),
+        event_focus_area: String(r["Event Name"] ?? r["Event Focus Area"] ?? r["event_focus_area"] ?? "").trim(),
         event_date: parseDate(r["Event Date"] ?? r["event_date"]),
         participant_name: String(r["Participant Name"] ?? r["participant_name"] ?? "").trim(),
         competency: String(r["Competency"] ?? r["competency"] ?? "").trim(),
