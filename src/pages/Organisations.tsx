@@ -419,3 +419,42 @@ function LogoField({
     </div>
   );
 }
+
+function TypeSelector({
+  selected,
+  onChange,
+}: {
+  selected: string[];
+  onChange: (types: string[]) => void;
+}) {
+  const OPTIONS = [
+    { value: "Funder", label: "Funder" },
+    { value: "Implementing Entity", label: "Implementing Entity" },
+    { value: "Delivery Partner", label: "Delivery Partner" },
+  ];
+
+  const toggle = (value: string) => {
+    if (selected.includes(value)) {
+      onChange(selected.filter((v) => v !== value));
+    } else {
+      onChange([...selected, value]);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>Organisation Type</Label>
+      <div className="flex flex-col gap-2">
+        {OPTIONS.map((option) => (
+          <label key={option.value} className="flex items-center gap-2 text-sm cursor-pointer">
+            <Checkbox
+              checked={selected.includes(option.value)}
+              onCheckedChange={() => toggle(option.value)}
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
