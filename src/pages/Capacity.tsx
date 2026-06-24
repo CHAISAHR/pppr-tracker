@@ -105,7 +105,9 @@ const Capacity = () => {
               </p>
             </div>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0 flex-wrap">
+            {isAdmin() && <CapacityExcelTemplate />}
+            {isAdmin() && <CapacityExcelUpload />}
             {user && (
               <Button onClick={() => setAddOpen(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
