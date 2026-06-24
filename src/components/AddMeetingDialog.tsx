@@ -61,17 +61,13 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
   const { isAdmin } = useAuth();
 
   const handleAdd = () => {
-    if (!form.quarter || !form.meetingDate || !form.focusArea) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
     const meeting: Meeting = {
       id: crypto.randomUUID(),
       activityId: form.activityId,
       subActivityId: form.subActivityId,
       quarter: form.quarter,
-      meetingDate: form.meetingDate,
+      meetingDateFrom: form.meetingDateFrom || undefined,
+      meetingDateTo: form.meetingDateTo || undefined,
       focusArea: form.focusArea,
       implementingEntities: form.implementingEntities.split(';').map(e => e.trim()).filter(Boolean),
       deliveryPartners: form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean),
@@ -89,7 +85,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
     onAdd(meeting);
     setForm({ ...emptyForm });
     setOpen(false);
-    toast.success("Meeting added successfully");
+    toast.success("Event added successfully");
   };
 
   return (
