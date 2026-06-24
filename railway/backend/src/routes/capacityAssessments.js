@@ -35,13 +35,16 @@ router.post('/', authenticateToken, async (req, res) => {
       ids.push(id);
       await pool.execute(
         `INSERT INTO capacity_assessments
-         (id, event_id, event_focus_area, event_date, participant_name, competency, pre_score, post_score)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         (id, event_id, event_focus_area, event_date, focus_area, sector,
+          participant_name, competency, pre_score, post_score)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           id,
           r.event_id || null,
           r.event_focus_area || '',
           r.event_date || null,
+          r.focus_area || null,
+          r.sector || null,
           r.participant_name || '',
           r.competency || '',
           r.pre_score ?? null,
