@@ -306,6 +306,10 @@ const Organisations = () => {
                 placeholder="Optional description"
               />
             </div>
+            <TypeSelector
+              selected={formData.types}
+              onChange={(types) => setFormData({ ...formData, types })}
+            />
             <LogoField
               currentName={formData.name}
               preview={logoPreview}
