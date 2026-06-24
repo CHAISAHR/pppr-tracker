@@ -7,7 +7,7 @@ const router = express.Router();
 // Map a DB row to the API shape used by the frontend (camelCase + date range)
 const mapRow = (r) => ({
   ...r,
-  meetingDateFrom: r.meeting_date_from || r.date || null,
+  meetingDateFrom: r.meeting_date_from || null,
   meetingDateTo: r.meeting_date_to || null,
   attendees: r.attendees
     ? (typeof r.attendees === 'string' ? JSON.parse(r.attendees) : r.attendees)
@@ -15,7 +15,7 @@ const mapRow = (r) => ({
 });
 
 // Pull date range out of an incoming payload, accepting either the new
-// from/to fields or the legacy single `date` field.
+// from/to fields or the legacy single `date` field (from older clients).
 const extractDates = (body) => {
   const from = body.meetingDateFrom ?? body.meeting_date_from ?? body.date ?? null;
   const to = body.meetingDateTo ?? body.meeting_date_to ?? null;
