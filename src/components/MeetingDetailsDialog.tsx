@@ -100,15 +100,9 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">Meeting Date:</span>
-            <span>
-              {new Date(meeting.meetingDate).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </span>
+            <span>{formatMeetingDateRange(meeting)}</span>
           </div>
+
 
           <Separator />
 
