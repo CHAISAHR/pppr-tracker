@@ -153,7 +153,7 @@ const Organisations = () => {
 
   const openEdit = (org: Organisation) => {
     setEditOrg(org);
-    setFormData({ name: org.name, description: org.description || "" });
+    setFormData({ name: org.name, description: org.description || "", types: org.types || [] });
     setLogoPreview(undefined);
   };
 
