@@ -124,9 +124,7 @@ const Meetings = () => {
                       <CardDescription className="flex items-center gap-3 text-xs">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
-                          {new Date(meeting.meetingDate).toLocaleDateString('en-US', {
-                            weekday: 'short', year: 'numeric', month: 'long', day: 'numeric',
-                          })}
+                          {formatMeetingDateRange(meeting)}
                         </span>
                         <span className="font-medium text-foreground/60">{meeting.quarter}</span>
                       </CardDescription>
