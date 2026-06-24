@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Building2, Edit } from "lucide-react";
-import { MeetingDetailsDialog, type Meeting } from "@/components/MeetingDetailsDialog";
+import { MeetingDetailsDialog, type Meeting, formatMeetingDateRange } from "@/components/MeetingDetailsDialog";
 import { EditMeetingDialog } from "@/components/EditMeetingDialog";
 import { AddMeetingDialog } from "@/components/AddMeetingDialog";
 import { MeetingExcelTemplate } from "@/components/MeetingExcelTemplate";
