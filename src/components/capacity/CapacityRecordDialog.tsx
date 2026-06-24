@@ -248,6 +248,27 @@ export const CapacityRecordDialog = ({
             )}
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="capacity-focus-area">Focus Area</Label>
+              <Input
+                id="capacity-focus-area"
+                placeholder="e.g. Climate adaptation"
+                value={focusArea}
+                onChange={(e) => setFocusArea(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="capacity-sector">Sector</Label>
+              <Input
+                id="capacity-sector"
+                placeholder="e.g. Agriculture"
+                value={sector}
+                onChange={(e) => setSector(e.target.value)}
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="capacity-competencies">Competencies (separate with ;)</Label>
             <Input
