@@ -69,6 +69,8 @@ export const CapacityRecordDialog = ({
       setEventSelection(existing.eventId ?? "__custom__");
       setManualLabel(existing.eventFocusArea);
       setManualDate(existing.eventDate ?? "");
+      setFocusArea(existing.focusArea ?? "");
+      setSector(existing.sector ?? "");
       setCompetenciesInput(existing.competencies.join("; "));
       setParticipants(
         existing.participants.map((p) => {
@@ -91,6 +93,8 @@ export const CapacityRecordDialog = ({
       setEventSelection("");
       setManualLabel("");
       setManualDate("");
+      setFocusArea("");
+      setSector("");
       setCompetenciesInput("");
       setParticipants([newParticipant()]);
     }
