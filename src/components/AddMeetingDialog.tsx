@@ -113,19 +113,23 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="add-quarter">Quarter *</Label>
+                <Label htmlFor="add-quarter">Quarter</Label>
                 <Input id="add-quarter" placeholder="Q1 2025" value={form.quarter} onChange={(e) => setForm({ ...form, quarter: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="add-meetingDate">Meeting Date *</Label>
-                <Input id="add-meetingDate" type="date" value={form.meetingDate} onChange={(e) => setForm({ ...form, meetingDate: e.target.value })} />
+                <Label htmlFor="add-meetingDateFrom">Date From</Label>
+                <Input id="add-meetingDateFrom" type="date" value={form.meetingDateFrom} onChange={(e) => setForm({ ...form, meetingDateFrom: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-meetingDateTo">Date To</Label>
+                <Input id="add-meetingDateTo" type="date" value={form.meetingDateTo} onChange={(e) => setForm({ ...form, meetingDateTo: e.target.value })} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="add-focusArea">Focus Area *</Label>
+              <Label htmlFor="add-focusArea">Focus Area</Label>
               <Input id="add-focusArea" placeholder="Project Kickoff Meeting" value={form.focusArea} onChange={(e) => setForm({ ...form, focusArea: e.target.value })} />
             </div>
 
