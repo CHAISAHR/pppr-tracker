@@ -7,7 +7,7 @@ export const CapacityExcelTemplate = () => {
   const downloadTemplate = () => {
     const sample = [
       {
-        "Event Focus Area": "Example training event",
+        "Event Name": "Example training event",
         "Event Date": "2026-03-15",
         "Participant Name": "Jane Doe",
         "Competency": "Data Analysis",
@@ -15,7 +15,7 @@ export const CapacityExcelTemplate = () => {
         "Score After": 5,
       },
       {
-        "Event Focus Area": "Example training event",
+        "Event Name": "Example training event",
         "Event Date": "2026-03-15",
         "Participant Name": "Jane Doe",
         "Competency": "Report Writing",
@@ -36,7 +36,7 @@ export const CapacityExcelTemplate = () => {
       ["One row per participant × competency."],
       [],
       ["Columns:"],
-      ["Event Focus Area", "Name / topic of the event"],
+      ["Event Name", "Name / focus area of the event"],
       ["Event Date", "YYYY-MM-DD format"],
       ["Participant Name", "Full name of the participant"],
       ["Competency", "The skill / competency being assessed"],
