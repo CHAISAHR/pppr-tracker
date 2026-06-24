@@ -55,8 +55,9 @@ const Meetings = () => {
     setMeetings(prev => [...prev, ...uploadedMeetings]);
   };
 
+  const sortKey = (m: Meeting) => m.meetingDateFrom || m.meetingDate || m.meetingDateTo || "";
   const sortedMeetings = [...meetings].sort((a, b) =>
-    new Date(a.meetingDate).getTime() - new Date(b.meetingDate).getTime()
+    new Date(sortKey(a)).getTime() - new Date(sortKey(b)).getTime()
   );
 
   return (
