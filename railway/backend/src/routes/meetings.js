@@ -26,7 +26,7 @@ router.get('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
     const [rows] = await pool.execute(
-      'SELECT * FROM meetings ORDER BY COALESCE(meeting_date_from, date) DESC'
+      'SELECT * FROM meetings ORDER BY meeting_date_from DESC'
     );
     res.json(rows.map(mapRow));
   } catch (error) {
