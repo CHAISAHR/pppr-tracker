@@ -120,7 +120,7 @@ export const CapacityRecordDialog = ({
 
   const handleSave = async () => {
     let eventId: string | null = null;
-    let focusArea = manualLabel.trim();
+    let eventName = manualLabel.trim();
     let date: string | null = manualDate || null;
 
     if (eventSelection && eventSelection !== "__custom__") {
@@ -130,11 +130,11 @@ export const CapacityRecordDialog = ({
         return;
       }
       eventId = meeting.id;
-      focusArea = meeting.focusArea;
+      eventName = meeting.focusArea;
       date = meeting.meetingDate || null;
     }
 
-    if (!focusArea) {
+    if (!eventName) {
       toast.error("Please select an event or enter an event name");
       return;
     }
@@ -163,8 +163,10 @@ export const CapacityRecordDialog = ({
       await saveEventCapacity(
         {
           eventId,
-          eventFocusArea: focusArea,
+          eventFocusArea: eventName,
           eventDate: date,
+          focusArea: focusArea.trim() || null,
+          sector: sector.trim() || null,
           competencies,
           participants: cleanParticipants,
         },
