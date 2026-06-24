@@ -9,6 +9,8 @@ export const CapacityExcelTemplate = () => {
       {
         "Event Name": "Example training event",
         "Event Date": "2026-03-15",
+        "Focus Area": "Climate adaptation",
+        "Sector": "Agriculture",
         "Participant Name": "Jane Doe",
         "Competency": "Data Analysis",
         "Score Before": 3,
@@ -17,6 +19,8 @@ export const CapacityExcelTemplate = () => {
       {
         "Event Name": "Example training event",
         "Event Date": "2026-03-15",
+        "Focus Area": "Climate adaptation",
+        "Sector": "Agriculture",
         "Participant Name": "Jane Doe",
         "Competency": "Report Writing",
         "Score Before": 2,
@@ -26,7 +30,8 @@ export const CapacityExcelTemplate = () => {
 
     const ws = XLSX.utils.json_to_sheet(sample);
     ws["!cols"] = [
-      { wch: 30 }, { wch: 12 }, { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 12 },
+      { wch: 30 }, { wch: 12 }, { wch: 25 }, { wch: 20 },
+      { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 12 },
     ];
 
     const instructions = [
