@@ -107,7 +107,7 @@ const Organisations = () => {
       await persistLogo(formData.name);
       setOrganisations([...organisations, newOrg]);
       setAddOpen(false);
-      setFormData({ name: "", description: "" });
+      setFormData({ name: "", description: "", types: [] });
       setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation created successfully" });
     } catch (error: any) {
