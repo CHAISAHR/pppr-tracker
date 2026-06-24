@@ -134,6 +134,8 @@ export interface SaveInput {
   eventId: string | null;
   eventFocusArea: string;
   eventDate: string | null;
+  focusArea: string | null;
+  sector: string | null;
   competencies: string[];
   participants: Array<{
     participantName: string;
