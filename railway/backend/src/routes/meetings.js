@@ -7,7 +7,7 @@ const router = express.Router();
 // Map a DB row to the API shape used by the frontend (camelCase + date range)
 const mapRow = (r) => ({
   ...r,
-  meetingDateFrom: r.meeting_date_from || r.date || null,
+  meetingDateFrom: r.meeting_date_from || null,
   meetingDateTo: r.meeting_date_to || null,
   attendees: r.attendees
     ? (typeof r.attendees === 'string' ? JSON.parse(r.attendees) : r.attendees)
@@ -15,7 +15,7 @@ const mapRow = (r) => ({
 });
 
 // Pull date range out of an incoming payload, accepting either the new
-// from/to fields or the legacy single `date` field.
+// from/to fields or the legacy single `date` field (from older clients).
 const extractDates = (body) => {
   const from = body.meetingDateFrom ?? body.meeting_date_from ?? body.date ?? null;
   const to = body.meetingDateTo ?? body.meeting_date_to ?? null;
@@ -26,7 +26,7 @@ router.get('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
     const [rows] = await pool.execute(
-      'SELECT * FROM meetings ORDER BY COALESCE(meeting_date_from, date) DESC'
+      'SELECT * FROM meetings ORDER BY meeting_date_from DESC'
     );
     res.json(rows.map(mapRow));
   } catch (error) {
@@ -44,15 +44,14 @@ router.post('/', authenticateToken, async (req, res) => {
   try {
     await pool.execute(
       `INSERT INTO meetings
-        (id, title, description, meeting_date_from, meeting_date_to, date, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (id, title, description, meeting_date_from, meeting_date_to, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         title || null,
         description || null,
         from,
         to,
-        from, // keep legacy `date` populated for backward compatibility
         time || null,
         venue || null,
         meeting_type || null,
@@ -86,7 +85,6 @@ router.put('/:id', authenticateToken, async (req, res) => {
          description = COALESCE(?, description),
          meeting_date_from = CASE WHEN ? THEN ? ELSE meeting_date_from END,
          meeting_date_to = CASE WHEN ? THEN ? ELSE meeting_date_to END,
-         date = CASE WHEN ? THEN ? ELSE date END,
          time = COALESCE(?, time),
          venue = COALESCE(?, venue),
          meeting_type = COALESCE(?, meeting_type),
@@ -100,7 +98,6 @@ router.put('/:id', authenticateToken, async (req, res) => {
         description ?? null,
         hasFrom ? 1 : 0, from,
         hasTo ? 1 : 0, to,
-        hasFrom ? 1 : 0, from,
         time ?? null,
         venue ?? null,
         meeting_type ?? null,

@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS meetings (
   description TEXT,
   meeting_date_from DATE NULL,
   meeting_date_to DATE NULL,
-  date DATE NULL, -- legacy single-date column, kept for backward compatibility
   time VARCHAR(50),
   venue VARCHAR(255),
   meeting_type VARCHAR(100),
