@@ -19,6 +19,8 @@ export interface CapacityRow {
   event_id: string | null;
   event_focus_area: string;
   event_date: string | null;
+  focus_area: string | null;
+  sector: string | null;
   participant_name: string;
   competency: string;
   pre_score: number | null;
@@ -36,6 +38,8 @@ export interface EventCapacity {
   eventId: string | null;
   eventFocusArea: string;
   eventDate: string | null;
+  focusArea: string | null;
+  sector: string | null;
   competencies: string[];
   participants: ParticipantRecord[];
 }
