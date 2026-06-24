@@ -348,6 +348,10 @@ const Organisations = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
+            <TypeSelector
+              selected={formData.types}
+              onChange={(types) => setFormData({ ...formData, types })}
+            />
             <LogoField
               currentName={formData.name}
               preview={logoPreview}
