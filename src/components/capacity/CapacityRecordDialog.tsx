@@ -219,7 +219,7 @@ export const CapacityRecordDialog = ({
                   {events.map((m) => (
                     <SelectItem key={m.id} value={m.id}>
                       {m.focusArea}
-                      {((m.meetingDateFrom || m.meetingDate) ? ` — ${m.meetingDateFrom || m.meetingDate}` : ""}
+                      {(m.meetingDateFrom || m.meetingDate) ? ` — ${m.meetingDateFrom || m.meetingDate}` : ""}
                     </SelectItem>
                   ))}
                   <SelectItem value="__custom__">Other / not in list…</SelectItem>
