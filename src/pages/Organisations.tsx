@@ -210,6 +210,7 @@ const Organisations = () => {
                   <TableHead className="w-16">Logo</TableHead>
                   <TableHead>Organisation Name</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead className="text-right">Attendees</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
