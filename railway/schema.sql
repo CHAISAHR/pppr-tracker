@@ -202,6 +202,8 @@ CREATE TABLE IF NOT EXISTS capacity_assessments (
   event_id CHAR(36) NULL,
   event_focus_area VARCHAR(255) NOT NULL,
   event_date DATE NULL,
+  focus_area VARCHAR(255) NULL,
+  sector VARCHAR(255) NULL,
   participant_name VARCHAR(255) NOT NULL,
   competency VARCHAR(255) NOT NULL,
   pre_score INT NULL,
