@@ -625,7 +625,7 @@ class ApiService {
     return response.json();
   }
 
-  async createOrganisation(data: { name: string; description?: string }): Promise<any> {
+  async createOrganisation(data: { name: string; description?: string; types?: string[] }): Promise<any> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
       return { id: crypto.randomUUID(), ...data, attendee_count: 0 };
@@ -645,7 +645,7 @@ class ApiService {
     return response.json();
   }
 
-  async updateOrganisation(id: string, data: { name?: string; description?: string }): Promise<any> {
+  async updateOrganisation(id: string, data: { name?: string; description?: string; types?: string[] }): Promise<any> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
       return { id, ...data };
