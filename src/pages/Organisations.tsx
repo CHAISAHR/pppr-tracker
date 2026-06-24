@@ -43,7 +43,7 @@ const Organisations = () => {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [editOrg, setEditOrg] = useState<Organisation | null>(null);
-  const [formData, setFormData] = useState({ name: "", description: "" });
+  const [formData, setFormData] = useState({ name: "", description: "", types: [] as string[] });
   const [logoPreview, setLogoPreview] = useState<string | undefined>(undefined);
   const [logoTick, setLogoTick] = useState(0);
 
