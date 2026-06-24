@@ -130,7 +130,7 @@ const Organisations = () => {
       await persistLogo(formData.name);
       setOrganisations(organisations.map(o => o.id === editOrg.id ? { ...o, ...formData } : o));
       setEditOrg(null);
-      setFormData({ name: "", description: "" });
+      setFormData({ name: "", description: "", types: [] });
       setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation updated successfully" });
     } catch (error) {
