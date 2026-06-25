@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User } from "@/services/api";
+import { api, User } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 
 interface EditUserDialogProps {
@@ -39,15 +39,32 @@ export const EditUserDialog = ({
     role: user.role,
     organization: user.organization || '',
   });
+  const [organisations, setOrganisations] = useState<Array<{ name: string }>>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!open) return;
+    api.getOrganisations()
+      .then((data) => setOrganisations(data || []))
+      .catch(() => setOrganisations([]));
+  }, [open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email) {
       toast({
         title: "Error",
         description: "Name and email are required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.organization) {
+      toast({
+        title: "Organisation required",
+        description: "Please select an organisation for this user.",
         variant: "destructive",
       });
       return;
@@ -115,14 +132,30 @@ export const EditUserDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="organization">Organization</Label>
-            <Input
-              id="organization"
+            <Label htmlFor="organization">Organisation</Label>
+            <Select
               value={formData.organization}
-              onChange={(e) =>
-                setFormData({ ...formData, organization: e.target.value })
+              onValueChange={(value) =>
+                setFormData({ ...formData, organization: value })
               }
-            />
+            >
+              <SelectTrigger id="organization">
+                <SelectValue placeholder={organisations.length ? "Select an organisation" : "Loading..."} />
+              </SelectTrigger>
+              <SelectContent>
+                {formData.organization &&
+                  !organisations.some((o) => o.name === formData.organization) && (
+                    <SelectItem value={formData.organization}>
+                      {formData.organization} (current)
+                    </SelectItem>
+                  )}
+                {organisations.map((org) => (
+                  <SelectItem key={org.name} value={org.name}>
+                    {org.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter>
