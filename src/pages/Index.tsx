@@ -87,6 +87,9 @@ const Index = () => {
   const [entityFilter, setEntityFilter] = useState("all");
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [modifiedByFilter, setModifiedByFilter] = useState("all");
+  const [modifiedDateFrom, setModifiedDateFrom] = useState("");
+  const [modifiedDateTo, setModifiedDateTo] = useState("");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const implementingEntities = useMemo(
