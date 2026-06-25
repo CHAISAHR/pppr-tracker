@@ -46,9 +46,13 @@ export default function Auth() {
       });
       navigate('/');
     } catch (error) {
+      const msg = error instanceof Error ? error.message : "Login failed";
+      const isInvalid = /invalid credentials|not found|unauthorized/i.test(msg);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Login failed",
+        title: isInvalid ? "Unable to sign in" : "Error",
+        description: isInvalid
+          ? "We couldn't sign you in. If you haven't registered yet, please request access first. New accounts must be approved by an administrator before you can log in."
+          : msg,
         variant: "destructive",
       });
     } finally {
