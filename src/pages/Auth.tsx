@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
@@ -27,6 +28,13 @@ export default function Auth() {
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [organisations, setOrganisations] = useState<Array<{ name: string }>>([]);
+
+  useEffect(() => {
+    api.getOrganisations()
+      .then((data) => setOrganisations(data || []))
+      .catch(() => setOrganisations([]));
+  }, []);
 
   // Redirect if already logged in
   if (user) {
@@ -62,6 +70,14 @@ export default function Auth() {
 
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!organization) {
+      toast({
+        title: "Organisation required",
+        description: "Please select your organisation from the list.",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
     try {
       await api.requestAccess({ email, password, name, organization });
@@ -137,8 +153,20 @@ export default function Auth() {
                   <Input id="req-password" type="password" placeholder="Minimum 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="req-org">Organisation (optional)</Label>
-                  <Input id="req-org" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+                  <Label htmlFor="req-org">Organisation</Label>
+                  <Select value={organization} onValueChange={setOrganization} required>
+                    <SelectTrigger id="req-org">
+                      <SelectValue placeholder={organisations.length ? "Select your organisation" : "Loading organisations..."} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organisations.map((org) => (
+                        <SelectItem key={org.name} value={org.name}>{org.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Don't see your organisation? Contact an administrator to add it.
+                  </p>
                 </div>
               </CardContent>
               <CardFooter>

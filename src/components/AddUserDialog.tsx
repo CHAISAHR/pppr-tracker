@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { api } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 
 interface AddUserDialogProps {
@@ -39,7 +40,15 @@ export const AddUserDialog = ({ open, onOpenChange, onSave }: AddUserDialogProps
     role: "user" as "admin" | "user",
     organization: "",
   });
+  const [organisations, setOrganisations] = useState<Array<{ name: string }>>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!open) return;
+    api.getOrganisations()
+      .then((data) => setOrganisations(data || []))
+      .catch(() => setOrganisations([]));
+  }, [open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,9 +71,18 @@ export const AddUserDialog = ({ open, onOpenChange, onSave }: AddUserDialogProps
       return;
     }
 
+    if (!formData.organization) {
+      toast({
+        title: "Organisation required",
+        description: "Please select an organisation for this user.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     onSave({
       ...formData,
-      organization: formData.organization || undefined,
+      organization: formData.organization,
     });
     setFormData({ name: "", email: "", password: "", role: "user", organization: "" });
   };
@@ -135,12 +153,21 @@ export const AddUserDialog = ({ open, onOpenChange, onSave }: AddUserDialogProps
 
           <div className="space-y-2">
             <Label htmlFor="add-organization">Organisation</Label>
-            <Input
-              id="add-organization"
+            <Select
               value={formData.organization}
-              onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
-              placeholder="Optional"
-            />
+              onValueChange={(value) => setFormData({ ...formData, organization: value })}
+            >
+              <SelectTrigger id="add-organization">
+                <SelectValue placeholder={organisations.length ? "Select an organisation" : "Loading..."} />
+              </SelectTrigger>
+              <SelectContent>
+                {organisations.map((org) => (
+                  <SelectItem key={org.name} value={org.name}>
+                    {org.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter>
