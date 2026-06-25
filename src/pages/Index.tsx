@@ -186,6 +186,9 @@ const Index = () => {
     setEntityFilter("all");
     setPartnerFilter("all");
     setPeriodFilter("all");
+    setModifiedByFilter("all");
+    setModifiedDateFrom("");
+    setModifiedDateTo("");
   };
 
   const handleAddProject = (projectData: Omit<Project, "id">) => {
