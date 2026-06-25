@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { Edit2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { EditProjectDialog } from "./EditProjectDialog";
