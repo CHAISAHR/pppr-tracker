@@ -45,7 +45,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/bulk', authenticateToken, async (req, res) => {
+router.post('/bulk', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   const indicators = req.body;
 
