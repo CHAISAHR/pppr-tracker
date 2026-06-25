@@ -86,7 +86,7 @@ class ApiService {
         id: '2',
         email: data.email,
         name: data.name,
-        role: data.email.includes('admin') ? 'admin' : 'user',
+        role: 'user',
         organization: data.organization
       };
       const mockToken = 'mock-token-' + Date.now();
