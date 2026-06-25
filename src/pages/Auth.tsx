@@ -28,6 +28,13 @@ export default function Auth() {
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [organisations, setOrganisations] = useState<Array<{ name: string }>>([]);
+
+  useEffect(() => {
+    api.getOrganisations()
+      .then((data) => setOrganisations(data || []))
+      .catch(() => setOrganisations([]));
+  }, []);
 
   // Redirect if already logged in
   if (user) {
