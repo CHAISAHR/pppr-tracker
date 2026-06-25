@@ -1,7 +1,15 @@
 // API service for Railway backend
 // Set your Railway backend URL here after deploying
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-app.railway.app/api';
-const MOCK_MODE = !import.meta.env.VITE_API_URL; // Auto-disables mock when API URL is set
+// Mock mode is for local dev only — never enabled in production builds.
+const MOCK_MODE = !import.meta.env.VITE_API_URL && !import.meta.env.PROD;
+
+if (!import.meta.env.VITE_API_URL && import.meta.env.PROD) {
+  // Fail loudly so a production deploy missing VITE_API_URL never silently
+  // falls back to the in-browser mock.
+  throw new Error('VITE_API_URL is required in production builds');
+}
+
 
 export interface User {
   id: string;
