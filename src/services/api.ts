@@ -114,21 +114,21 @@ class ApiService {
     return result;
   }
 
-  async resetPassword(email: string, newPassword: string): Promise<void> {
+  async resetPassword(currentPassword: string, newPassword: string): Promise<void> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 500));
       return;
     }
 
-    const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+    const response = await fetch(`${BASE_URL}/auth/change-password`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, newPassword }),
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Password reset failed');
+      throw new Error(error.message || 'Password change failed');
     }
   }
 
