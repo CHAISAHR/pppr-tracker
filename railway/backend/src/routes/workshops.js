@@ -43,7 +43,7 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
 });
 
 // POST /api/workshops/attendance
-router.post('/attendance', async (req, res) => {
+router.post('/attendance', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const { workshop_id, name, email, organization, phone_number } = req.body;
   const id = crypto.randomUUID();
