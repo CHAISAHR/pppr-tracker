@@ -153,8 +153,20 @@ export default function Auth() {
                   <Input id="req-password" type="password" placeholder="Minimum 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="req-org">Organisation (optional)</Label>
-                  <Input id="req-org" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+                  <Label htmlFor="req-org">Organisation</Label>
+                  <Select value={organization} onValueChange={setOrganization} required>
+                    <SelectTrigger id="req-org">
+                      <SelectValue placeholder={organisations.length ? "Select your organisation" : "Loading organisations..."} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organisations.map((org) => (
+                        <SelectItem key={org.name} value={org.name}>{org.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Don't see your organisation? Contact an administrator to add it.
+                  </p>
                 </div>
               </CardContent>
               <CardFooter>
