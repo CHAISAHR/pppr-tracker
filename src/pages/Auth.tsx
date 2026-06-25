@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
 export default function Auth() {
+  const [requestSuccessOpen, setRequestSuccessOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
