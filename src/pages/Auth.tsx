@@ -70,6 +70,14 @@ export default function Auth() {
 
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!organization) {
+      toast({
+        title: "Organisation required",
+        description: "Please select your organisation from the list.",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
     try {
       await api.requestAccess({ email, password, name, organization });
