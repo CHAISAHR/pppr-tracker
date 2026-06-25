@@ -105,8 +105,18 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
               <TableHead className="font-semibold">Start Date</TableHead>
               <TableHead className="font-semibold">End Date</TableHead>
               <TableHead className="font-semibold">Comments</TableHead>
-              <TableHead className="font-semibold">Modified By</TableHead>
-              <TableHead className="font-semibold">Modified Date</TableHead>
+              <TableHead
+                className="font-semibold cursor-pointer select-none hover:text-primary"
+                onClick={() => toggleSort("modifiedBy")}
+              >
+                Modified By<SortIcon k="modifiedBy" />
+              </TableHead>
+              <TableHead
+                className="font-semibold cursor-pointer select-none hover:text-primary"
+                onClick={() => toggleSort("modifiedAt")}
+              >
+                Modified Date<SortIcon k="modifiedAt" />
+              </TableHead>
               {!readOnly && <TableHead className="font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
