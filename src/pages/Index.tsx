@@ -115,12 +115,19 @@ const Index = () => {
     return Array.from(periodSet).sort();
   }, [projects]);
 
+  const modifiedByOptions = useMemo(
+    () => Array.from(new Set(projects.map((p) => p.modifiedBy).filter(Boolean) as string[])).sort(),
+    [projects]
+  );
+
   const filteredProjects = useMemo(() => {
+    const fromTs = modifiedDateFrom ? new Date(modifiedDateFrom).getTime() : null;
+    const toTs = modifiedDateTo ? new Date(modifiedDateTo).getTime() + 24 * 60 * 60 * 1000 - 1 : null;
     return projects.filter((project) => {
       const matchesSearch =
         searchTerm === "" ||
         Object.values(project).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
       const matchesStatus = statusFilter === "all" || project.status === statusFilter;
       const matchesEntity = entityFilter === "all" || project.implementingEntity === entityFilter;
@@ -133,9 +140,23 @@ const Index = () => {
           const year = date.getFullYear();
           return `Q${quarter} ${year}` === periodFilter;
         })();
-      return matchesSearch && matchesStatus && matchesEntity && matchesPartner && matchesPeriod;
+      const matchesModifiedBy =
+        modifiedByFilter === "all" || project.modifiedBy === modifiedByFilter;
+      const modTs = project.modifiedAt ? new Date(project.modifiedAt).getTime() : null;
+      const matchesModFrom = fromTs === null || (modTs !== null && modTs >= fromTs);
+      const matchesModTo = toTs === null || (modTs !== null && modTs <= toTs);
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesEntity &&
+        matchesPartner &&
+        matchesPeriod &&
+        matchesModifiedBy &&
+        matchesModFrom &&
+        matchesModTo
+      );
     });
-  }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter]);
+  }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter, modifiedByFilter, modifiedDateFrom, modifiedDateTo]);
 
   const handleUpdateProject = (id: string, updates: Partial<Project>) => {
     if (!user) {
