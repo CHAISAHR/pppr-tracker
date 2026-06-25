@@ -28,6 +28,8 @@ export interface Project {
   startDate: string;
   endDate: string;
   comments: string;
+  modifiedBy?: string;
+  modifiedAt?: string;
 }
 
 interface ProjectTableProps {
