@@ -283,10 +283,17 @@ const Index = () => {
           onPartnerFilterChange={setPartnerFilter}
           periodFilter={periodFilter}
           onPeriodFilterChange={setPeriodFilter}
+          modifiedByFilter={modifiedByFilter}
+          onModifiedByFilterChange={setModifiedByFilter}
+          modifiedDateFrom={modifiedDateFrom}
+          onModifiedDateFromChange={setModifiedDateFrom}
+          modifiedDateTo={modifiedDateTo}
+          onModifiedDateToChange={setModifiedDateTo}
           onClearFilters={handleClearFilters}
           implementingEntities={implementingEntities}
           deliveryPartners={deliveryPartners}
           periods={periods}
+          modifiedByOptions={modifiedByOptions}
         />
 
         {/* Project Table */}
