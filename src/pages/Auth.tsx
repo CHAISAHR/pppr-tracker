@@ -169,6 +169,32 @@ export default function Auth() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={requestSuccessOpen} onOpenChange={setRequestSuccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Registration request submitted</DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-3 pt-2 text-left">
+                <p>Thanks for registering. Your request has been sent to the administrators.</p>
+                <div className="rounded-md border bg-muted/40 p-3 text-sm">
+                  <p className="font-medium text-foreground mb-1">What happens next?</p>
+                  <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
+                    <li>An administrator will review your request.</li>
+                    <li>Once approved, you can sign in with the email and password you just provided.</li>
+                    <li>If you don't hear back within a few days, please contact your administrator.</li>
+                  </ol>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" className="w-full" onClick={() => { setRequestSuccessOpen(false); setIsLogin(true); }}>
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
