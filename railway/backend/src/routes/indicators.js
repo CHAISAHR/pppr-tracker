@@ -1,6 +1,6 @@
 const express = require('express');
 const crypto = require('crypto');
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -45,7 +45,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/bulk', authenticateToken, async (req, res) => {
+router.post('/bulk', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   const indicators = req.body;
 
@@ -120,7 +120,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
     await pool.execute('DELETE FROM indicators WHERE id = ?', [req.params.id]);

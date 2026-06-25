@@ -4,8 +4,9 @@ const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/capacity-assessments - public read
-router.get('/', async (req, res) => {
+// GET /api/capacity-assessments - authenticated read (contains participant PII)
+router.get('/', authenticateToken, async (req, res) => {
+
   const pool = req.app.locals.pool;
   try {
     const [rows] = await pool.execute(
