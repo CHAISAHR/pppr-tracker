@@ -56,10 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAdmin = () => user?.role === 'admin';
 
-  const canEditProject = (deliveryPartners: string[]) => {
-    if (!user) return false;
-    if (user.role === 'admin') return true;
-    return user.organization ? deliveryPartners.includes(user.organization) : false;
+  const canEditProject = (_deliveryPartners: string[]) => {
+    // Any authenticated user can edit Activity Tracker / Indicator Tracker records.
+    return !!user;
   };
 
   return (
