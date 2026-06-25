@@ -68,13 +68,15 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
               <TableHead className="font-semibold">Start Date</TableHead>
               <TableHead className="font-semibold">End Date</TableHead>
               <TableHead className="font-semibold">Comments</TableHead>
+              <TableHead className="font-semibold">Modified By</TableHead>
+              <TableHead className="font-semibold">Modified Date</TableHead>
               {!readOnly && <TableHead className="font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {projects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={13} className="text-center text-muted-foreground py-8">
                   No projects found matching your filters
                 </TableCell>
               </TableRow>
