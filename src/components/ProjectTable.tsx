@@ -121,14 +121,14 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.length === 0 ? (
+            {sortedProjects.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={13} className="text-center text-muted-foreground py-8">
                   No projects found matching your filters
                 </TableCell>
               </TableRow>
             ) : (
-              projects.map((project) => (
+              sortedProjects.map((project) => (
                 <TableRow 
                   key={project.id} 
                   className="hover:bg-primary/5 cursor-pointer transition-all duration-200 group"
