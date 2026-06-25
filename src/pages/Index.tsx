@@ -139,9 +139,14 @@ const Index = () => {
       toast.error("Please log in to update projects");
       return;
     }
+    const stamped: Partial<Project> = {
+      ...updates,
+      modifiedBy: user.name || user.email,
+      modifiedAt: new Date().toISOString(),
+    };
     setProjects((prev) =>
       prev.map((project) =>
-        project.id === id ? { ...project, ...updates } : project
+        project.id === id ? { ...project, ...stamped } : project
       )
     );
     toast.success("Project updated successfully");

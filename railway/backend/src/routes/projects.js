@@ -7,9 +7,18 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
-    const [rows] = await pool.execute('SELECT * FROM projects ORDER BY created_at DESC');
-    // Parse JSON delivery_partners back to arrays
-    const projects = rows.map(r => ({ ...r, delivery_partners: r.delivery_partners ? JSON.parse(r.delivery_partners) : [] }));
+    const [rows] = await pool.execute(
+      `SELECT p.*, u.name AS modified_by_name
+       FROM projects p
+       LEFT JOIN users u ON u.id = p.modified_by
+       ORDER BY p.created_at DESC`
+    );
+    const projects = rows.map(r => ({
+      ...r,
+      delivery_partners: r.delivery_partners ? JSON.parse(r.delivery_partners) : [],
+      modifiedBy: r.modified_by_name || null,
+      modifiedAt: r.modified_at || null,
+    }));
     res.json(projects);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch projects' });
@@ -46,14 +55,21 @@ router.put('/:id', authenticateToken, async (req, res) => {
     await pool.execute(
       `UPDATE projects SET title = COALESCE(?, title), description = COALESCE(?, description), status = COALESCE(?, status),
        start_date = COALESCE(?, start_date), end_date = COALESCE(?, end_date), budget = COALESCE(?, budget),
-       delivery_partners = COALESCE(?, delivery_partners), country = COALESCE(?, country), organisation = COALESCE(?, organisation)
+       delivery_partners = COALESCE(?, delivery_partners), country = COALESCE(?, country), organisation = COALESCE(?, organisation),
+       modified_by = ?, modified_at = NOW()
        WHERE id = ?`,
-      [title, description, status, start_date, end_date, budget, delivery_partners ? JSON.stringify(delivery_partners) : null, country, organisation, id]
+      [title, description, status, start_date, end_date, budget, delivery_partners ? JSON.stringify(delivery_partners) : null, country, organisation, req.user.id, id]
     );
-    const [rows] = await pool.execute('SELECT * FROM projects WHERE id = ?', [id]);
+    const [rows] = await pool.execute(
+      `SELECT p.*, u.name AS modified_by_name FROM projects p
+       LEFT JOIN users u ON u.id = p.modified_by WHERE p.id = ?`,
+      [id]
+    );
     if (rows.length === 0) return res.status(404).json({ message: 'Project not found' });
     const project = rows[0];
     project.delivery_partners = project.delivery_partners ? JSON.parse(project.delivery_partners) : [];
+    project.modifiedBy = project.modified_by_name || null;
+    project.modifiedAt = project.modified_at || null;
     res.json(project);
   } catch (error) {
     res.status(500).json({ message: 'Failed to update project' });

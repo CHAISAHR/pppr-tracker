@@ -28,9 +28,12 @@ CREATE TABLE IF NOT EXISTS projects (
   country VARCHAR(255),
   organisation VARCHAR(255),
   created_by CHAR(36),
+  modified_by CHAR(36),
+  modified_at DATETIME,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (created_by) REFERENCES users(id)
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (modified_by) REFERENCES users(id)
 );
 
 -- 3. Meetings table

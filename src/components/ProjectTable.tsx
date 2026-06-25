@@ -28,6 +28,8 @@ export interface Project {
   startDate: string;
   endDate: string;
   comments: string;
+  modifiedBy?: string;
+  modifiedAt?: string;
 }
 
 interface ProjectTableProps {
@@ -66,13 +68,15 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
               <TableHead className="font-semibold">Start Date</TableHead>
               <TableHead className="font-semibold">End Date</TableHead>
               <TableHead className="font-semibold">Comments</TableHead>
+              <TableHead className="font-semibold">Modified By</TableHead>
+              <TableHead className="font-semibold">Modified Date</TableHead>
               {!readOnly && <TableHead className="font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {projects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={13} className="text-center text-muted-foreground py-8">
                   No projects found matching your filters
                 </TableCell>
               </TableRow>
@@ -95,6 +99,8 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
                   <TableCell>{project.startDate ? new Date(project.startDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.comments}</TableCell>
+                  <TableCell className="text-muted-foreground">{project.modifiedBy || '-'}</TableCell>
+                  <TableCell className="text-muted-foreground">{project.modifiedAt ? new Date(project.modifiedAt).toLocaleString() : '-'}</TableCell>
                   <TableCell>
                     {!readOnly && (() => {
                       const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
