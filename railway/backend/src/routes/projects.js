@@ -60,7 +60,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
     await pool.execute('DELETE FROM projects WHERE id = ?', [req.params.id]);
