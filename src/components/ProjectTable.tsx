@@ -42,7 +42,43 @@ interface ProjectTableProps {
 export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [viewingProject, setViewingProject] = useState<Project | null>(null);
+  const [sortKey, setSortKey] = useState<"modifiedBy" | "modifiedAt" | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const { canEditProject } = useAuth();
+
+  const toggleSort = (key: "modifiedBy" | "modifiedAt") => {
+    if (sortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const sortedProjects = useMemo(() => {
+    if (!sortKey) return projects;
+    const copy = [...projects];
+    copy.sort((a, b) => {
+      const av = a[sortKey] || "";
+      const bv = b[sortKey] || "";
+      if (sortKey === "modifiedAt") {
+        const at = av ? new Date(av).getTime() : 0;
+        const bt = bv ? new Date(bv).getTime() : 0;
+        return sortDir === "asc" ? at - bt : bt - at;
+      }
+      return sortDir === "asc"
+        ? String(av).localeCompare(String(bv))
+        : String(bv).localeCompare(String(av));
+    });
+    return copy;
+  }, [projects, sortKey, sortDir]);
+
+  const SortIcon = ({ k }: { k: "modifiedBy" | "modifiedAt" }) => {
+    if (sortKey !== k) return <ArrowUpDown className="h-3 w-3 inline ml-1 opacity-50" />;
+    return sortDir === "asc"
+      ? <ArrowUp className="h-3 w-3 inline ml-1" />
+      : <ArrowDown className="h-3 w-3 inline ml-1" />;
+  };
 
   const handleEditClick = (project: Project, e: React.MouseEvent) => {
     e.stopPropagation();
