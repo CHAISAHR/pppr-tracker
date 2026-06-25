@@ -14,7 +14,7 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   const { name, activity, date, venue, number_of_days } = req.body;
   const id = crypto.randomUUID();
