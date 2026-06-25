@@ -147,19 +147,17 @@ class ApiService {
 
   async getCurrentUser(): Promise<User> {
     if (MOCK_MODE) {
-      // Mock get current user for testing
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('No auth token');
-      
-      // Extract email from token for consistent mock data
-      const isAdmin = token.includes('admin');
+      // Dev-only mock — role is NOT derived from the token or email.
       return {
         id: '1',
-        email: isAdmin ? 'admin@test.com' : 'user@test.com',
-        name: isAdmin ? 'Admin User' : 'User',
-        role: isAdmin ? 'admin' : 'user',
-        organization: isAdmin ? undefined : 'Test Organization'
+        email: 'user@test.com',
+        name: 'Dev User',
+        role: 'user',
+        organization: 'Test Organization'
       };
+
     }
 
     const response = await fetch(`${BASE_URL}/auth/me`, {
