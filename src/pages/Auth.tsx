@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
 export default function Auth() {
+  const [requestSuccessOpen, setRequestSuccessOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,9 +46,13 @@ export default function Auth() {
       });
       navigate('/');
     } catch (error) {
+      const msg = error instanceof Error ? error.message : "Login failed";
+      const isInvalid = /invalid credentials|not found|unauthorized/i.test(msg);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Login failed",
+        title: isInvalid ? "Unable to sign in" : "Error",
+        description: isInvalid
+          ? "We couldn't sign you in. If you haven't registered yet, please request access first. New accounts must be approved by an administrator before you can log in."
+          : msg,
         variant: "destructive",
       });
     } finally {
@@ -59,13 +64,9 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     try {
-      const result = await api.requestAccess({ email, password, name, organization });
-      toast({
-        title: "Request sent",
-        description: result.message || "An administrator will review your request shortly.",
-      });
+      await api.requestAccess({ email, password, name, organization });
+      setRequestSuccessOpen(true);
       setName(''); setEmail(''); setPassword(''); setOrganization('');
-      setIsLogin(true);
     } catch (error) {
       toast({
         title: "Error",
@@ -163,6 +164,32 @@ export default function Auth() {
           <DialogFooter>
             <Button type="button" className="w-full" onClick={() => setForgotOpen(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={requestSuccessOpen} onOpenChange={setRequestSuccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Registration request submitted</DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-3 pt-2 text-left">
+                <p>Thanks for registering. Your request has been sent to the administrators.</p>
+                <div className="rounded-md border bg-muted/40 p-3 text-sm">
+                  <p className="font-medium text-foreground mb-1">What happens next?</p>
+                  <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
+                    <li>An administrator will review your request.</li>
+                    <li>Once approved, you can sign in with the email and password you just provided.</li>
+                    <li>If you don't hear back within a few days, please contact your administrator.</li>
+                  </ol>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" className="w-full" onClick={() => { setRequestSuccessOpen(false); setIsLogin(true); }}>
+              Got it
             </Button>
           </DialogFooter>
         </DialogContent>
