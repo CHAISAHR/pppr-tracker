@@ -82,23 +82,61 @@ router.post('/logout', authenticateToken, (req, res) => {
   res.json({ message: 'Logged out' });
 });
 
-// POST /api/auth/reset-password
-router.post('/reset-password', async (req, res) => {
+// POST /api/auth/change-password
+// Authenticated password change — requires the user's current password.
+// The previous unauthenticated /reset-password endpoint was removed because
+// it allowed account takeover by anyone who knew a user's email address.
+router.post('/change-password', authenticateToken, async (req, res) => {
+  const pool = req.app.locals.pool;
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword || String(newPassword).length < 8) {
+    return res.status(400).json({ message: 'currentPassword and newPassword (min 8 chars) are required' });
+  }
+
+  try {
+    const [rows] = await pool.execute('SELECT password_hash FROM users WHERE id = ?', [req.user.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Account not found' });
+    }
+
+    const valid = await bcrypt.compare(currentPassword, rows[0].password_hash);
+    if (!valid) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await pool.execute('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, req.user.id]);
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ message: 'Password change failed' });
+  }
+});
+
+// POST /api/auth/admin-reset-password
+// Admin-only reset for another user (no email-token flow yet).
+router.post('/admin-reset-password', authenticateToken, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
   const pool = req.app.locals.pool;
   const { email, newPassword } = req.body;
+  if (!email || !newPassword || String(newPassword).length < 8) {
+    return res.status(400).json({ message: 'email and newPassword (min 8 chars) are required' });
+  }
 
   try {
     const [rows] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
     if (rows.length === 0) {
       return res.status(404).json({ message: 'No account found with that email' });
     }
-
     const passwordHash = await bcrypt.hash(newPassword, 10);
     await pool.execute('UPDATE users SET password_hash = ? WHERE email = ?', [passwordHash, email]);
-
     res.json({ message: 'Password reset successfully' });
   } catch (error) {
-    console.error('Reset password error:', error);
+    console.error('Admin reset password error:', error);
     res.status(500).json({ message: 'Password reset failed' });
   }
 });
