@@ -7,9 +7,18 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
-    const [rows] = await pool.execute('SELECT * FROM projects ORDER BY created_at DESC');
-    // Parse JSON delivery_partners back to arrays
-    const projects = rows.map(r => ({ ...r, delivery_partners: r.delivery_partners ? JSON.parse(r.delivery_partners) : [] }));
+    const [rows] = await pool.execute(
+      `SELECT p.*, u.name AS modified_by_name
+       FROM projects p
+       LEFT JOIN users u ON u.id = p.modified_by
+       ORDER BY p.created_at DESC`
+    );
+    const projects = rows.map(r => ({
+      ...r,
+      delivery_partners: r.delivery_partners ? JSON.parse(r.delivery_partners) : [],
+      modifiedBy: r.modified_by_name || null,
+      modifiedAt: r.modified_at || null,
+    }));
     res.json(projects);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch projects' });
