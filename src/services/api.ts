@@ -43,13 +43,17 @@ class ApiService {
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
     if (MOCK_MODE) {
       // Mock login for testing
+      // Dev-only mock — roles are NOT derived from the email. Default to
+      // the least-privileged role; switch a test account to admin via the
+      // backend (or the Users page) once the real API is wired up.
       const mockUser: User = {
         id: '1',
         email: credentials.email,
-        name: credentials.email.includes('admin') ? 'Admin User' : 'User',
-        role: credentials.email.includes('admin') ? 'admin' : 'user',
-        organization: credentials.email.includes('admin') ? undefined : 'Test Organization'
+        name: 'Dev User',
+        role: 'user',
+        organization: 'Test Organization'
       };
+
       const mockToken = 'mock-token-' + Date.now();
       localStorage.setItem('auth_token', mockToken);
       
