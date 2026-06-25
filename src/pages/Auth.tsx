@@ -64,13 +64,9 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     try {
-      const result = await api.requestAccess({ email, password, name, organization });
-      toast({
-        title: "Request sent",
-        description: result.message || "An administrator will review your request shortly.",
-      });
+      await api.requestAccess({ email, password, name, organization });
+      setRequestSuccessOpen(true);
       setName(''); setEmail(''); setPassword(''); setOrganization('');
-      setIsLogin(true);
     } catch (error) {
       toast({
         title: "Error",
