@@ -7,15 +7,16 @@ import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { getLogo, loadLogos } from "@/lib/orgLogos";
 
-// Partner categories are derived positionally from the Admin > Organisations list:
-// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
-// remainder = Delivery Partners. Edit the order on the Organisations admin page to change groupings.
-const CATEGORY_SLICES: { label: string; take: number }[] = [
-  { label: "Funder", take: 1 },
-  { label: "Government Departments", take: 3 },
-  { label: "Implementing Entities", take: 3 },
-  { label: "Delivery Partners", take: Infinity },
+// Partner categories are derived from each organisation's `types` field
+// (set on the Admin > Organisations page). An org with multiple types appears
+// in each matching group. Orgs with no type fall under "Other Partners".
+const CATEGORY_ORDER: { label: string; match: string[] }[] = [
+  { label: "Funder", match: ["funder"] },
+  { label: "Government Departments", match: ["government", "government department", "government departments"] },
+  { label: "Implementing Entities", match: ["implementing entity", "implementing entities"] },
+  { label: "Delivery Partners", match: ["delivery partner", "delivery partners"] },
 ];
+const OTHER_LABEL = "Other Partners";
 
 // Deterministic colour swatch per organisation (uses theme tokens).
 const SWATCHES = [
@@ -44,17 +45,30 @@ function hashIdx(s: string, mod: number) {
 export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [orgs, setOrgs] = useState<string[]>([]);
+  const [orgs, setOrgs] = useState<Array<{ name: string; types: string[] }>>([]);
   const [, setLogoTick] = useState(0);
 
   useEffect(() => {
     (async () => {
       try {
         const data = await api.getOrganisations();
-        const names: string[] = (data || [])
-          .map((o: any) => o?.name)
-          .filter((n: string) => !!n);
-        setOrgs(names);
+        const list = (data || [])
+          .filter((o: any) => o?.name)
+          .map((o: any) => {
+            let types: string[] = [];
+            const raw = o?.types;
+            if (Array.isArray(raw)) types = raw;
+            else if (typeof raw === "string") {
+              try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) types = parsed;
+              } catch {
+                types = raw.split(",").map((s) => s.trim()).filter(Boolean);
+              }
+            }
+            return { name: o.name as string, types: types.map((t) => String(t)) };
+          });
+        setOrgs(list);
       } catch {
         setOrgs([]);
       }
@@ -67,14 +81,18 @@ export default function Home() {
 
   const groups = (() => {
     const out: { label: string; items: string[] }[] = [];
-    let i = 0;
-    for (const { label, take } of CATEGORY_SLICES) {
-      const end = take === Infinity ? orgs.length : Math.min(i + take, orgs.length);
-      const items = orgs.slice(i, end);
-      if (items.length) out.push({ label, items });
-      i = end;
-      if (i >= orgs.length) break;
+    const used = new Set<string>();
+    for (const { label, match } of CATEGORY_ORDER) {
+      const items = orgs
+        .filter((o) => o.types.some((t) => match.includes(t.toLowerCase().trim())))
+        .map((o) => o.name);
+      if (items.length) {
+        out.push({ label, items });
+        items.forEach((n) => used.add(n));
+      }
     }
+    const leftovers = orgs.filter((o) => !used.has(o.name)).map((o) => o.name);
+    if (leftovers.length) out.push({ label: OTHER_LABEL, items: leftovers });
     return out;
   })();
 
