@@ -1,6 +1,6 @@
 const express = require('express');
 const crypto = require('crypto');
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   const { name, activity, date, venue, number_of_days } = req.body;
   const id = crypto.randomUUID();
@@ -32,7 +32,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
     await pool.execute('DELETE FROM workshops WHERE id = ?', [req.params.id]);
@@ -43,7 +43,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 });
 
 // POST /api/workshops/attendance
-router.post('/attendance', async (req, res) => {
+router.post('/attendance', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const { workshop_id, name, email, organization, phone_number } = req.body;
   const id = crypto.randomUUID();

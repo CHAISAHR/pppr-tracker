@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
@@ -8,10 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
 export default function Auth() {
+  const [requestSuccessOpen, setRequestSuccessOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,6 +28,13 @@ export default function Auth() {
   const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [organisations, setOrganisations] = useState<Array<{ name: string }>>([]);
+
+  useEffect(() => {
+    api.getOrganisations()
+      .then((data) => setOrganisations(data || []))
+      .catch(() => setOrganisations([]));
+  }, []);
 
   // Redirect if already logged in
   if (user) {
@@ -45,9 +54,13 @@ export default function Auth() {
       });
       navigate('/');
     } catch (error) {
+      const msg = error instanceof Error ? error.message : "Login failed";
+      const isInvalid = /invalid credentials|not found|unauthorized/i.test(msg);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Login failed",
+        title: isInvalid ? "Unable to sign in" : "Error",
+        description: isInvalid
+          ? "We couldn't sign you in. If you haven't registered yet, please request access first. New accounts must be approved by an administrator before you can log in."
+          : msg,
         variant: "destructive",
       });
     } finally {
@@ -57,15 +70,19 @@ export default function Auth() {
 
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!organization) {
+      toast({
+        title: "Organisation required",
+        description: "Please select your organisation from the list.",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
     try {
-      const result = await api.requestAccess({ email, password, name, organization });
-      toast({
-        title: "Request sent",
-        description: result.message || "An administrator will review your request shortly.",
-      });
+      await api.requestAccess({ email, password, name, organization });
+      setRequestSuccessOpen(true);
       setName(''); setEmail(''); setPassword(''); setOrganization('');
-      setIsLogin(true);
     } catch (error) {
       toast({
         title: "Error",
@@ -136,8 +153,20 @@ export default function Auth() {
                   <Input id="req-password" type="password" placeholder="Minimum 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="req-org">Organisation (optional)</Label>
-                  <Input id="req-org" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+                  <Label htmlFor="req-org">Organisation</Label>
+                  <Select value={organization} onValueChange={setOrganization} required>
+                    <SelectTrigger id="req-org">
+                      <SelectValue placeholder={organisations.length ? "Select your organisation" : "Loading organisations..."} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organisations.map((org) => (
+                        <SelectItem key={org.name} value={org.name}>{org.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Don't see your organisation? Contact an administrator to add it.
+                  </p>
                 </div>
               </CardContent>
               <CardFooter>
@@ -154,55 +183,46 @@ export default function Auth() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Reset Password</DialogTitle>
-            <DialogDescription>Enter your email and a new password to reset your account.</DialogDescription>
+            <DialogDescription>
+              For your security, passwords can no longer be reset from this page. Please contact an
+              administrator to have your password reset, or sign in and change it from your account
+              settings.
+            </DialogDescription>
           </DialogHeader>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              if (resetPassword !== resetConfirm) {
-                toast({ title: "Error", description: "Passwords do not match", variant: "destructive" });
-                return;
-              }
-              if (resetPassword.length < 6) {
-                toast({ title: "Error", description: "Password must be at least 6 characters", variant: "destructive" });
-                return;
-              }
-              setResetLoading(true);
-              try {
-                await api.resetPassword(resetEmail, resetPassword);
-                toast({ title: "Success", description: "Password has been reset. You can now log in." });
-                setForgotOpen(false);
-                setResetEmail('');
-                setResetPassword('');
-                setResetConfirm('');
-              } catch (error) {
-                toast({ title: "Error", description: error instanceof Error ? error.message : "Reset failed", variant: "destructive" });
-              } finally {
-                setResetLoading(false);
-              }
-            }}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="reset-email">Email</Label>
-              <Input id="reset-email" type="email" placeholder="Enter your email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reset-new-password">New Password</Label>
-              <Input id="reset-new-password" type="password" placeholder="Enter new password" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reset-confirm-password">Confirm Password</Label>
-              <Input id="reset-confirm-password" type="password" placeholder="Confirm new password" value={resetConfirm} onChange={(e) => setResetConfirm(e.target.value)} required />
-            </div>
-            <DialogFooter>
-              <Button type="submit" className="w-full" disabled={resetLoading}>
-                {resetLoading ? "Resetting..." : "Reset Password"}
-              </Button>
-            </DialogFooter>
-          </form>
+          <DialogFooter>
+            <Button type="button" className="w-full" onClick={() => setForgotOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={requestSuccessOpen} onOpenChange={setRequestSuccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Registration request submitted</DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-3 pt-2 text-left">
+                <p>Thanks for registering. Your request has been sent to the administrators.</p>
+                <div className="rounded-md border bg-muted/40 p-3 text-sm">
+                  <p className="font-medium text-foreground mb-1">What happens next?</p>
+                  <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
+                    <li>An administrator will review your request.</li>
+                    <li>Once approved, you can sign in with the email and password you just provided.</li>
+                    <li>If you don't hear back within a few days, please contact your administrator.</li>
+                  </ol>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" className="w-full" onClick={() => { setRequestSuccessOpen(false); setIsLogin(true); }}>
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }

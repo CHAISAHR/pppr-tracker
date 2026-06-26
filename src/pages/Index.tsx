@@ -87,6 +87,9 @@ const Index = () => {
   const [entityFilter, setEntityFilter] = useState("all");
   const [partnerFilter, setPartnerFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [modifiedByFilter, setModifiedByFilter] = useState("all");
+  const [modifiedDateFrom, setModifiedDateFrom] = useState("");
+  const [modifiedDateTo, setModifiedDateTo] = useState("");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const implementingEntities = useMemo(
@@ -112,12 +115,19 @@ const Index = () => {
     return Array.from(periodSet).sort();
   }, [projects]);
 
+  const modifiedByOptions = useMemo(
+    () => Array.from(new Set(projects.map((p) => p.modifiedBy).filter(Boolean) as string[])).sort(),
+    [projects]
+  );
+
   const filteredProjects = useMemo(() => {
+    const fromTs = modifiedDateFrom ? new Date(modifiedDateFrom).getTime() : null;
+    const toTs = modifiedDateTo ? new Date(modifiedDateTo).getTime() + 24 * 60 * 60 * 1000 - 1 : null;
     return projects.filter((project) => {
       const matchesSearch =
         searchTerm === "" ||
         Object.values(project).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
       const matchesStatus = statusFilter === "all" || project.status === statusFilter;
       const matchesEntity = entityFilter === "all" || project.implementingEntity === entityFilter;
@@ -130,18 +140,37 @@ const Index = () => {
           const year = date.getFullYear();
           return `Q${quarter} ${year}` === periodFilter;
         })();
-      return matchesSearch && matchesStatus && matchesEntity && matchesPartner && matchesPeriod;
+      const matchesModifiedBy =
+        modifiedByFilter === "all" || project.modifiedBy === modifiedByFilter;
+      const modTs = project.modifiedAt ? new Date(project.modifiedAt).getTime() : null;
+      const matchesModFrom = fromTs === null || (modTs !== null && modTs >= fromTs);
+      const matchesModTo = toTs === null || (modTs !== null && modTs <= toTs);
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesEntity &&
+        matchesPartner &&
+        matchesPeriod &&
+        matchesModifiedBy &&
+        matchesModFrom &&
+        matchesModTo
+      );
     });
-  }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter]);
+  }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter, modifiedByFilter, modifiedDateFrom, modifiedDateTo]);
 
   const handleUpdateProject = (id: string, updates: Partial<Project>) => {
     if (!user) {
       toast.error("Please log in to update projects");
       return;
     }
+    const stamped: Partial<Project> = {
+      ...updates,
+      modifiedBy: user.name || user.email,
+      modifiedAt: new Date().toISOString(),
+    };
     setProjects((prev) =>
       prev.map((project) =>
-        project.id === id ? { ...project, ...updates } : project
+        project.id === id ? { ...project, ...stamped } : project
       )
     );
     toast.success("Project updated successfully");
@@ -157,6 +186,9 @@ const Index = () => {
     setEntityFilter("all");
     setPartnerFilter("all");
     setPeriodFilter("all");
+    setModifiedByFilter("all");
+    setModifiedDateFrom("");
+    setModifiedDateTo("");
   };
 
   const handleAddProject = (projectData: Omit<Project, "id">) => {
@@ -251,10 +283,17 @@ const Index = () => {
           onPartnerFilterChange={setPartnerFilter}
           periodFilter={periodFilter}
           onPeriodFilterChange={setPeriodFilter}
+          modifiedByFilter={modifiedByFilter}
+          onModifiedByFilterChange={setModifiedByFilter}
+          modifiedDateFrom={modifiedDateFrom}
+          onModifiedDateFromChange={setModifiedDateFrom}
+          modifiedDateTo={modifiedDateTo}
+          onModifiedDateToChange={setModifiedDateTo}
           onClearFilters={handleClearFilters}
           implementingEntities={implementingEntities}
           deliveryPartners={deliveryPartners}
           periods={periods}
+          modifiedByOptions={modifiedByOptions}
         />
 
         {/* Project Table */}

@@ -14,6 +14,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -24,11 +26,14 @@ import {
 } from "@/components/ui/dialog";
 import { Building2, Plus, Edit2, Trash2, Upload, X } from "lucide-react";
 import { getLogo, setLogo, removeLogo, fileToDataUrl, loadLogos } from "@/lib/orgLogos";
+import { OrganisationExcelTemplate } from "@/components/OrganisationExcelTemplate";
+import { OrganisationExcelUpload } from "@/components/OrganisationExcelUpload";
 
 interface Organisation {
   id: string | null;
   name: string;
   description?: string | null;
+  types?: string[];
   attendee_count?: number;
   count?: number;
 }
@@ -40,7 +45,7 @@ const Organisations = () => {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [editOrg, setEditOrg] = useState<Organisation | null>(null);
-  const [formData, setFormData] = useState({ name: "", description: "" });
+  const [formData, setFormData] = useState({ name: "", description: "", types: [] as string[] });
   const [logoPreview, setLogoPreview] = useState<string | undefined>(undefined);
   const [logoTick, setLogoTick] = useState(0);
 
@@ -104,7 +109,7 @@ const Organisations = () => {
       await persistLogo(formData.name);
       setOrganisations([...organisations, newOrg]);
       setAddOpen(false);
-      setFormData({ name: "", description: "" });
+      setFormData({ name: "", description: "", types: [] });
       setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation created successfully" });
     } catch (error: any) {
@@ -127,7 +132,7 @@ const Organisations = () => {
       await persistLogo(formData.name);
       setOrganisations(organisations.map(o => o.id === editOrg.id ? { ...o, ...formData } : o));
       setEditOrg(null);
-      setFormData({ name: "", description: "" });
+      setFormData({ name: "", description: "", types: [] });
       setLogoPreview(undefined);
       toast({ title: "Success", description: "Organisation updated successfully" });
     } catch (error) {
@@ -150,7 +155,7 @@ const Organisations = () => {
 
   const openEdit = (org: Organisation) => {
     setEditOrg(org);
-    setFormData({ name: org.name, description: org.description || "" });
+    setFormData({ name: org.name, description: org.description || "", types: org.types || [] });
     setLogoPreview(undefined);
   };
 
@@ -180,10 +185,14 @@ const Organisations = () => {
             Manage organisations and view attendee data
           </p>
         </div>
-        <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "" }); setLogoPreview(undefined); setAddOpen(true); }}>
-          <Plus className="h-4 w-4" />
-          Add Organisation
-        </Button>
+        <div className="flex items-center gap-2">
+          <OrganisationExcelTemplate />
+          <OrganisationExcelUpload onComplete={loadOrganisations} />
+          <Button className="gap-2" onClick={() => { setFormData({ name: "", description: "", types: [] }); setLogoPreview(undefined); setAddOpen(true); }}>
+            <Plus className="h-4 w-4" />
+            Add Organisation
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -207,6 +216,7 @@ const Organisations = () => {
                   <TableHead className="w-16">Logo</TableHead>
                   <TableHead>Organisation Name</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead className="text-right">Attendees</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -229,6 +239,17 @@ const Organisations = () => {
                     </TableCell>
                     <TableCell className="font-medium">{org.name}</TableCell>
                     <TableCell className="text-muted-foreground">{org.description || '-'}</TableCell>
+                    <TableCell>
+                      {org.types && org.types.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {org.types.map(type => (
+                            <Badge key={type} variant="secondary" className="text-xs">{type}</Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">{org.attendee_count ?? org.count ?? 0}</TableCell>
                     <TableCell>
                       {org.id && (
@@ -291,6 +312,10 @@ const Organisations = () => {
                 placeholder="Optional description"
               />
             </div>
+            <TypeSelector
+              selected={formData.types}
+              onChange={(types) => setFormData({ ...formData, types })}
+            />
             <LogoField
               currentName={formData.name}
               preview={logoPreview}
@@ -329,6 +354,10 @@ const Organisations = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
+            <TypeSelector
+              selected={formData.types}
+              onChange={(types) => setFormData({ ...formData, types })}
+            />
             <LogoField
               currentName={formData.name}
               preview={logoPreview}
@@ -393,6 +422,45 @@ function LogoField({
         </div>
       </div>
       <p className="text-xs text-muted-foreground">PNG, JPG or SVG. Max 1 MB.</p>
+    </div>
+  );
+}
+
+function TypeSelector({
+  selected,
+  onChange,
+}: {
+  selected: string[];
+  onChange: (types: string[]) => void;
+}) {
+  const OPTIONS = [
+    { value: "Funder", label: "Funder" },
+    { value: "Implementing Entity", label: "Implementing Entity" },
+    { value: "Delivery Partner", label: "Delivery Partner" },
+  ];
+
+  const toggle = (value: string) => {
+    if (selected.includes(value)) {
+      onChange(selected.filter((v) => v !== value));
+    } else {
+      onChange([...selected, value]);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>Organisation Type</Label>
+      <div className="flex flex-col gap-2">
+        {OPTIONS.map((option) => (
+          <label key={option.value} className="flex items-center gap-2 text-sm cursor-pointer">
+            <Checkbox
+              checked={selected.includes(option.value)}
+              onCheckedChange={() => toggle(option.value)}
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
     </div>
   );
 }

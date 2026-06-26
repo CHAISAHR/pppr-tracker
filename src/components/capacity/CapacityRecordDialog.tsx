@@ -57,6 +57,8 @@ export const CapacityRecordDialog = ({
   const [eventSelection, setEventSelection] = useState<string>("");
   const [manualLabel, setManualLabel] = useState("");
   const [manualDate, setManualDate] = useState("");
+  const [focusArea, setFocusArea] = useState("");
+  const [sector, setSector] = useState("");
   const [competenciesInput, setCompetenciesInput] = useState("");
   const [participants, setParticipants] = useState<ParticipantDraft[]>([]);
   const [saving, setSaving] = useState(false);
@@ -67,6 +69,8 @@ export const CapacityRecordDialog = ({
       setEventSelection(existing.eventId ?? "__custom__");
       setManualLabel(existing.eventFocusArea);
       setManualDate(existing.eventDate ?? "");
+      setFocusArea(existing.focusArea ?? "");
+      setSector(existing.sector ?? "");
       setCompetenciesInput(existing.competencies.join("; "));
       setParticipants(
         existing.participants.map((p) => {
@@ -89,6 +93,8 @@ export const CapacityRecordDialog = ({
       setEventSelection("");
       setManualLabel("");
       setManualDate("");
+      setFocusArea("");
+      setSector("");
       setCompetenciesInput("");
       setParticipants([newParticipant()]);
     }
@@ -114,7 +120,7 @@ export const CapacityRecordDialog = ({
 
   const handleSave = async () => {
     let eventId: string | null = null;
-    let focusArea = manualLabel.trim();
+    let eventName = manualLabel.trim();
     let date: string | null = manualDate || null;
 
     if (eventSelection && eventSelection !== "__custom__") {
@@ -124,11 +130,11 @@ export const CapacityRecordDialog = ({
         return;
       }
       eventId = meeting.id;
-      focusArea = meeting.focusArea;
-      date = meeting.meetingDate || null;
+      eventName = meeting.focusArea;
+      date = meeting.meetingDateFrom || meeting.meetingDate || null;
     }
 
-    if (!focusArea) {
+    if (!eventName) {
       toast.error("Please select an event or enter an event name");
       return;
     }
@@ -157,8 +163,10 @@ export const CapacityRecordDialog = ({
       await saveEventCapacity(
         {
           eventId,
-          eventFocusArea: focusArea,
+          eventFocusArea: eventName,
           eventDate: date,
+          focusArea: focusArea.trim() || null,
+          sector: sector.trim() || null,
           competencies,
           participants: cleanParticipants,
         },
@@ -198,7 +206,7 @@ export const CapacityRecordDialog = ({
                     const m = events.find((e) => e.id === v);
                     if (m) {
                       setManualLabel(m.focusArea);
-                      setManualDate(m.meetingDate || "");
+                      setManualDate(m.meetingDateFrom || m.meetingDate || "");
                     }
                   }
                 }}
@@ -211,7 +219,7 @@ export const CapacityRecordDialog = ({
                   {events.map((m) => (
                     <SelectItem key={m.id} value={m.id}>
                       {m.focusArea}
-                      {m.meetingDate ? ` — ${m.meetingDate}` : ""}
+                      {(m.meetingDateFrom || m.meetingDate) ? ` — ${m.meetingDateFrom || m.meetingDate}` : ""}
                     </SelectItem>
                   ))}
                   <SelectItem value="__custom__">Other / not in list…</SelectItem>
@@ -238,6 +246,27 @@ export const CapacityRecordDialog = ({
                 </div>
               </>
             )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="capacity-focus-area">Focus Area</Label>
+              <Input
+                id="capacity-focus-area"
+                placeholder="e.g. Climate adaptation"
+                value={focusArea}
+                onChange={(e) => setFocusArea(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="capacity-sector">Sector</Label>
+              <Input
+                id="capacity-sector"
+                placeholder="e.g. Agriculture"
+                value={sector}
+                onChange={(e) => setSector(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">

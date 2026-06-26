@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
-  organization VARCHAR(255),
+  organization VARCHAR(255) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -28,24 +28,28 @@ CREATE TABLE IF NOT EXISTS projects (
   country VARCHAR(255),
   organisation VARCHAR(255),
   created_by CHAR(36),
+  modified_by CHAR(36),
+  modified_at DATETIME,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (created_by) REFERENCES users(id)
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (modified_by) REFERENCES users(id)
 );
 
 -- 3. Meetings table
 CREATE TABLE IF NOT EXISTS meetings (
   id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
-  title VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NULL,
   description TEXT,
-  date DATE NOT NULL,
+  meeting_date_from DATE NULL,
+  meeting_date_to DATE NULL,
   time VARCHAR(50),
   venue VARCHAR(255),
   meeting_type VARCHAR(100),
   attendees JSON,
   minutes TEXT,
   action_items TEXT,
-  status VARCHAR(50) NOT NULL DEFAULT 'scheduled',
+  status VARCHAR(50) NULL DEFAULT 'scheduled',
   created_by CHAR(36),
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -165,6 +169,7 @@ CREATE TABLE IF NOT EXISTS organisations (
   id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
   name VARCHAR(255) UNIQUE NOT NULL,
   description TEXT,
+  types JSON,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -184,7 +189,7 @@ CREATE TABLE IF NOT EXISTS user_requests (
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  organization VARCHAR(255),
+  organization VARCHAR(255) NOT NULL,
   status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
   requested_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   reviewed_at DATETIME NULL,
@@ -201,6 +206,8 @@ CREATE TABLE IF NOT EXISTS capacity_assessments (
   event_id CHAR(36) NULL,
   event_focus_area VARCHAR(255) NOT NULL,
   event_date DATE NULL,
+  focus_area VARCHAR(255) NULL,
+  sector VARCHAR(255) NULL,
   participant_name VARCHAR(255) NOT NULL,
   competency VARCHAR(255) NOT NULL,
   pre_score INT NULL,

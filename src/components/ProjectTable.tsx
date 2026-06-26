@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { Edit2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { EditProjectDialog } from "./EditProjectDialog";
@@ -28,6 +29,8 @@ export interface Project {
   startDate: string;
   endDate: string;
   comments: string;
+  modifiedBy?: string;
+  modifiedAt?: string;
 }
 
 interface ProjectTableProps {
@@ -39,7 +42,43 @@ interface ProjectTableProps {
 export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [viewingProject, setViewingProject] = useState<Project | null>(null);
+  const [sortKey, setSortKey] = useState<"modifiedBy" | "modifiedAt" | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const { canEditProject } = useAuth();
+
+  const toggleSort = (key: "modifiedBy" | "modifiedAt") => {
+    if (sortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const sortedProjects = useMemo(() => {
+    if (!sortKey) return projects;
+    const copy = [...projects];
+    copy.sort((a, b) => {
+      const av = a[sortKey] || "";
+      const bv = b[sortKey] || "";
+      if (sortKey === "modifiedAt") {
+        const at = av ? new Date(av).getTime() : 0;
+        const bt = bv ? new Date(bv).getTime() : 0;
+        return sortDir === "asc" ? at - bt : bt - at;
+      }
+      return sortDir === "asc"
+        ? String(av).localeCompare(String(bv))
+        : String(bv).localeCompare(String(av));
+    });
+    return copy;
+  }, [projects, sortKey, sortDir]);
+
+  const SortIcon = ({ k }: { k: "modifiedBy" | "modifiedAt" }) => {
+    if (sortKey !== k) return <ArrowUpDown className="h-3 w-3 inline ml-1 opacity-50" />;
+    return sortDir === "asc"
+      ? <ArrowUp className="h-3 w-3 inline ml-1" />
+      : <ArrowDown className="h-3 w-3 inline ml-1" />;
+  };
 
   const handleEditClick = (project: Project, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,18 +105,30 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
               <TableHead className="font-semibold">Start Date</TableHead>
               <TableHead className="font-semibold">End Date</TableHead>
               <TableHead className="font-semibold">Comments</TableHead>
+              <TableHead
+                className="font-semibold cursor-pointer select-none hover:text-primary"
+                onClick={() => toggleSort("modifiedBy")}
+              >
+                Modified By<SortIcon k="modifiedBy" />
+              </TableHead>
+              <TableHead
+                className="font-semibold cursor-pointer select-none hover:text-primary"
+                onClick={() => toggleSort("modifiedAt")}
+              >
+                Modified Date<SortIcon k="modifiedAt" />
+              </TableHead>
               {!readOnly && <TableHead className="font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.length === 0 ? (
+            {sortedProjects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={13} className="text-center text-muted-foreground py-8">
                   No projects found matching your filters
                 </TableCell>
               </TableRow>
             ) : (
-              projects.map((project) => (
+              sortedProjects.map((project) => (
                 <TableRow 
                   key={project.id} 
                   className="hover:bg-primary/5 cursor-pointer transition-all duration-200 group"
@@ -95,6 +146,8 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
                   <TableCell>{project.startDate ? new Date(project.startDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell className="max-w-xs truncate">{project.comments}</TableCell>
+                  <TableCell className="text-muted-foreground">{project.modifiedBy || '-'}</TableCell>
+                  <TableCell className="text-muted-foreground">{project.modifiedAt ? new Date(project.modifiedAt).toLocaleString() : '-'}</TableCell>
                   <TableCell>
                     {!readOnly && (() => {
                       const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());

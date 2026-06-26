@@ -21,7 +21,8 @@ const emptyMeeting: Meeting = {
   activityId: "",
   subActivityId: "",
   quarter: "",
-  meetingDate: "",
+  meetingDateFrom: "",
+  meetingDateTo: "",
   focusArea: "",
   implementingEntities: [],
   deliveryPartners: [],
@@ -43,18 +44,21 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
 
   useEffect(() => {
     if (meeting) {
-      setFormData({ ...emptyMeeting, ...meeting });
+      // Backfill from legacy single meetingDate if present
+      const legacy = meeting.meetingDate;
+      setFormData({
+        ...emptyMeeting,
+        ...meeting,
+        meetingDateFrom: meeting.meetingDateFrom ?? legacy ?? "",
+        meetingDateTo: meeting.meetingDateTo ?? "",
+      });
     }
   }, [meeting]);
 
   const handleSave = () => {
-    if (!formData.quarter || !formData.meetingDate || !formData.focusArea) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
     onSave(formData);
     onOpenChange(false);
-    toast.success("Meeting updated successfully");
+    toast.success("Event updated successfully");
   };
 
   const handleArrayChange = (field: "implementingEntities" | "deliveryPartners", value: string) => {
@@ -82,24 +86,28 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-quarter">Quarter *</Label>
+              <Label htmlFor="edit-quarter">Quarter</Label>
               <Input id="edit-quarter" placeholder="Q1 2025" value={formData.quarter} onChange={(e) => setFormData({ ...formData, quarter: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-meetingDate">Meeting Date *</Label>
-              <Input id="edit-meetingDate" type="date" value={formData.meetingDate} onChange={(e) => setFormData({ ...formData, meetingDate: e.target.value })} />
+              <Label htmlFor="edit-meetingDateFrom">Date From</Label>
+              <Input id="edit-meetingDateFrom" type="date" value={formData.meetingDateFrom || ""} onChange={(e) => setFormData({ ...formData, meetingDateFrom: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-meetingDateTo">Date To</Label>
+              <Input id="edit-meetingDateTo" type="date" value={formData.meetingDateTo || ""} onChange={(e) => setFormData({ ...formData, meetingDateTo: e.target.value })} />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-focusArea">Focus Area *</Label>
+            <Label htmlFor="edit-focusArea">Focus Area</Label>
             <Input id="edit-focusArea" placeholder="Project Kickoff Meeting" value={formData.focusArea} onChange={(e) => setFormData({ ...formData, focusArea: e.target.value })} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-format">Format *</Label>
+            <Label htmlFor="edit-format">Format</Label>
             <Select value={formData.format} onValueChange={(value: "Virtual" | "Hybrid" | "In-Person") => setFormData({ ...formData, format: value })}>
               <SelectTrigger id="edit-format"><SelectValue /></SelectTrigger>
               <SelectContent>

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Building2, Edit } from "lucide-react";
-import { MeetingDetailsDialog, type Meeting } from "@/components/MeetingDetailsDialog";
+import { MeetingDetailsDialog, type Meeting, formatMeetingDateRange } from "@/components/MeetingDetailsDialog";
 import { EditMeetingDialog } from "@/components/EditMeetingDialog";
 import { AddMeetingDialog } from "@/components/AddMeetingDialog";
 import { MeetingExcelTemplate } from "@/components/MeetingExcelTemplate";
@@ -55,8 +55,9 @@ const Meetings = () => {
     setMeetings(prev => [...prev, ...uploadedMeetings]);
   };
 
+  const sortKey = (m: Meeting) => m.meetingDateFrom || m.meetingDate || m.meetingDateTo || "";
   const sortedMeetings = [...meetings].sort((a, b) =>
-    new Date(a.meetingDate).getTime() - new Date(b.meetingDate).getTime()
+    new Date(sortKey(a)).getTime() - new Date(sortKey(b)).getTime()
   );
 
   return (
@@ -123,9 +124,7 @@ const Meetings = () => {
                       <CardDescription className="flex items-center gap-3 text-xs">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
-                          {new Date(meeting.meetingDate).toLocaleDateString('en-US', {
-                            weekday: 'short', year: 'numeric', month: 'long', day: 'numeric',
-                          })}
+                          {formatMeetingDateRange(meeting)}
                         </span>
                         <span className="font-medium text-foreground/60">{meeting.quarter}</span>
                       </CardDescription>

@@ -19,7 +19,8 @@ export const MeetingExcelExport = ({ meetings }: MeetingExcelExportProps) => {
       "Activity ID": meeting.activityId || "",
       "Sub-Activity ID": meeting.subActivityId || "",
       "Quarter": meeting.quarter,
-      "Meeting Date": meeting.meetingDate,
+      "Date From": meeting.meetingDateFrom || meeting.meetingDate || "",
+      "Date To": meeting.meetingDateTo || "",
       "Focus Area": meeting.focusArea,
       "Format": meeting.format,
       "Implementing Entities": meeting.implementingEntities.join("; "),
@@ -34,10 +35,10 @@ export const MeetingExcelExport = ({ meetings }: MeetingExcelExportProps) => {
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Meetings");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Events");
 
     worksheet["!cols"] = [
-      { wch: 12 }, { wch: 15 }, { wch: 10 }, { wch: 14 }, { wch: 25 },
+      { wch: 12 }, { wch: 15 }, { wch: 10 }, { wch: 14 }, { wch: 14 }, { wch: 25 },
       { wch: 12 }, { wch: 30 }, { wch: 30 }, { wch: 35 },
       { wch: 20 }, { wch: 25 }, { wch: 18 }, { wch: 35 }, { wch: 35 },
     ];

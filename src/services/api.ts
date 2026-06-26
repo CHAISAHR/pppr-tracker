@@ -1,7 +1,15 @@
 // API service for Railway backend
 // Set your Railway backend URL here after deploying
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-app.railway.app/api';
-const MOCK_MODE = !import.meta.env.VITE_API_URL; // Auto-disables mock when API URL is set
+// Mock mode is for local dev only — never enabled in production builds.
+const MOCK_MODE = !import.meta.env.VITE_API_URL && !import.meta.env.PROD;
+
+if (!import.meta.env.VITE_API_URL && import.meta.env.PROD) {
+  // Fail loudly so a production deploy missing VITE_API_URL never silently
+  // falls back to the in-browser mock.
+  throw new Error('VITE_API_URL is required in production builds');
+}
+
 
 export interface User {
   id: string;
@@ -35,13 +43,17 @@ class ApiService {
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
     if (MOCK_MODE) {
       // Mock login for testing
+      // Dev-only mock — roles are NOT derived from the email. Default to
+      // the least-privileged role; switch a test account to admin via the
+      // backend (or the Users page) once the real API is wired up.
       const mockUser: User = {
         id: '1',
         email: credentials.email,
-        name: credentials.email.includes('admin') ? 'Admin User' : 'User',
-        role: credentials.email.includes('admin') ? 'admin' : 'user',
-        organization: credentials.email.includes('admin') ? undefined : 'Test Organization'
+        name: 'Dev User',
+        role: 'user',
+        organization: 'Test Organization'
       };
+
       const mockToken = 'mock-token-' + Date.now();
       localStorage.setItem('auth_token', mockToken);
       
@@ -74,7 +86,7 @@ class ApiService {
         id: '2',
         email: data.email,
         name: data.name,
-        role: data.email.includes('admin') ? 'admin' : 'user',
+        role: 'user',
         organization: data.organization
       };
       const mockToken = 'mock-token-' + Date.now();
@@ -102,21 +114,21 @@ class ApiService {
     return result;
   }
 
-  async resetPassword(email: string, newPassword: string): Promise<void> {
+  async resetPassword(currentPassword: string, newPassword: string): Promise<void> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 500));
       return;
     }
 
-    const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+    const response = await fetch(`${BASE_URL}/auth/change-password`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, newPassword }),
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Password reset failed');
+      throw new Error(error.message || 'Password change failed');
     }
   }
 
@@ -135,19 +147,17 @@ class ApiService {
 
   async getCurrentUser(): Promise<User> {
     if (MOCK_MODE) {
-      // Mock get current user for testing
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('No auth token');
-      
-      // Extract email from token for consistent mock data
-      const isAdmin = token.includes('admin');
+      // Dev-only mock — role is NOT derived from the token or email.
       return {
         id: '1',
-        email: isAdmin ? 'admin@test.com' : 'user@test.com',
-        name: isAdmin ? 'Admin User' : 'User',
-        role: isAdmin ? 'admin' : 'user',
-        organization: isAdmin ? undefined : 'Test Organization'
+        email: 'user@test.com',
+        name: 'Dev User',
+        role: 'user',
+        organization: 'Test Organization'
       };
+
     }
 
     const response = await fetch(`${BASE_URL}/auth/me`, {
@@ -625,7 +635,7 @@ class ApiService {
     return response.json();
   }
 
-  async createOrganisation(data: { name: string; description?: string }): Promise<any> {
+  async createOrganisation(data: { name: string; description?: string; types?: string[] }): Promise<any> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
       return { id: crypto.randomUUID(), ...data, attendee_count: 0 };
@@ -645,7 +655,7 @@ class ApiService {
     return response.json();
   }
 
-  async updateOrganisation(id: string, data: { name?: string; description?: string }): Promise<any> {
+  async updateOrganisation(id: string, data: { name?: string; description?: string; types?: string[] }): Promise<any> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
       return { id, ...data };

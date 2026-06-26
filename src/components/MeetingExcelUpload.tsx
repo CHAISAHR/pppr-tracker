@@ -57,29 +57,28 @@ export const MeetingExcelUpload = ({ onUpload }: MeetingExcelUploadProps) => {
           .map(p => p.trim())
           .filter(p => p);
 
-        // Parse date
-        let meetingDate = "";
-        const dateValue = row["Meeting Date"] || row["meeting_date"];
-        if (dateValue) {
-          // Handle Excel date serial number
-          if (typeof dateValue === 'number') {
-            const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
-            meetingDate = excelDate.toISOString().split('T')[0];
-          } else {
-            // Handle string date
-            const parsedDate = new Date(dateValue);
-            if (!isNaN(parsedDate.getTime())) {
-              meetingDate = parsedDate.toISOString().split('T')[0];
-            }
+        const parseDate = (v: unknown): string => {
+          if (v == null || v === "") return "";
+          if (typeof v === "number") {
+            const d = new Date((v - 25569) * 86400 * 1000);
+            return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
           }
-        }
+          const d = new Date(v as string);
+          return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
+        };
+
+        const dateFrom = parseDate(
+          row["Date From"] ?? row["date_from"] ?? row["Meeting Date"] ?? row["meeting_date"],
+        );
+        const dateTo = parseDate(row["Date To"] ?? row["date_to"]);
 
         return {
           id: `${Date.now()}-${index}`,
           activityId: String(row["Activity ID"] || row["activity_id"] || ""),
           subActivityId: String(row["Sub-Activity ID"] || row["sub_activity_id"] || ""),
           quarter: String(row["Quarter"] || row["quarter"] || ""),
-          meetingDate: meetingDate,
+          meetingDateFrom: dateFrom || undefined,
+          meetingDateTo: dateTo || undefined,
           focusArea: String(row["Focus Area"] || row["focus_area"] || ""),
           implementingEntities: implementingEntities,
           deliveryPartners: deliveryPartners,
