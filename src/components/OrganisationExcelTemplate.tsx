@@ -9,12 +9,12 @@ export const OrganisationExcelTemplate = () => {
       {
         "Name": "Example Organisation",
         "Description": "Short description of the organisation",
-        "Types": "Funder; Implementing Entity",
+        "Types": "Funder; Government",
       },
       {
         "Name": "Another Organisation",
         "Description": "",
-        "Types": "Delivery Partner",
+        "Types": "Government; Delivery Partner",
       },
     ];
 
@@ -32,7 +32,7 @@ export const OrganisationExcelTemplate = () => {
         Field: "Types",
         Required: "No",
         Notes:
-          "Semicolon-separated. Allowed values: Funder, Implementing Entity, Delivery Partner",
+          "Semicolon-separated. Allowed values: Funder, Government, Implementing Entity, Delivery Partner",
       },
     ];
     const notesSheet = XLSX.utils.json_to_sheet(notes);
