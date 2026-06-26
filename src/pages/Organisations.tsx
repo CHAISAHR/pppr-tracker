@@ -435,6 +435,7 @@ function TypeSelector({
 }) {
   const OPTIONS = [
     { value: "Funder", label: "Funder" },
+    { value: "Government", label: "Government" },
     { value: "Implementing Entity", label: "Implementing Entity" },
     { value: "Delivery Partner", label: "Delivery Partner" },
   ];
