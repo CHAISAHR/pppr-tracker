@@ -182,7 +182,7 @@ const Organisations = () => {
             Organisations
           </h1>
           <p className="text-muted-foreground mt-2">
-            Manage organisations and view attendee data
+            Manage organisations and partner types
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -217,7 +217,6 @@ const Organisations = () => {
                   <TableHead>Organisation Name</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Type</TableHead>
-                  <TableHead className="text-right">Attendees</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -250,7 +249,7 @@ const Organisations = () => {
                         <span className="text-muted-foreground">-</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">{org.attendee_count ?? org.count ?? 0}</TableCell>
+                    
                     <TableCell>
                       {org.id && (
                         <div className="flex gap-2">
@@ -435,6 +434,7 @@ function TypeSelector({
 }) {
   const OPTIONS = [
     { value: "Funder", label: "Funder" },
+    { value: "Government", label: "Government" },
     { value: "Implementing Entity", label: "Implementing Entity" },
     { value: "Delivery Partner", label: "Delivery Partner" },
   ];
