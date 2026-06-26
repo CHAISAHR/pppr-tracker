@@ -7,15 +7,16 @@ import { api } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { getLogo, loadLogos } from "@/lib/orgLogos";
 
-// Partner categories are derived positionally from the Admin > Organisations list:
-// 1st row = Funder, next 3 = Government Departments, next 3 = Implementing Entities,
-// remainder = Delivery Partners. Edit the order on the Organisations admin page to change groupings.
-const CATEGORY_SLICES: { label: string; take: number }[] = [
-  { label: "Funder", take: 1 },
-  { label: "Government Departments", take: 3 },
-  { label: "Implementing Entities", take: 3 },
-  { label: "Delivery Partners", take: Infinity },
+// Partner categories are derived from each organisation's `types` field
+// (set on the Admin > Organisations page). An org with multiple types appears
+// in each matching group. Orgs with no type fall under "Other Partners".
+const CATEGORY_ORDER: { label: string; match: string[] }[] = [
+  { label: "Funder", match: ["funder"] },
+  { label: "Government Departments", match: ["government", "government department", "government departments"] },
+  { label: "Implementing Entities", match: ["implementing entity", "implementing entities"] },
+  { label: "Delivery Partners", match: ["delivery partner", "delivery partners"] },
 ];
+const OTHER_LABEL = "Other Partners";
 
 // Deterministic colour swatch per organisation (uses theme tokens).
 const SWATCHES = [
