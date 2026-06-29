@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS projects (
   delivery_partners JSON,
   country TEXT,
   organisation TEXT,
+  comments TEXT,
   created_by CHAR(36),
   modified_by CHAR(36),
   modified_at DATETIME,
