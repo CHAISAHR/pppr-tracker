@@ -1,6 +1,54 @@
 import { useState, useMemo, useEffect } from "react";
+import { api } from "@/services/api";
 
 const STORAGE_KEY = "activity_tracker_projects";
+
+const STATUS_NORMALIZE = (s: any): Project["status"] => {
+  const v = String(s ?? "").toLowerCase();
+  if (v === "completed") return "Completed";
+  if (v === "in progress" || v === "active") return "In Progress";
+  if (v === "not yet started" || v === "pending") return "Not Yet Started";
+  return (s as Project["status"]) || "Not Yet Started";
+};
+
+const fromApi = (r: any): Project => {
+  const dp = Array.isArray(r.delivery_partners)
+    ? r.delivery_partners
+    : (typeof r.delivery_partners === "string" && r.delivery_partners
+        ? (() => { try { return JSON.parse(r.delivery_partners); } catch { return [r.delivery_partners]; } })()
+        : []);
+  return {
+    id: r.id,
+    activityId: r.activity_id ?? "",
+    activityDescription: r.title ?? "",
+    subActivityId: r.sub_activity_id ?? "",
+    subActivityDescription: r.description ?? "",
+    implementingEntity: r.implementing_entity ?? r.organisation ?? "",
+    deliveryPartner: Array.isArray(dp) ? dp.join("; ") : String(dp ?? ""),
+    status: STATUS_NORMALIZE(r.status),
+    startDate: r.start_date ? String(r.start_date).slice(0, 10) : "",
+    endDate: r.end_date ? String(r.end_date).slice(0, 10) : "",
+    comments: r.comments ?? "",
+    modifiedBy: r.modifiedBy ?? r.modified_by_name ?? undefined,
+    modifiedAt: r.modifiedAt ?? r.modified_at ?? undefined,
+  };
+};
+
+const toApi = (p: Partial<Project>) => ({
+  title: p.activityDescription,
+  description: p.subActivityDescription,
+  status: p.status,
+  start_date: p.startDate || null,
+  end_date: p.endDate || null,
+  comments: p.comments ?? null,
+  activity_id: p.activityId ?? null,
+  sub_activity_id: p.subActivityId ?? null,
+  implementing_entity: p.implementingEntity ?? null,
+  organisation: p.implementingEntity ?? null,
+  delivery_partners: p.deliveryPartner
+    ? p.deliveryPartner.split(";").map((s) => s.trim()).filter(Boolean)
+    : [],
+});
 import { ProjectTable, type Project } from "@/components/ProjectTable";
 import { ProjectFilters } from "@/components/ProjectFilters";
 import { ExcelUpload } from "@/components/ExcelUpload";
