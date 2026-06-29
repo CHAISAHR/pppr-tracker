@@ -279,12 +279,20 @@ const Index = () => {
     setModifiedDateTo("");
   };
 
-  const handleAddProject = (projectData: Omit<Project, "id">) => {
-    const newProject: Project = {
-      ...projectData,
-      id: Date.now().toString(),
-    };
-    setProjects((prev) => [...prev, newProject]);
+  const handleAddProject = async (projectData: Omit<Project, "id">) => {
+    const tempId = `temp-${Date.now()}`;
+    const optimistic: Project = { ...projectData, id: tempId };
+    setProjects((prev) => [...prev, optimistic]);
+    try {
+      const saved = await api.createProject(toApi(projectData));
+      const mapped = fromApi(saved);
+      setProjects((prev) => prev.map((p) => (p.id === tempId ? mapped : p)));
+      toast.success("Activity added");
+    } catch (err: any) {
+      console.error("Create project failed:", err);
+      toast.error(err?.message || "Failed to save activity to server");
+      setProjects((prev) => prev.filter((p) => p.id !== tempId));
+    }
   };
 
   const completedCount = filteredProjects.filter((p) => p.status === "Completed").length;
