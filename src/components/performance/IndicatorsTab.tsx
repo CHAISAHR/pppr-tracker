@@ -60,6 +60,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(null);
+  const [viewingIndicator, setViewingIndicator] = useState<Indicator | null>(null);
 
   // Filter state
   const [searchText, setSearchText] = useState("");
