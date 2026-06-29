@@ -200,6 +200,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       "Q4": ind.q4 ?? "",
       "Annual Performance": ind.annual_performance ?? "",
       "Evidence": ind.evidence || "",
+      "Comments": ind.comments || "",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
