@@ -29,6 +29,7 @@ export const IndicatorExcelTemplate = () => {
         "Target Year 4": "250 trained",
         "Target Year 5": "300 trained",
         "Target Year 6": "350 trained",
+        "Comments": "Example comments",
       },
     ];
 
