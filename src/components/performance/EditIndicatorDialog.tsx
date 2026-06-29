@@ -34,6 +34,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
       implementing_entity: ind.implementing_entity || "",
       data_source: ind.data_source || "", unit: ind.unit,
       subactivity_id: ind.subactivity_id || "", description: ind.description || "",
+      comments: ind.comments || "",
       baseline_proposal_year: ind.baseline_proposal_year || "",
       quarter_3: ind.quarter_3?.toString() || "",
       target_year_1: ind.target_year_1 || "",
@@ -75,6 +76,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
         implementing_entity: formData.implementing_entity || null,
         data_source: formData.data_source || null, unit: formData.unit,
         subactivity_id: formData.subactivity_id || null, description: formData.description || null,
+        comments: formData.comments || null,
         baseline_proposal_year: formData.baseline_proposal_year || null,
         quarter_3: formData.quarter_3 ? Number(formData.quarter_3) : null,
         target_year_1: formData.target_year_1 || null,
@@ -186,6 +188,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
               <div className="space-y-2"><Label>Q4</Label><Input type="number" value={formData.q4} onChange={e => update("q4", e.target.value)} /></div>
             </div>
             <div className="space-y-2"><Label>Description</Label><Textarea value={formData.description} onChange={e => update("description", e.target.value)} rows={2} /></div>
+            <div className="space-y-2"><Label>Comments</Label><Textarea value={formData.comments} onChange={e => update("comments", e.target.value)} placeholder="Add any comments or notes" rows={2} /></div>
 
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>

@@ -71,6 +71,7 @@ export const IndicatorExcelUpload = ({ onSuccess }: IndicatorExcelUploadProps) =
           target_year_4: toStr(row["Target Year 4"]),
           target_year_5: toStr(row["Target Year 5"]),
           target_year_6: toStr(row["Target Year 6"]),
+          comments: toStr(row["Comments"] ?? row["comments"]),
         };
       });
 

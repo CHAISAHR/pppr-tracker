@@ -28,6 +28,7 @@ export interface Indicator {
   q4: number | null;
   annual_performance: number | null;
   evidence: string | null;
+  comments: string | null;
   created_at: string;
   country: string | null;
   activity: string | null;
@@ -199,6 +200,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       "Q4": ind.q4 ?? "",
       "Annual Performance": ind.annual_performance ?? "",
       "Evidence": ind.evidence || "",
+      "Comments": ind.comments || "",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);

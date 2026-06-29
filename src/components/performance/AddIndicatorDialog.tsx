@@ -25,7 +25,7 @@ const initialFormData = {
   target_year_2: "", target_year_3: "", target_year_4: "",
   target_year_5: "", target_year_6: "", year: "", target: "",
   q1: "", q2: "", q3: "", q4: "", evidence: "", description: "",
-  subactivity_id: "",
+  subactivity_id: "", comments: "",
 };
 
 export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicatorDialogProps) {
@@ -62,6 +62,7 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
         unit: formData.unit || "Number",
         subactivity_id: formData.subactivity_id || null,
         description: formData.description || null,
+        comments: formData.comments || null,
         baseline_proposal_year: formData.baseline_proposal_year || null,
         target_year_1: formData.target_year_1 || null,
         target_year_2: formData.target_year_2 || null,
@@ -264,6 +265,11 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
             <div className="space-y-2">
               <Label>Description</Label>
               <Textarea value={formData.description} onChange={e => update("description", e.target.value)} placeholder="Brief description" rows={2} />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Comments</Label>
+              <Textarea value={formData.comments} onChange={e => update("comments", e.target.value)} placeholder="Add any comments or notes" rows={2} />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
