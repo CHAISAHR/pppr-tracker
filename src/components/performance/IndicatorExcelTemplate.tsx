@@ -43,7 +43,7 @@ export const IndicatorExcelTemplate = () => {
       { wch: 35 }, { wch: 14 }, { wch: 45 }, { wch: 20 },
       { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 20 },
       { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-      { wch: 15 }, { wch: 15 },
+      { wch: 15 }, { wch: 15 }, { wch: 30 },
     ];
 
     XLSX.writeFile(workbook, "indicators_template.xlsx");
