@@ -4,10 +4,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pencil, Trash2, Loader2, ExternalLink, Download, Search, X } from "lucide-react";
+import { Pencil, Trash2, Loader2, Download, Search, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { EditIndicatorDialog } from "./EditIndicatorDialog";
+import { IndicatorDetailsDialog } from "./IndicatorDetailsDialog";
 import * as XLSX from "xlsx";
 
 export interface Indicator {
@@ -59,6 +60,7 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(null);
+  const [viewingIndicator, setViewingIndicator] = useState<Indicator | null>(null);
 
   // Filter state
   const [searchText, setSearchText] = useState("");
@@ -360,78 +362,48 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
               <TableHead>Indicator Type</TableHead>
               <TableHead>Indicator Name</TableHead>
               <TableHead>Indicator Definition</TableHead>
-              <TableHead>NAPHS (Yes/No)</TableHead>
+              <TableHead>NAPHS</TableHead>
               <TableHead>Responsibility</TableHead>
               <TableHead>Delivery Partner</TableHead>
               <TableHead>Implementing Entity</TableHead>
               <TableHead>Data Source</TableHead>
               <TableHead>Cost US$</TableHead>
-              <TableHead>Baseline Yr</TableHead>
-              <TableHead>Target Y1</TableHead>
-              <TableHead>Target Y2</TableHead>
-              <TableHead>Target Y3</TableHead>
-              <TableHead>Target Y4</TableHead>
-              <TableHead>Target Y5</TableHead>
-              <TableHead>Target Y6</TableHead>
-              <TableHead>Year</TableHead>
-              <TableHead>Target</TableHead>
-              <TableHead>Q1</TableHead>
-              <TableHead>Q2</TableHead>
-              <TableHead>Q3</TableHead>
-              <TableHead>Q4</TableHead>
               <TableHead>Annual Perf.</TableHead>
-              <TableHead>Evidence</TableHead>
               {user && <TableHead className="text-right">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredIndicators.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={31} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={18} className="text-center py-8 text-muted-foreground">
                   No indicators match the current filters.
                 </TableCell>
               </TableRow>
             ) : (
               filteredIndicators.map((ind) => (
-                <TableRow key={ind.id}>
+                <TableRow
+                  key={ind.id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => setViewingIndicator(ind)}
+                >
                   <TableCell>{ind.country || "-"}</TableCell>
                   <TableCell>{ind.activity_id || "-"}</TableCell>
-                  <TableCell>{ind.activity || "-"}</TableCell>
-                  <TableCell>{ind.long_term_outcome || "-"}</TableCell>
+                  <TableCell className="max-w-[240px] truncate" title={ind.activity || ""}>{ind.activity || "-"}</TableCell>
+                  <TableCell className="max-w-[240px] truncate" title={ind.long_term_outcome || ""}>{ind.long_term_outcome || "-"}</TableCell>
                   <TableCell>{ind.core_indicators || "-"}</TableCell>
                   <TableCell>{ind.workstream || "-"}</TableCell>
                   <TableCell>{ind.indicator_type || "-"}</TableCell>
-                  <TableCell className="font-medium">{ind.name}</TableCell>
-                  <TableCell>{ind.indicator_definition || "-"}</TableCell>
+                  <TableCell className="font-medium max-w-[260px] truncate" title={ind.name}>{ind.name}</TableCell>
+                  <TableCell className="max-w-[280px] truncate" title={ind.indicator_definition || ""}>{ind.indicator_definition || "-"}</TableCell>
                   <TableCell>{ind.naphs || "-"}</TableCell>
                   <TableCell>{ind.responsibility || "-"}</TableCell>
                   <TableCell>{ind.organisation || "-"}</TableCell>
                   <TableCell>{ind.implementing_entity || "-"}</TableCell>
                   <TableCell>{ind.data_source || "-"}</TableCell>
-                  <TableCell>{ind.cost_usd != null ? `$${ind.cost_usd.toLocaleString()}` : "-"}</TableCell>
-                  <TableCell>{ind.baseline_proposal_year ?? "-"}</TableCell>
-                  <TableCell>{ind.target_year_1 ?? "-"}</TableCell>
-                  <TableCell>{ind.target_year_2 ?? "-"}</TableCell>
-                  <TableCell>{ind.target_year_3 ?? "-"}</TableCell>
-                  <TableCell>{ind.target_year_4 ?? "-"}</TableCell>
-                  <TableCell>{ind.target_year_5 ?? "-"}</TableCell>
-                  <TableCell>{ind.target_year_6 ?? "-"}</TableCell>
-                  <TableCell>{ind.year || "-"}</TableCell>
-                  <TableCell>{ind.target ?? "-"}</TableCell>
-                  <TableCell>{ind.q1 ?? "-"}</TableCell>
-                  <TableCell>{ind.q2 ?? "-"}</TableCell>
-                  <TableCell>{ind.q3 ?? "-"}</TableCell>
-                  <TableCell>{ind.q4 ?? "-"}</TableCell>
+                  <TableCell>{ind.cost_usd != null ? `$${Number(ind.cost_usd).toLocaleString()}` : "-"}</TableCell>
                   <TableCell>{ind.annual_performance ?? "-"}</TableCell>
-                  <TableCell>
-                    {ind.evidence ? (
-                      <a href={ind.evidence} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
-                        View <ExternalLink className="h-3 w-3" />
-                      </a>
-                    ) : "-"}
-                  </TableCell>
                   {user && (
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-2">
                         <Button variant="ghost" size="sm" onClick={() => setEditingIndicator(ind)}>
                           <Pencil className="h-4 w-4" />
@@ -450,6 +422,13 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
           </TableBody>
         </Table>
       </div>
+
+      <IndicatorDetailsDialog
+        indicator={viewingIndicator}
+        open={!!viewingIndicator}
+        onOpenChange={(open) => !open && setViewingIndicator(null)}
+      />
+
 
       {editingIndicator && (
         <EditIndicatorDialog

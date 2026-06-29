@@ -157,38 +157,8 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
               <div className="space-y-2"><Label>Implementing Entity</Label><Input value={formData.implementing_entity} onChange={e => update("implementing_entity", e.target.value)} /></div>
               <div className="space-y-2"><Label>Data Source</Label><Input value={formData.data_source} onChange={e => update("data_source", e.target.value)} /></div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>Unit *</Label><Input value={formData.unit} onChange={e => update("unit", e.target.value)} required /></div>
-              <div className="space-y-2"><Label>Subactivity ID</Label><Input value={formData.subactivity_id} onChange={e => update("subactivity_id", e.target.value)} /></div>
-            </div>
+            <div className="space-y-2"><Label>Comments</Label><Textarea value={formData.comments} onChange={e => update("comments", e.target.value)} placeholder="Add any comments or notes" rows={3} /></div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>Baseline Yr</Label><Input value={formData.baseline_proposal_year} onChange={e => update("baseline_proposal_year", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y1</Label><Input value={formData.target_year_1} onChange={e => update("target_year_1", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y2</Label><Input value={formData.target_year_2} onChange={e => update("target_year_2", e.target.value)} /></div>
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="space-y-2"><Label>Target Y3</Label><Input value={formData.target_year_3} onChange={e => update("target_year_3", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y4</Label><Input value={formData.target_year_4} onChange={e => update("target_year_4", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y5</Label><Input value={formData.target_year_5} onChange={e => update("target_year_5", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target Y6</Label><Input value={formData.target_year_6} onChange={e => update("target_year_6", e.target.value)} /></div>
-            </div>
-
-            <hr className="border-border" />
-            <p className="text-sm font-medium text-muted-foreground">Performance Tracking</p>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>Year</Label><Input type="number" value={formData.year} onChange={e => update("year", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Target</Label><Input type="number" value={formData.target} onChange={e => update("target", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Evidence (URL)</Label><Input type="url" value={formData.evidence} onChange={e => update("evidence", e.target.value)} /></div>
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="space-y-2"><Label>Q1</Label><Input type="number" value={formData.q1} onChange={e => update("q1", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Q2</Label><Input type="number" value={formData.q2} onChange={e => update("q2", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Q3</Label><Input type="number" value={formData.q3} onChange={e => update("q3", e.target.value)} /></div>
-              <div className="space-y-2"><Label>Q4</Label><Input type="number" value={formData.q4} onChange={e => update("q4", e.target.value)} /></div>
-            </div>
-            <div className="space-y-2"><Label>Description</Label><Textarea value={formData.description} onChange={e => update("description", e.target.value)} rows={2} /></div>
-            <div className="space-y-2"><Label>Comments</Label><Textarea value={formData.comments} onChange={e => update("comments", e.target.value)} placeholder="Add any comments or notes" rows={2} /></div>
 
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>

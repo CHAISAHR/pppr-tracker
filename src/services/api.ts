@@ -450,6 +450,29 @@ class ApiService {
     }
   }
 
+  async bulkCreateMeetings(meetings: any[]): Promise<{ inserted: any[]; errors: { row: number; message: string }[] }> {
+    if (MOCK_MODE) {
+      const inserted = meetings.map(m => ({ id: crypto.randomUUID(), ...m }));
+      const stored = localStorage.getItem('mock_meetings');
+      const all = stored ? JSON.parse(stored) : [];
+      localStorage.setItem('mock_meetings', JSON.stringify([...inserted, ...all]));
+      return { inserted, errors: [] };
+    }
+
+    const response = await fetch(`${BASE_URL}/meetings/bulk`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(meetings),
+    });
+
+    if (!response.ok && response.status !== 207) {
+      throw new Error('Failed to bulk upload meetings');
+    }
+
+    return response.json();
+  }
+
+
   async getWorkshops(): Promise<any[]> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
