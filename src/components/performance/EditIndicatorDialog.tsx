@@ -76,6 +76,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
         implementing_entity: formData.implementing_entity || null,
         data_source: formData.data_source || null, unit: formData.unit,
         subactivity_id: formData.subactivity_id || null, description: formData.description || null,
+        comments: formData.comments || null,
         baseline_proposal_year: formData.baseline_proposal_year || null,
         quarter_3: formData.quarter_3 ? Number(formData.quarter_3) : null,
         target_year_1: formData.target_year_1 || null,
