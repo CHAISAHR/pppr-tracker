@@ -143,6 +143,21 @@ const Index = () => {
   });
 
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const rows = await api.getProjects();
+        if (cancelled) return;
+        const mapped = (rows || []).map(fromApi);
+        if (mapped.length > 0) setProjects(mapped);
+      } catch (err) {
+        console.error("Failed to fetch projects:", err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
+  useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
     } catch {}
