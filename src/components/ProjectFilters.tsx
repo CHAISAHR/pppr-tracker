@@ -85,11 +85,12 @@ export const ProjectFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Periods</SelectItem>
-            {periods.map((period) => (
+            {periods.filter(Boolean).map((period) => (
               <SelectItem key={period} value={period}>
                 {period}
               </SelectItem>
             ))}
+
           </SelectContent>
         </Select>
 
@@ -111,11 +112,12 @@ export const ProjectFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Entities</SelectItem>
-            {implementingEntities.map((entity) => (
+            {implementingEntities.filter(Boolean).map((entity) => (
               <SelectItem key={entity} value={entity}>
                 {entity}
               </SelectItem>
             ))}
+
           </SelectContent>
         </Select>
 
@@ -125,11 +127,12 @@ export const ProjectFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Partners</SelectItem>
-            {deliveryPartners.map((partner) => (
+            {deliveryPartners.filter(Boolean).map((partner) => (
               <SelectItem key={partner} value={partner}>
                 {partner}
               </SelectItem>
             ))}
+
           </SelectContent>
         </Select>
 
@@ -139,11 +142,12 @@ export const ProjectFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Editors</SelectItem>
-            {modifiedByOptions.map((m) => (
+            {modifiedByOptions.filter(Boolean).map((m) => (
               <SelectItem key={m} value={m}>
                 {m}
               </SelectItem>
             ))}
+
           </SelectContent>
         </Select>
 
