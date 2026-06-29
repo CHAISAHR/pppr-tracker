@@ -4,6 +4,12 @@ const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
+const shape = (r) => ({
+  ...r,
+  modifiedBy: r.modified_by_name || null,
+  modifiedAt: r.modified_at || null,
+});
+
 router.get('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   try {
@@ -13,13 +19,7 @@ router.get('/', authenticateToken, async (req, res) => {
        LEFT JOIN users u ON u.id = p.modified_by
        ORDER BY p.created_at DESC`
     );
-    const projects = rows.map(r => ({
-      ...r,
-      delivery_partners: r.delivery_partners ? (typeof r.delivery_partners === 'string' ? JSON.parse(r.delivery_partners) : r.delivery_partners) : [],
-      modifiedBy: r.modified_by_name || null,
-      modifiedAt: r.modified_at || null,
-    }));
-    res.json(projects);
+    res.json(rows.map(shape));
   } catch (error) {
     console.error('List projects error:', error);
     res.status(500).json({ message: 'Failed to fetch projects' });
@@ -29,32 +29,31 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const {
-    title, description, status, start_date, end_date, budget,
-    delivery_partners, country, organisation, comments,
-    activity_id, sub_activity_id, implementing_entity,
+    activity_id, activity_description, sub_activity_id, sub_activity_description,
+    implementing_entity, delivery_partner, status, start_date, end_date, comments,
   } = req.body;
   const id = crypto.randomUUID();
 
   try {
     await pool.execute(
       `INSERT INTO projects (
-         id, title, description, status, start_date, end_date, budget,
-         delivery_partners, country, organisation, comments,
-         activity_id, sub_activity_id, implementing_entity, created_by
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         id, activity_id, activity_description, sub_activity_id, sub_activity_description,
+         implementing_entity, delivery_partner, status, start_date, end_date, comments, created_by
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        id, title, description, status || 'active', start_date || null, end_date || null, budget || null,
-        JSON.stringify(delivery_partners || []), country || null, organisation || null, comments || null,
-        activity_id || null, sub_activity_id || null, implementing_entity || null, req.user.id,
+        id,
+        activity_id || null, activity_description || null,
+        sub_activity_id || null, sub_activity_description || null,
+        implementing_entity || null, delivery_partner || null,
+        status || 'Not Yet Started', start_date || null, end_date || null,
+        comments || null, req.user.id,
       ]
     );
     const [rows] = await pool.execute('SELECT * FROM projects WHERE id = ?', [id]);
-    const project = rows[0];
-    project.delivery_partners = project.delivery_partners ? (typeof project.delivery_partners === 'string' ? JSON.parse(project.delivery_partners) : project.delivery_partners) : [];
-    res.status(201).json(project);
+    res.status(201).json(shape(rows[0]));
   } catch (error) {
     console.error('Create project error:', error);
-    res.status(500).json({ message: 'Failed to create project' });
+    res.status(500).json({ message: 'Failed to create project', error: error.message });
   }
 });
 
@@ -62,36 +61,31 @@ router.put('/:id', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const { id } = req.params;
   const {
-    title, description, status, start_date, end_date, budget,
-    delivery_partners, country, organisation, comments,
-    activity_id, sub_activity_id, implementing_entity,
+    activity_id, activity_description, sub_activity_id, sub_activity_description,
+    implementing_entity, delivery_partner, status, start_date, end_date, comments,
   } = req.body;
 
   try {
     await pool.execute(
       `UPDATE projects SET
-         title = COALESCE(?, title),
-         description = COALESCE(?, description),
+         activity_id = COALESCE(?, activity_id),
+         activity_description = COALESCE(?, activity_description),
+         sub_activity_id = COALESCE(?, sub_activity_id),
+         sub_activity_description = COALESCE(?, sub_activity_description),
+         implementing_entity = COALESCE(?, implementing_entity),
+         delivery_partner = COALESCE(?, delivery_partner),
          status = COALESCE(?, status),
          start_date = COALESCE(?, start_date),
          end_date = COALESCE(?, end_date),
-         budget = COALESCE(?, budget),
-         delivery_partners = COALESCE(?, delivery_partners),
-         country = COALESCE(?, country),
-         organisation = COALESCE(?, organisation),
          comments = COALESCE(?, comments),
-         activity_id = COALESCE(?, activity_id),
-         sub_activity_id = COALESCE(?, sub_activity_id),
-         implementing_entity = COALESCE(?, implementing_entity),
          modified_by = ?, modified_at = NOW()
        WHERE id = ?`,
       [
-        title ?? null, description ?? null, status ?? null,
-        start_date ?? null, end_date ?? null, budget ?? null,
-        delivery_partners ? JSON.stringify(delivery_partners) : null,
-        country ?? null, organisation ?? null, comments ?? null,
-        activity_id ?? null, sub_activity_id ?? null, implementing_entity ?? null,
-        req.user.id, id,
+        activity_id ?? null, activity_description ?? null,
+        sub_activity_id ?? null, sub_activity_description ?? null,
+        implementing_entity ?? null, delivery_partner ?? null,
+        status ?? null, start_date ?? null, end_date ?? null,
+        comments ?? null, req.user.id, id,
       ]
     );
     const [rows] = await pool.execute(
@@ -100,14 +94,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
       [id]
     );
     if (rows.length === 0) return res.status(404).json({ message: 'Project not found' });
-    const project = rows[0];
-    project.delivery_partners = project.delivery_partners ? (typeof project.delivery_partners === 'string' ? JSON.parse(project.delivery_partners) : project.delivery_partners) : [];
-    project.modifiedBy = project.modified_by_name || null;
-    project.modifiedAt = project.modified_at || null;
-    res.json(project);
+    res.json(shape(rows[0]));
   } catch (error) {
     console.error('Update project error:', error);
-    res.status(500).json({ message: 'Failed to update project' });
+    res.status(500).json({ message: 'Failed to update project', error: error.message });
   }
 });
 
