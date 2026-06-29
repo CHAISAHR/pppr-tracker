@@ -62,6 +62,7 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
         unit: formData.unit || "Number",
         subactivity_id: formData.subactivity_id || null,
         description: formData.description || null,
+        comments: formData.comments || null,
         baseline_proposal_year: formData.baseline_proposal_year || null,
         target_year_1: formData.target_year_1 || null,
         target_year_2: formData.target_year_2 || null,
