@@ -27,14 +27,14 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
-  const { title, description, status, start_date, end_date, budget, delivery_partners, country, organisation } = req.body;
+  const { title, description, status, start_date, end_date, budget, delivery_partners, country, organisation, comments } = req.body;
   const id = crypto.randomUUID();
 
   try {
     await pool.execute(
-      `INSERT INTO projects (id, title, description, status, start_date, end_date, budget, delivery_partners, country, organisation, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, title, description, status || 'active', start_date || null, end_date || null, budget || null, JSON.stringify(delivery_partners || []), country || null, organisation || null, req.user.id]
+      `INSERT INTO projects (id, title, description, status, start_date, end_date, budget, delivery_partners, country, organisation, comments, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, title, description, status || 'active', start_date || null, end_date || null, budget || null, JSON.stringify(delivery_partners || []), country || null, organisation || null, comments || null, req.user.id]
     );
     const [rows] = await pool.execute('SELECT * FROM projects WHERE id = ?', [id]);
     const project = rows[0];
@@ -49,16 +49,17 @@ router.post('/', authenticateToken, async (req, res) => {
 router.put('/:id', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const { id } = req.params;
-  const { title, description, status, start_date, end_date, budget, delivery_partners, country, organisation } = req.body;
+  const { title, description, status, start_date, end_date, budget, delivery_partners, country, organisation, comments } = req.body;
 
   try {
     await pool.execute(
       `UPDATE projects SET title = COALESCE(?, title), description = COALESCE(?, description), status = COALESCE(?, status),
        start_date = COALESCE(?, start_date), end_date = COALESCE(?, end_date), budget = COALESCE(?, budget),
        delivery_partners = COALESCE(?, delivery_partners), country = COALESCE(?, country), organisation = COALESCE(?, organisation),
+       comments = COALESCE(?, comments),
        modified_by = ?, modified_at = NOW()
        WHERE id = ?`,
-      [title, description, status, start_date, end_date, budget, delivery_partners ? JSON.stringify(delivery_partners) : null, country, organisation, req.user.id, id]
+      [title, description, status, start_date, end_date, budget, delivery_partners ? JSON.stringify(delivery_partners) : null, country, organisation, comments ?? null, req.user.id, id]
     );
     const [rows] = await pool.execute(
       `SELECT p.*, u.name AS modified_by_name FROM projects p
