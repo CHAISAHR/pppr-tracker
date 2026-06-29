@@ -238,7 +238,7 @@ const Index = () => {
     });
   }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter, modifiedByFilter, modifiedDateFrom, modifiedDateTo]);
 
-  const handleUpdateProject = (id: string, updates: Partial<Project>) => {
+  const handleUpdateProject = async (id: string, updates: Partial<Project>) => {
     if (!user) {
       toast.error("Please log in to update projects");
       return;
@@ -253,7 +253,15 @@ const Index = () => {
         project.id === id ? { ...project, ...stamped } : project
       )
     );
-    toast.success("Project updated successfully");
+    try {
+      const saved = await api.updateProject(id, toApi({ ...updates }));
+      const mapped = fromApi(saved);
+      setProjects((prev) => prev.map((p) => (p.id === id ? mapped : p)));
+      toast.success("Project updated successfully");
+    } catch (err: any) {
+      console.error("Update project failed:", err);
+      toast.error(err?.message || "Failed to save project to server");
+    }
   };
 
   const handleExcelUpload = (newProjects: Project[]) => {
