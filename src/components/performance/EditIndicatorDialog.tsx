@@ -188,6 +188,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
               <div className="space-y-2"><Label>Q4</Label><Input type="number" value={formData.q4} onChange={e => update("q4", e.target.value)} /></div>
             </div>
             <div className="space-y-2"><Label>Description</Label><Textarea value={formData.description} onChange={e => update("description", e.target.value)} rows={2} /></div>
+            <div className="space-y-2"><Label>Comments</Label><Textarea value={formData.comments} onChange={e => update("comments", e.target.value)} placeholder="Add any comments or notes" rows={2} /></div>
 
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
