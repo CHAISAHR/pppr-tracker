@@ -1,6 +1,54 @@
 import { useState, useMemo, useEffect } from "react";
+import { api } from "@/services/api";
 
 const STORAGE_KEY = "activity_tracker_projects";
+
+const STATUS_NORMALIZE = (s: any): Project["status"] => {
+  const v = String(s ?? "").toLowerCase();
+  if (v === "completed") return "Completed";
+  if (v === "in progress" || v === "active") return "In Progress";
+  if (v === "not yet started" || v === "pending") return "Not Yet Started";
+  return (s as Project["status"]) || "Not Yet Started";
+};
+
+const fromApi = (r: any): Project => {
+  const dp = Array.isArray(r.delivery_partners)
+    ? r.delivery_partners
+    : (typeof r.delivery_partners === "string" && r.delivery_partners
+        ? (() => { try { return JSON.parse(r.delivery_partners); } catch { return [r.delivery_partners]; } })()
+        : []);
+  return {
+    id: r.id,
+    activityId: r.activity_id ?? "",
+    activityDescription: r.title ?? "",
+    subActivityId: r.sub_activity_id ?? "",
+    subActivityDescription: r.description ?? "",
+    implementingEntity: r.implementing_entity ?? r.organisation ?? "",
+    deliveryPartner: Array.isArray(dp) ? dp.join("; ") : String(dp ?? ""),
+    status: STATUS_NORMALIZE(r.status),
+    startDate: r.start_date ? String(r.start_date).slice(0, 10) : "",
+    endDate: r.end_date ? String(r.end_date).slice(0, 10) : "",
+    comments: r.comments ?? "",
+    modifiedBy: r.modifiedBy ?? r.modified_by_name ?? undefined,
+    modifiedAt: r.modifiedAt ?? r.modified_at ?? undefined,
+  };
+};
+
+const toApi = (p: Partial<Project>) => ({
+  title: p.activityDescription,
+  description: p.subActivityDescription,
+  status: p.status,
+  start_date: p.startDate || null,
+  end_date: p.endDate || null,
+  comments: p.comments ?? null,
+  activity_id: p.activityId ?? null,
+  sub_activity_id: p.subActivityId ?? null,
+  implementing_entity: p.implementingEntity ?? null,
+  organisation: p.implementingEntity ?? null,
+  delivery_partners: p.deliveryPartner
+    ? p.deliveryPartner.split(";").map((s) => s.trim()).filter(Boolean)
+    : [],
+});
 import { ProjectTable, type Project } from "@/components/ProjectTable";
 import { ProjectFilters } from "@/components/ProjectFilters";
 import { ExcelUpload } from "@/components/ExcelUpload";
@@ -95,6 +143,21 @@ const Index = () => {
   });
 
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const rows = await api.getProjects();
+        if (cancelled) return;
+        const mapped = (rows || []).map(fromApi);
+        if (mapped.length > 0) setProjects(mapped);
+      } catch (err) {
+        console.error("Failed to fetch projects:", err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
+  useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
     } catch {}
@@ -175,7 +238,7 @@ const Index = () => {
     });
   }, [projects, searchTerm, statusFilter, entityFilter, partnerFilter, periodFilter, modifiedByFilter, modifiedDateFrom, modifiedDateTo]);
 
-  const handleUpdateProject = (id: string, updates: Partial<Project>) => {
+  const handleUpdateProject = async (id: string, updates: Partial<Project>) => {
     if (!user) {
       toast.error("Please log in to update projects");
       return;
@@ -190,7 +253,15 @@ const Index = () => {
         project.id === id ? { ...project, ...stamped } : project
       )
     );
-    toast.success("Project updated successfully");
+    try {
+      const saved = await api.updateProject(id, toApi({ ...updates }));
+      const mapped = fromApi(saved);
+      setProjects((prev) => prev.map((p) => (p.id === id ? mapped : p)));
+      toast.success("Project updated successfully");
+    } catch (err: any) {
+      console.error("Update project failed:", err);
+      toast.error(err?.message || "Failed to save project to server");
+    }
   };
 
   const handleExcelUpload = (newProjects: Project[]) => {
@@ -208,12 +279,20 @@ const Index = () => {
     setModifiedDateTo("");
   };
 
-  const handleAddProject = (projectData: Omit<Project, "id">) => {
-    const newProject: Project = {
-      ...projectData,
-      id: Date.now().toString(),
-    };
-    setProjects((prev) => [...prev, newProject]);
+  const handleAddProject = async (projectData: Omit<Project, "id">) => {
+    const tempId = `temp-${Date.now()}`;
+    const optimistic: Project = { ...projectData, id: tempId };
+    setProjects((prev) => [...prev, optimistic]);
+    try {
+      const saved = await api.createProject(toApi(projectData));
+      const mapped = fromApi(saved);
+      setProjects((prev) => prev.map((p) => (p.id === tempId ? mapped : p)));
+      toast.success("Activity added");
+    } catch (err: any) {
+      console.error("Create project failed:", err);
+      toast.error(err?.message || "Failed to save activity to server");
+      setProjects((prev) => prev.filter((p) => p.id !== tempId));
+    }
   };
 
   const completedCount = filteredProjects.filter((p) => p.status === "Completed").length;
