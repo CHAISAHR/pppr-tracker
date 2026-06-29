@@ -10,6 +10,8 @@ import { MeetingExcelTemplate } from "@/components/MeetingExcelTemplate";
 import { MeetingExcelUpload } from "@/components/MeetingExcelUpload";
 import { MeetingExcelExport } from "@/components/MeetingExcelExport";
 import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/services/api";
+import { toast } from "sonner";
 
 const Meetings = () => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -19,18 +21,19 @@ const Meetings = () => {
   const [editOpen, setEditOpen] = useState(false);
   const { user, isAdmin } = useAuth();
 
-  useEffect(() => {
-    const savedMeetings = localStorage.getItem("meetings");
-    if (savedMeetings) {
-      setMeetings(JSON.parse(savedMeetings));
+  const loadMeetings = async () => {
+    try {
+      const data = await api.getMeetings();
+      setMeetings(data as Meeting[]);
+    } catch (err) {
+      console.error("Failed to load meetings", err);
+      toast.error("Failed to load events from the server");
     }
-  }, []);
+  };
 
   useEffect(() => {
-    if (meetings.length > 0) {
-      localStorage.setItem("meetings", JSON.stringify(meetings));
-    }
-  }, [meetings]);
+    loadMeetings();
+  }, []);
 
   const handleMeetingClick = (meeting: Meeting) => {
     setSelectedMeeting(meeting);
@@ -43,17 +46,42 @@ const Meetings = () => {
     setEditOpen(true);
   };
 
-  const handleSaveMeeting = (updatedMeeting: Meeting) => {
-    setMeetings(meetings.map(m => m.id === updatedMeeting.id ? updatedMeeting : m));
+  const handleSaveMeeting = async (updatedMeeting: Meeting) => {
+    try {
+      const saved = await api.updateMeeting(updatedMeeting.id, updatedMeeting);
+      setMeetings(meetings.map(m => m.id === updatedMeeting.id ? (saved as Meeting) : m));
+      toast.success("Event updated");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update event");
+    }
   };
 
-  const handleAddMeeting = (newMeeting: Meeting) => {
-    setMeetings(prev => [...prev, newMeeting]);
+  const handleAddMeeting = async (newMeeting: Meeting) => {
+    try {
+      const saved = await api.createMeeting(newMeeting);
+      setMeetings(prev => [...prev, saved as Meeting]);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save event");
+    }
   };
 
-  const handleUploadMeetings = (uploadedMeetings: Meeting[]) => {
-    setMeetings(prev => [...prev, ...uploadedMeetings]);
+  const handleUploadMeetings = async (uploadedMeetings: Meeting[]) => {
+    try {
+      const { inserted, errors } = await api.bulkCreateMeetings(uploadedMeetings);
+      setMeetings(prev => [...prev, ...(inserted as Meeting[])]);
+      if (errors.length) {
+        toast.warning(`${inserted.length} added, ${errors.length} failed. First error: ${errors[0].message}`);
+      } else {
+        toast.success(`${inserted.length} events uploaded`);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Bulk upload failed");
+    }
   };
+
 
   const sortKey = (m: Meeting) => m.meetingDateFrom || m.meetingDate || m.meetingDateTo || "";
   const sortedMeetings = [...meetings].sort((a, b) =>

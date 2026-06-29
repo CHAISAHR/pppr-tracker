@@ -40,10 +40,28 @@ CREATE TABLE IF NOT EXISTS projects (
 -- 3. Meetings table
 CREATE TABLE IF NOT EXISTS meetings (
   id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
-  title VARCHAR(255) NULL,
-  description TEXT,
+  activity_id VARCHAR(255) NULL,
+  sub_activity_id VARCHAR(255) NULL,
+  quarter VARCHAR(50) NULL,
   meeting_date_from DATE NULL,
   meeting_date_to DATE NULL,
+  focus_area TEXT NULL,
+  implementing_entities JSON NULL,
+  delivery_partners JSON NULL,
+  key_objectives TEXT NULL,
+  format VARCHAR(50) NULL,
+  links TEXT NULL,
+  organiser_name VARCHAR(255) NULL,
+  organiser_email VARCHAR(255) NULL,
+  organiser_phone VARCHAR(100) NULL,
+  pre_survey_link TEXT NULL,
+  post_survey_link TEXT NULL,
+  pre_survey_qr_code LONGTEXT NULL,
+  post_survey_qr_code LONGTEXT NULL,
+  attachments TEXT NULL,
+  -- legacy columns kept for backwards compatibility
+  title VARCHAR(255) NULL,
+  description TEXT,
   time VARCHAR(50),
   venue VARCHAR(255),
   meeting_type VARCHAR(100),
@@ -56,6 +74,7 @@ CREATE TABLE IF NOT EXISTS meetings (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (created_by) REFERENCES users(id)
 );
+
 
 -- 4. Workshops table
 CREATE TABLE IF NOT EXISTS workshops (
