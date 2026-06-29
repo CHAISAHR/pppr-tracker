@@ -15,29 +15,26 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 2. Projects table
+-- 2. Projects table (aligned to Activity Tracker import template)
 CREATE TABLE IF NOT EXISTS projects (
   id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
-  title TEXT NOT NULL,
-  description TEXT,
-  status VARCHAR(50) NOT NULL DEFAULT 'active',
-  start_date DATE,
-  end_date DATE,
-  budget DECIMAL(15,2),
-  delivery_partners JSON,
-  country TEXT,
-  organisation TEXT,
-  comments TEXT,
-  activity_id TEXT,
-  sub_activity_id TEXT,
-  implementing_entity TEXT,
-  created_by CHAR(36),
-  modified_by CHAR(36),
-  modified_at DATETIME,
+  activity_id TEXT NULL,
+  activity_description TEXT NULL,
+  sub_activity_id TEXT NULL,
+  sub_activity_description TEXT NULL,
+  implementing_entity TEXT NULL,
+  delivery_partner TEXT NULL,
+  status VARCHAR(50) NULL DEFAULT 'Not Yet Started',
+  start_date DATE NULL,
+  end_date DATE NULL,
+  comments TEXT NULL,
+  created_by CHAR(36) NULL,
+  modified_by CHAR(36) NULL,
+  modified_at DATETIME NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (created_by) REFERENCES users(id),
-  FOREIGN KEY (modified_by) REFERENCES users(id)
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (modified_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- 3. Meetings table
