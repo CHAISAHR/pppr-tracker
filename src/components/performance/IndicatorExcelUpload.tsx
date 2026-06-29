@@ -34,33 +34,43 @@ export const IndicatorExcelUpload = ({ onSuccess }: IndicatorExcelUploadProps) =
         return;
       }
 
+      const toStr = (v: any) => {
+        if (v === undefined || v === null) return null;
+        const s = String(v).trim();
+        return s === "" ? null : s;
+      };
+      const toNum = (v: any) => {
+        if (v === undefined || v === null || v === "") return null;
+        const n = typeof v === "number" ? v : Number(String(v).replace(/[,\s$]/g, ""));
+        return Number.isFinite(n) ? n : null;
+      };
+
       const indicators = jsonData.map((row) => {
-        const responsibility = String(row["Responsibility for Implementation (Delivery Entity/Implementing Entity)"] || row["Responsibility for Implementation"] || row["responsibility"] || "");
-        
+        const responsibility = toStr(row["Responsibility for Implementation (Delivery Entity/Implementing Entity)"] ?? row["Responsibility for Implementation"] ?? row["responsibility"]);
         return {
-          country: String(row["Country"] || "") || null,
-          activity_id: String(row["Activity ID"] || row["activity_id"] || "") || null,
-          activity: String(row["Activity"] || "") || null,
-          long_term_outcome: String(row["Long-term Outcome"] || row["Long-term outcome"] || "") || null,
-          core_indicators: String(row["Core Indicator"] || row["Core indicator"] || row["core_indicators"] || "") || null,
-          workstream: String(row["Workstream"] || row["workstream"] || "") || null,
-          indicator_type: String(row["Indicator Type"] || row["Indicator type"] || "") || null,
-          name: String(row["Indicator Name"] || row["Indicator name"] || row["name"] || "Unnamed"),
-          indicator_definition: String(row["Indicator Definition"] || row["Indicator definition"] || "") || null,
-          naphs: String(row["NAPHS (Yes/No)"] || row["NAPHS"] || row["naphs"] || "") || null,
-          responsibility: responsibility || null,
-          organisation: String(row["Delivery Partner"] || row["Organisation Name"] || row["Organisation name"] || row["organisation"] || "") || null,
-          cost_usd: row["Cost US$"] || row["Cost USD"] ? Number(row["Cost US$"] || row["Cost USD"]) : null,
-          implementing_entity: String(row["Implementing Entity"] || row["Implementing entity"] || "") || null,
-          data_source: String(row["Data Source"] || row["Data source"] || "") || null,
-          unit: String(row["Unit"] || row["unit"] || "Number"),
-          baseline_proposal_year: row["Baseline Proposal Year"] ? String(row["Baseline Proposal Year"]) : null,
-          target_year_1: row["Target Year 1"] || row["Target Year 1 (proposal year)"] ? String(row["Target Year 1"] || row["Target Year 1 (proposal year)"]) : null,
-          target_year_2: row["Target Year 2"] ? String(row["Target Year 2"]) : null,
-          target_year_3: row["Target Year 3"] ? String(row["Target Year 3"]) : null,
-          target_year_4: row["Target Year 4"] ? String(row["Target Year 4"]) : null,
-          target_year_5: row["Target Year 5"] ? String(row["Target Year 5"]) : null,
-          target_year_6: row["Target Year 6"] ? String(row["Target Year 6"]) : null,
+          country: toStr(row["Country"]),
+          activity_id: toStr(row["Activity ID"] ?? row["activity_id"]),
+          activity: toStr(row["Activity"]),
+          long_term_outcome: toStr(row["Long-term Outcome"] ?? row["Long-term outcome"]),
+          core_indicators: toStr(row["Core Indicator"] ?? row["Core indicator"] ?? row["core_indicators"]),
+          workstream: toStr(row["Workstream"] ?? row["workstream"]),
+          indicator_type: toStr(row["Indicator Type"] ?? row["Indicator type"]),
+          name: toStr(row["Indicator Name"] ?? row["Indicator name"] ?? row["name"]) ?? "Unnamed",
+          indicator_definition: toStr(row["Indicator Definition"] ?? row["Indicator definition"]),
+          naphs: toStr(row["NAPHS (Yes/No)"] ?? row["NAPHS"] ?? row["naphs"]),
+          responsibility,
+          organisation: toStr(row["Delivery Partner"] ?? row["Organisation Name"] ?? row["Organisation name"] ?? row["organisation"]),
+          cost_usd: toNum(row["Cost US$"] ?? row["Cost USD"]),
+          implementing_entity: toStr(row["Implementing Entity"] ?? row["Implementing entity"]),
+          data_source: toStr(row["Data Source"] ?? row["Data source"]),
+          unit: toStr(row["Unit"] ?? row["unit"]) ?? "Number",
+          baseline_proposal_year: toStr(row["Baseline Proposal Year"]),
+          target_year_1: toStr(row["Target Year 1"] ?? row["Target Year 1 (proposal year)"]),
+          target_year_2: toStr(row["Target Year 2"]),
+          target_year_3: toStr(row["Target Year 3"]),
+          target_year_4: toStr(row["Target Year 4"]),
+          target_year_5: toStr(row["Target Year 5"]),
+          target_year_6: toStr(row["Target Year 6"]),
         };
       });
 
@@ -69,9 +79,9 @@ export const IndicatorExcelUpload = ({ onSuccess }: IndicatorExcelUploadProps) =
       toast.success(`Successfully imported ${indicators.length} indicators`);
       onSuccess();
       if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error importing indicators:", error);
-      toast.error("Failed to import indicators. Please check the format.");
+      toast.error(error?.message || "Failed to import indicators. Please check the format.");
     } finally {
       setLoading(false);
     }

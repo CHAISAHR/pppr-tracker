@@ -752,7 +752,14 @@ class ApiService {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to import indicators');
+      let msg = `Failed to import indicators (HTTP ${response.status})`;
+      try {
+        const err = await response.json();
+        if (err?.message) msg = err.message;
+      } catch {}
+      if (response.status === 401) msg = 'You must be signed in to import indicators.';
+      if (response.status === 403) msg = 'Only admins can bulk-import indicators.';
+      throw new Error(msg);
     }
 
     return response.json();
