@@ -25,7 +25,7 @@ const initialFormData = {
   target_year_2: "", target_year_3: "", target_year_4: "",
   target_year_5: "", target_year_6: "", year: "", target: "",
   q1: "", q2: "", q3: "", q4: "", evidence: "", description: "",
-  subactivity_id: "",
+  subactivity_id: "", comments: "",
 };
 
 export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicatorDialogProps) {
