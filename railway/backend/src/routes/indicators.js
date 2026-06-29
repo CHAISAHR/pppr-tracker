@@ -51,32 +51,42 @@ router.post('/bulk', authenticateToken, requireAdmin, async (req, res) => {
 
   try {
     const results = [];
-    for (const d of indicators) {
+    for (let i = 0; i < indicators.length; i++) {
+      const d = indicators[i];
       const id = crypto.randomUUID();
-      await pool.execute(
-        `INSERT INTO indicators (id, name, description, unit, country, workstream, organisation, implementing_entity,
-         activity_id, activity, long_term_outcome, core_indicators, indicator_type, indicator_definition,
-         naphs, responsibility, cost_usd, data_source, evidence, year, target, q1, q2, q3, q4, quarter_3,
-         annual_performance, baseline_proposal_year, target_year_1, target_year_2, target_year_3,
-         target_year_4, target_year_5, target_year_6, subactivity_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, d.name, d.description || null, d.unit, d.country || null, d.workstream || null, d.organisation || null,
-         d.implementing_entity || null, d.activity_id || null, d.activity || null, d.long_term_outcome || null,
-         d.core_indicators || null, d.indicator_type || null, d.indicator_definition || null,
-         d.naphs || null, d.responsibility || null, d.cost_usd || null, d.data_source || null, d.evidence || null,
-         d.year || null, d.target || null, d.q1 || null, d.q2 || null, d.q3 || null, d.q4 || null,
-         d.quarter_3 || null, d.annual_performance || null,
-         d.baseline_proposal_year || null, d.target_year_1 || null, d.target_year_2 || null,
-         d.target_year_3 || null, d.target_year_4 || null, d.target_year_5 || null, d.target_year_6 || null,
-         d.subactivity_id || null]
-      );
-      const [rows] = await pool.execute('SELECT * FROM indicators WHERE id = ?', [id]);
-      results.push(rows[0]);
+      try {
+        await pool.execute(
+          `INSERT INTO indicators (id, name, description, unit, country, workstream, organisation, implementing_entity,
+           activity_id, activity, long_term_outcome, core_indicators, indicator_type, indicator_definition,
+           naphs, responsibility, cost_usd, data_source, evidence, year, target, q1, q2, q3, q4, quarter_3,
+           annual_performance, baseline_proposal_year, target_year_1, target_year_2, target_year_3,
+           target_year_4, target_year_5, target_year_6, subactivity_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [id, d.name || 'Unnamed', d.description || null, d.unit || 'Number', d.country || null, d.workstream || null, d.organisation || null,
+           d.implementing_entity || null, d.activity_id || null, d.activity || null, d.long_term_outcome || null,
+           d.core_indicators || null, d.indicator_type || null, d.indicator_definition || null,
+           d.naphs || null, d.responsibility || null, d.cost_usd ?? null, d.data_source || null, d.evidence || null,
+           d.year || null, d.target ?? null, d.q1 ?? null, d.q2 ?? null, d.q3 ?? null, d.q4 ?? null,
+           d.quarter_3 ?? null, d.annual_performance ?? null,
+           d.baseline_proposal_year || null, d.target_year_1 || null, d.target_year_2 || null,
+           d.target_year_3 || null, d.target_year_4 || null, d.target_year_5 || null, d.target_year_6 || null,
+           d.subactivity_id || null]
+        );
+        const [rows] = await pool.execute('SELECT * FROM indicators WHERE id = ?', [id]);
+        results.push(rows[0]);
+      } catch (rowErr) {
+        console.error(`Bulk import row ${i + 1} failed:`, rowErr);
+        return res.status(400).json({
+          message: `Row ${i + 1} failed: ${rowErr.sqlMessage || rowErr.message}`,
+          row: i + 1,
+          code: rowErr.code,
+        });
+      }
     }
     res.status(201).json(results);
   } catch (error) {
     console.error('Bulk import error:', error);
-    res.status(500).json({ message: 'Failed to import indicators' });
+    res.status(500).json({ message: error.sqlMessage || error.message || 'Failed to import indicators' });
   }
 });
 
