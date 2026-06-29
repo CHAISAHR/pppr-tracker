@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+
+const STORAGE_KEY = "activity_tracker_projects";
 import { ProjectTable, type Project } from "@/components/ProjectTable";
 import { ProjectFilters } from "@/components/ProjectFilters";
 import { ExcelUpload } from "@/components/ExcelUpload";
@@ -81,7 +83,22 @@ const initialProjects: Project[] = [
 
 const Index = () => {
   const { user, isAdmin } = useAuth();
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as Project[];
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return initialProjects;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    } catch {}
+  }, [projects]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [entityFilter, setEntityFilter] = useState("all");
