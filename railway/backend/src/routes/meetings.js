@@ -4,22 +4,61 @@ const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Map a DB row to the API shape used by the frontend (camelCase + date range)
+const parseJson = (v, fallback) => {
+  if (v == null) return fallback;
+  if (typeof v !== 'string') return v;
+  try { return JSON.parse(v); } catch { return fallback; }
+};
+
+// Map a DB row to the API shape used by the frontend.
 const mapRow = (r) => ({
-  ...r,
-  meetingDateFrom: r.meeting_date_from || null,
-  meetingDateTo: r.meeting_date_to || null,
-  attendees: r.attendees
-    ? (typeof r.attendees === 'string' ? JSON.parse(r.attendees) : r.attendees)
-    : [],
+  id: r.id,
+  activityId: r.activity_id || '',
+  subActivityId: r.sub_activity_id || '',
+  quarter: r.quarter || '',
+  meetingDateFrom: r.meeting_date_from || undefined,
+  meetingDateTo: r.meeting_date_to || undefined,
+  focusArea: r.focus_area || '',
+  implementingEntities: parseJson(r.implementing_entities, []) || [],
+  deliveryPartners: parseJson(r.delivery_partners, []) || [],
+  keyObjectives: r.key_objectives || '',
+  format: r.format || 'Virtual',
+  links: r.links || undefined,
+  organiserName: r.organiser_name || undefined,
+  organiserEmail: r.organiser_email || undefined,
+  organiserPhone: r.organiser_phone || undefined,
+  preSurveyLink: r.pre_survey_link || undefined,
+  postSurveyLink: r.post_survey_link || undefined,
+  preSurveyQrCode: r.pre_survey_qr_code || undefined,
+  postSurveyQrCode: r.post_survey_qr_code || undefined,
+  attachments: r.attachments || undefined,
 });
 
-// Pull date range out of an incoming payload, accepting either the new
-// from/to fields or the legacy single `date` field (from older clients).
-const extractDates = (body) => {
-  const from = body.meetingDateFrom ?? body.meeting_date_from ?? body.date ?? null;
-  const to = body.meetingDateTo ?? body.meeting_date_to ?? null;
-  return { from: from || null, to: to || null };
+// Build the column/value pair for an incoming meeting payload.
+const buildFields = (body) => {
+  const dateFrom = body.meetingDateFrom ?? body.meeting_date_from ?? body.date ?? null;
+  const dateTo = body.meetingDateTo ?? body.meeting_date_to ?? null;
+  return {
+    activity_id: body.activityId ?? null,
+    sub_activity_id: body.subActivityId ?? null,
+    quarter: body.quarter ?? null,
+    meeting_date_from: dateFrom || null,
+    meeting_date_to: dateTo || null,
+    focus_area: body.focusArea ?? null,
+    implementing_entities: JSON.stringify(body.implementingEntities || []),
+    delivery_partners: JSON.stringify(body.deliveryPartners || []),
+    key_objectives: body.keyObjectives ?? null,
+    format: body.format ?? null,
+    links: body.links ?? null,
+    organiser_name: body.organiserName ?? null,
+    organiser_email: body.organiserEmail ?? null,
+    organiser_phone: body.organiserPhone ?? null,
+    pre_survey_link: body.preSurveyLink ?? null,
+    post_survey_link: body.postSurveyLink ?? null,
+    pre_survey_qr_code: body.preSurveyQrCode ?? null,
+    post_survey_qr_code: body.postSurveyQrCode ?? null,
+    attachments: body.attachments ?? null,
+  };
 };
 
 router.get('/', authenticateToken, async (req, res) => {
@@ -35,78 +74,60 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+const insertMeeting = async (pool, body, userId) => {
+  const f = buildFields(body);
+  const id = body.id || crypto.randomUUID();
+  const cols = ['id', ...Object.keys(f), 'created_by'];
+  const placeholders = cols.map(() => '?').join(', ');
+  const values = [id, ...Object.values(f), userId];
+  await pool.execute(
+    `INSERT INTO meetings (${cols.join(', ')}) VALUES (${placeholders})`,
+    values
+  );
+  const [rows] = await pool.execute('SELECT * FROM meetings WHERE id = ?', [id]);
+  return mapRow(rows[0]);
+};
+
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
-  const { title, description, time, venue, meeting_type, attendees, minutes, action_items, status } = req.body;
-  const { from, to } = extractDates(req.body);
-  const id = crypto.randomUUID();
-
   try {
-    await pool.execute(
-      `INSERT INTO meetings
-        (id, title, description, meeting_date_from, meeting_date_to, time, venue, meeting_type, attendees, minutes, action_items, status, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id,
-        title || null,
-        description || null,
-        from,
-        to,
-        time || null,
-        venue || null,
-        meeting_type || null,
-        JSON.stringify(attendees || []),
-        minutes || null,
-        action_items || null,
-        status || 'scheduled',
-        req.user.id,
-      ]
-    );
-    const [rows] = await pool.execute('SELECT * FROM meetings WHERE id = ?', [id]);
-    res.status(201).json(mapRow(rows[0]));
+    const meeting = await insertMeeting(pool, req.body, req.user.id);
+    res.status(201).json(meeting);
   } catch (error) {
     console.error('Create meeting error:', error);
     res.status(500).json({ message: 'Failed to create meeting' });
   }
 });
 
+// Bulk insert used by the Excel upload — one round-trip per row in a single request.
+router.post('/bulk', authenticateToken, async (req, res) => {
+  const pool = req.app.locals.pool;
+  const items = Array.isArray(req.body) ? req.body : req.body?.meetings;
+  if (!Array.isArray(items)) {
+    return res.status(400).json({ message: 'Expected an array of meetings' });
+  }
+  const inserted = [];
+  const errors = [];
+  for (let i = 0; i < items.length; i++) {
+    try {
+      inserted.push(await insertMeeting(pool, items[i], req.user.id));
+    } catch (e) {
+      console.error('Bulk meeting row error:', e);
+      errors.push({ row: i + 1, message: e.message });
+    }
+  }
+  res.status(errors.length ? 207 : 201).json({ inserted, errors });
+});
+
 router.put('/:id', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
   const { id } = req.params;
-  const { title, description, time, venue, meeting_type, attendees, minutes, action_items, status } = req.body;
-  const hasFrom = 'meetingDateFrom' in req.body || 'meeting_date_from' in req.body || 'date' in req.body;
-  const hasTo = 'meetingDateTo' in req.body || 'meeting_date_to' in req.body;
-  const { from, to } = extractDates(req.body);
-
+  const f = buildFields(req.body);
+  const setClause = Object.keys(f).map((k) => `${k} = ?`).join(', ');
   try {
     await pool.execute(
-      `UPDATE meetings SET
-         title = COALESCE(?, title),
-         description = COALESCE(?, description),
-         meeting_date_from = CASE WHEN ? THEN ? ELSE meeting_date_from END,
-         meeting_date_to = CASE WHEN ? THEN ? ELSE meeting_date_to END,
-         time = COALESCE(?, time),
-         venue = COALESCE(?, venue),
-         meeting_type = COALESCE(?, meeting_type),
-         attendees = COALESCE(?, attendees),
-         minutes = COALESCE(?, minutes),
-         action_items = COALESCE(?, action_items),
-         status = COALESCE(?, status)
-       WHERE id = ?`,
-      [
-        title ?? null,
-        description ?? null,
-        hasFrom ? 1 : 0, from,
-        hasTo ? 1 : 0, to,
-        time ?? null,
-        venue ?? null,
-        meeting_type ?? null,
-        attendees ? JSON.stringify(attendees) : null,
-        minutes ?? null,
-        action_items ?? null,
-        status ?? null,
-        id,
-      ]
+      `UPDATE meetings SET ${setClause} WHERE id = ?`,
+      [...Object.values(f), id]
     );
     const [rows] = await pool.execute('SELECT * FROM meetings WHERE id = ?', [id]);
     if (rows.length === 0) return res.status(404).json({ message: 'Meeting not found' });
