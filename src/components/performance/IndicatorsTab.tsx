@@ -8,6 +8,7 @@ import { Pencil, Trash2, Loader2, ExternalLink, Download, Search, X } from "luci
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { EditIndicatorDialog } from "./EditIndicatorDialog";
+import { IndicatorDetailsDialog } from "./IndicatorDetailsDialog";
 import * as XLSX from "xlsx";
 
 export interface Indicator {
