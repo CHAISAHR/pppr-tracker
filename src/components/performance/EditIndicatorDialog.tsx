@@ -34,6 +34,7 @@ export function EditIndicatorDialog({ indicator, open, onOpenChange, onSuccess }
       implementing_entity: ind.implementing_entity || "",
       data_source: ind.data_source || "", unit: ind.unit,
       subactivity_id: ind.subactivity_id || "", description: ind.description || "",
+      comments: ind.comments || "",
       baseline_proposal_year: ind.baseline_proposal_year || "",
       quarter_3: ind.quarter_3?.toString() || "",
       target_year_1: ind.target_year_1 || "",
