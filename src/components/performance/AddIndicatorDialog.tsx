@@ -267,6 +267,11 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
               <Textarea value={formData.description} onChange={e => update("description", e.target.value)} placeholder="Brief description" rows={2} />
             </div>
 
+            <div className="space-y-2">
+              <Label>Comments</Label>
+              <Textarea value={formData.comments} onChange={e => update("comments", e.target.value)} placeholder="Add any comments or notes" rows={2} />
+            </div>
+
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
               <Button type="submit" disabled={loading}>
