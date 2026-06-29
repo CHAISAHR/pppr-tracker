@@ -8,9 +8,9 @@ const INSERT_SQL = `INSERT INTO indicators (
   id, name, description, unit, country, workstream, organisation, implementing_entity,
   activity_id, activity, long_term_outcome, core_indicators, indicator_type, indicator_definition,
   naphs, responsibility, cost_usd, data_source, evidence, year, target, q1, q2, q3, q4, quarter_3,
-  annual_performance, baseline_proposal_year, target_year_1, target_year_2, target_year_3,
+  annual_performance, comments, baseline_proposal_year, target_year_1, target_year_2, target_year_3,
   target_year_4, target_year_5, target_year_6, subactivity_id, created_by
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
 function insertParams(id, d, userId) {
   return [
@@ -41,6 +41,7 @@ function insertParams(id, d, userId) {
     d.q4 ?? null,
     d.quarter_3 ?? null,
     d.annual_performance ?? null,
+    d.comments || null,
     d.baseline_proposal_year || null,
     d.target_year_1 || null,
     d.target_year_2 || null,
@@ -129,7 +130,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
         data_source = COALESCE(?, data_source), evidence = COALESCE(?, evidence),
         year = COALESCE(?, year), target = COALESCE(?, target),
         q1 = COALESCE(?, q1), q2 = COALESCE(?, q2), q3 = COALESCE(?, q3), q4 = COALESCE(?, q4),
-        annual_performance = COALESCE(?, annual_performance),
+        annual_performance = COALESCE(?, annual_performance), comments = COALESCE(?, comments),
         baseline_proposal_year = COALESCE(?, baseline_proposal_year),
         target_year_1 = COALESCE(?, target_year_1), target_year_2 = COALESCE(?, target_year_2),
         target_year_3 = COALESCE(?, target_year_3), target_year_4 = COALESCE(?, target_year_4),
@@ -141,7 +142,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
        d.core_indicators, d.indicator_type, d.indicator_definition, d.naphs,
        d.responsibility, d.cost_usd ?? null, d.data_source, d.evidence,
        d.year, d.target ?? null, d.q1 ?? null, d.q2 ?? null, d.q3 ?? null, d.q4 ?? null,
-       d.annual_performance ?? null,
+       d.annual_performance ?? null, d.comments || null,
        d.baseline_proposal_year, d.target_year_1, d.target_year_2,
        d.target_year_3, d.target_year_4, d.target_year_5, d.target_year_6,
        req.user?.id || null, id]

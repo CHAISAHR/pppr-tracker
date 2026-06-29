@@ -44,6 +44,7 @@ CREATE TABLE indicators (
   q4 DECIMAL(15,2) NULL,
   quarter_3 DECIMAL(15,2) NULL,
   annual_performance DECIMAL(15,2) NULL,
+  comments TEXT NULL,
   -- Audit trail
   created_by CHAR(36) NULL,
   modified_by CHAR(36) NULL,

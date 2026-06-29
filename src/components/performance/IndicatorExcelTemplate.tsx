@@ -29,6 +29,7 @@ export const IndicatorExcelTemplate = () => {
         "Target Year 4": "250 trained",
         "Target Year 5": "300 trained",
         "Target Year 6": "350 trained",
+        "Comments": "Example comments",
       },
     ];
 
@@ -42,7 +43,7 @@ export const IndicatorExcelTemplate = () => {
       { wch: 35 }, { wch: 14 }, { wch: 45 }, { wch: 20 },
       { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 20 },
       { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-      { wch: 15 }, { wch: 15 },
+      { wch: 15 }, { wch: 15 }, { wch: 30 },
     ];
 
     XLSX.writeFile(workbook, "indicators_template.xlsx");
