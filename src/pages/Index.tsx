@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+
+const STORAGE_KEY = "activity_tracker_projects";
 import { ProjectTable, type Project } from "@/components/ProjectTable";
 import { ProjectFilters } from "@/components/ProjectFilters";
 import { ExcelUpload } from "@/components/ExcelUpload";
