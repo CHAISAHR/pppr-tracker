@@ -41,6 +41,7 @@ function insertParams(id, d, userId) {
     d.q4 ?? null,
     d.quarter_3 ?? null,
     d.annual_performance ?? null,
+    d.comments || null,
     d.baseline_proposal_year || null,
     d.target_year_1 || null,
     d.target_year_2 || null,
