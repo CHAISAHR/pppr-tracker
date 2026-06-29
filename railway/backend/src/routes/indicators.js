@@ -8,9 +8,9 @@ const INSERT_SQL = `INSERT INTO indicators (
   id, name, description, unit, country, workstream, organisation, implementing_entity,
   activity_id, activity, long_term_outcome, core_indicators, indicator_type, indicator_definition,
   naphs, responsibility, cost_usd, data_source, evidence, year, target, q1, q2, q3, q4, quarter_3,
-  annual_performance, baseline_proposal_year, target_year_1, target_year_2, target_year_3,
+  annual_performance, comments, baseline_proposal_year, target_year_1, target_year_2, target_year_3,
   target_year_4, target_year_5, target_year_6, subactivity_id, created_by
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
 function insertParams(id, d, userId) {
   return [
