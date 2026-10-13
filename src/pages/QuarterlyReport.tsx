@@ -75,6 +75,8 @@ export default function QuarterlyReport() {
           {admin && <Button onClick={() => setCreateOpen(true)} className="gap-2"><Plus className="h-4 w-4" />New Report</Button>}
         </div>
 
+        {admin && !loading && <SubmissionDashboard reports={reports.filter((r) => r.status === "Published")} onOpen={setActive} />}
+
         {loading ? <p className="text-muted-foreground">Loading…</p> : reports.length === 0 ? (
           <div className="rounded-xl border border-border bg-card p-10 text-center text-muted-foreground">
             {admin ? "No quarterly reports yet. Create one, then publish it so organisations can respond." : "No quarterly report has been published yet."}
@@ -270,5 +272,59 @@ function ReportWorkspace({ report, onBack, admin, userName, organisation }: { re
         ) : form}
       </div>
     </div>
+  );
+}
+
+type Progress = "Not started" | "Draft" | "Submitted";
+function SubmissionDashboard({ reports, onOpen }: { reports: Report[]; onOpen: (r: Report) => void }) {
+  const [orgs, setOrgs] = useState<string[]>([]);
+  const [byReport, setByReport] = useState<Record<string, ResponseRec[]>>({});
+  useEffect(() => {
+    api.getOrganisations().then((o) => setOrgs(Array.from(new Set(o.map((x: any) => x.name).filter(Boolean))).sort() as string[])).catch(() => {});
+  }, []);
+  useEffect(() => {
+    Promise.all(reports.map((r) => api.getQuarterlyResponses(r.id, true).then((x) => [r.id, x] as const).catch(() => [r.id, []] as const)))
+      .then((pairs) => setByReport(Object.fromEntries(pairs)));
+  }, [reports.map((r) => r.id).join()]);
+
+  if (!reports.length) return null;
+  const cols: { key: Progress; tone: string }[] = [
+    { key: "Not started", tone: "bg-destructive/10 text-destructive" },
+    { key: "Draft", tone: "bg-accent/20 text-foreground" },
+    { key: "Submitted", tone: "bg-primary/10 text-primary" },
+  ];
+  return (
+    <section className="space-y-4">
+      <h2 className="text-lg font-semibold text-foreground">Submission dashboard</h2>
+      {reports.map((r) => {
+        const resp = byReport[r.id] || [];
+        const all = Array.from(new Set([...orgs, ...resp.map((x) => x.organisation)])).sort();
+        const statusOf = (o: string): Progress => { const x = resp.find((y) => y.organisation === o); return x ? (x.status === "Submitted" ? "Submitted" : "Draft") : "Not started"; };
+        const groups = Object.fromEntries(cols.map((c) => [c.key, all.filter((o) => statusOf(o) === c.key)])) as Record<Progress, string[]>;
+        const pct = all.length ? Math.round((groups.Submitted.length / all.length) * 100) : 0;
+        return (
+          <div key={r.id} className="rounded-xl border border-border bg-card p-5 shadow-card space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 className="font-semibold text-foreground">{r.title}</h3>
+                <p className="text-xs text-muted-foreground">{groups.Submitted.length} of {all.length} organisations submitted{r.dueDate ? ` · due ${new Date(r.dueDate).toLocaleDateString()}` : ""}</p>
+              </div>
+              <Button size="sm" variant="outline" onClick={() => onOpen(r)}>View responses</Button>
+            </div>
+            <div className="h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary" style={{ width: `${pct}%` }} /></div>
+            <div className="grid gap-3 md:grid-cols-3">
+              {cols.map((c) => (
+                <div key={c.key} className="rounded-lg border border-border">
+                  <div className={`px-3 py-2 rounded-t-lg text-sm font-medium flex justify-between ${c.tone}`}><span>{c.key}</span><span>{groups[c.key].length}</span></div>
+                  <ul className="p-3 space-y-1 text-sm max-h-48 overflow-y-auto">
+                    {groups[c.key].length ? groups[c.key].map((o) => <li key={o} className="text-foreground">{o}</li>) : <li className="text-muted-foreground">None</li>}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </section>
   );
 }
