@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3, FileText, GraduationCap, ShieldAlert, ClipboardList } from "lucide-react";
+import { Home, Calendar, Users, LogOut, Building2, TrendingUp, Settings, BarChart3, FileText, GraduationCap, ShieldAlert, ClipboardList, ClipboardCheck } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 import logo from "@/assets/logo.png";
 
 const items = [
@@ -38,6 +40,15 @@ export function AppSidebar() {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  // Quarterly Report only appears for non-admins once an admin has published one.
+  const [hasPublished, setHasPublished] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    api.getQuarterlyReports(isAdmin()).then((r) => setHasPublished(r.some((x: any) => x.status === "Published"))).catch(() => {});
+  }, [user, location.pathname]);
+  const navItems = isAdmin() || hasPublished
+    ? [...items, { title: "Quarterly Report", url: "/quarterly-report", icon: ClipboardCheck }]
+    : items;
 
   const handleLogout = async () => {
     await logout();
@@ -70,7 +81,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
+              {navItems.map((item) => {
                 const isActive = location.pathname === item.url || 
                   (item.url !== "/" && location.pathname.startsWith(item.url));
                 return (

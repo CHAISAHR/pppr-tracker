@@ -29,6 +29,7 @@ import Organisations from "./pages/Organisations";
 import Documents from "./pages/Documents";
 import Auth from "./pages/Auth";
 import RiskRegister from "./pages/RiskRegister";
+import QuarterlyReport from "./pages/QuarterlyReport";
 import MEActivityTracker from "./pages/MEActivityTracker";
 import NotFound from "./pages/NotFound";
 
@@ -104,6 +105,7 @@ function AppContent() {
               <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
               <Route path="/meetings" element={<ProtectedRoute><Meetings /></ProtectedRoute>} />
               <Route path="/risk-register" element={<ProtectedRoute><RiskRegister /></ProtectedRoute>} />
+              <Route path="/quarterly-report" element={<ProtectedRoute><QuarterlyReport /></ProtectedRoute>} />
               <Route path="/me-activity-tracker" element={<ProtectedRoute requireAdmin><MEActivityTracker /></ProtectedRoute>} />
               <Route path="/capacity" element={<ProtectedRoute requireAdmin><Capacity /></ProtectedRoute>} />
               <Route path="/organisations" element={<ProtectedRoute><Organisations /></ProtectedRoute>} />
