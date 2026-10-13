@@ -312,3 +312,4 @@ CREATE INDEX idx_me_activities_status ON me_activities(status);
 
 -- 2026-10-07: per-year quarterly + annual actuals (JSON text)
 -- ALTER TABLE indicators ADD COLUMN yearly_performance TEXT NULL;
+
