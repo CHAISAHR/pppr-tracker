@@ -1,0 +1,1 @@
+- Quarterly Report questions live in `src/lib/quarterlyReport.ts` (not the DB); responses store answers as JSON keyed by question id, one row per organisation per report — keeps the form editable without migrations.

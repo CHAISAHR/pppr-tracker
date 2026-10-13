@@ -1077,6 +1077,44 @@ class ApiService {
     });
     if (!response.ok) throw new Error('Failed to delete M&E activity');
   }
+  // ==================== Quarterly Reports ====================
+  private mockGet(key: string): any[] { const s = localStorage.getItem(key); return s ? JSON.parse(s) : []; }
+  private mockSet(key: string, v: any[]) { localStorage.setItem(key, JSON.stringify(v)); }
+  private async req(path: string, method = 'GET', body?: any): Promise<any> {
+    const r = await fetch(`${BASE_URL}${path}`, { method, headers: this.getAuthHeaders(), body: body ? JSON.stringify(body) : undefined });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.message || 'Request failed'); }
+    return r.json();
+  }
+  async getQuarterlyReports(isAdmin: boolean): Promise<any[]> {
+    if (MOCK_MODE) { const all = this.mockGet('mock_qreports'); return isAdmin ? all : all.filter((r: any) => r.status === 'Published'); }
+    return this.req('/quarterly-reports');
+  }
+  async createQuarterlyReport(data: any): Promise<any> {
+    if (MOCK_MODE) { const r = { id: crypto.randomUUID(), status: 'Draft', createdAt: new Date().toISOString(), ...data }; this.mockSet('mock_qreports', [r, ...this.mockGet('mock_qreports')]); return r; }
+    return this.req('/quarterly-reports', 'POST', data);
+  }
+  async updateQuarterlyReport(id: string, data: any): Promise<any> {
+    if (MOCK_MODE) { const all = this.mockGet('mock_qreports').map((r: any) => r.id === id ? { ...r, ...data, publishedAt: data.status === 'Published' && r.status !== 'Published' ? new Date().toISOString() : r.publishedAt } : r); this.mockSet('mock_qreports', all); return all.find((r: any) => r.id === id); }
+    return this.req(`/quarterly-reports/${id}`, 'PUT', data);
+  }
+  async deleteQuarterlyReport(id: string): Promise<void> {
+    if (MOCK_MODE) { this.mockSet('mock_qreports', this.mockGet('mock_qreports').filter((r: any) => r.id !== id)); return; }
+    await this.req(`/quarterly-reports/${id}`, 'DELETE');
+  }
+  async getQuarterlyResponses(reportId: string, isAdmin: boolean, organisation?: string): Promise<any[]> {
+    if (MOCK_MODE) { const all = this.mockGet('mock_qresponses').filter((r: any) => r.reportId === reportId); return isAdmin ? all : all.filter((r: any) => r.organisation === (organisation || 'My organisation')); }
+    return this.req(`/quarterly-reports/${reportId}/responses`);
+  }
+  async saveQuarterlyResponse(reportId: string, data: { organisation?: string; answers: any; status: string; submittedBy?: string }): Promise<any> {
+    if (MOCK_MODE) {
+      const all = this.mockGet('mock_qresponses');
+      const org = data.organisation || 'My organisation';
+      const rec = { id: crypto.randomUUID(), reportId, ...data, organisation: org, submittedAt: data.status === 'Submitted' ? new Date().toISOString() : null, updatedAt: new Date().toISOString() };
+      this.mockSet('mock_qresponses', [...all.filter((r: any) => !(r.reportId === reportId && r.organisation === org)), rec]);
+      return rec;
+    }
+    return this.req(`/quarterly-reports/${reportId}/responses`, 'PUT', data);
+  }
 }
 
 export const api = new ApiService();

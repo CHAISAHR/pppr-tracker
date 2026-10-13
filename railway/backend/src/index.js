@@ -13,6 +13,7 @@ const userRequestsRoutes = require('./routes/userRequests');
 const capacityAssessmentsRoutes = require('./routes/capacityAssessments');
 const orgLogosRoutes = require('./routes/orgLogos');
 const risksRoutes = require('./routes/risks');
+const quarterlyReportsRoutes = require('./routes/quarterlyReports');
 const meActivitiesRoutes = require('./routes/meActivities');
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/api/user-requests', userRequestsRoutes);
 app.use('/api/capacity-assessments', capacityAssessmentsRoutes);
 app.use('/api/org-logos', orgLogosRoutes);
 app.use('/api/risks', risksRoutes);
+app.use('/api/quarterly-reports', quarterlyReportsRoutes);
 app.use('/api/me-activities', meActivitiesRoutes);
 
 // Health check
