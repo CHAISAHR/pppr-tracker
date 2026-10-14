@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { ensureOrgAccess } = require('../lib/orgAccess');
 
 const router = express.Router();
 
@@ -28,6 +29,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
+  if (!(await ensureOrgAccess(req, res, [req.body.implementing_entity, req.body.delivery_partner]))) return;
   const {
     activity_id, activity_description, sub_activity_id, sub_activity_description,
     implementing_entity, delivery_partner, status, start_date, end_date, comments, challenges, data_links,
@@ -66,6 +68,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
   } = req.body;
 
   try {
+    const [cur] = await pool.execute('SELECT implementing_entity, delivery_partner FROM projects WHERE id = ?', [id]);
+    if (cur.length === 0) return res.status(404).json({ message: 'Project not found' });
+    if (!(await ensureOrgAccess(req, res, [cur[0].implementing_entity, cur[0].delivery_partner]))) return;
+    if (req.user.role !== 'admin' && (implementing_entity != null || delivery_partner != null) &&
+        !(await ensureOrgAccess(req, res, [implementing_entity ?? cur[0].implementing_entity, delivery_partner ?? cur[0].delivery_partner]))) return;
     await pool.execute(
       `UPDATE projects SET
          activity_id = COALESCE(?, activity_id),

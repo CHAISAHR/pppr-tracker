@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { ensureOrgAccess } = require('../lib/orgAccess');
 
 const router = express.Router();
 
@@ -77,6 +78,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
+  if (!(await ensureOrgAccess(req, res, [req.body.organisation, req.body.implementing_entity]))) return;
   const id = crypto.randomUUID();
   try {
     await pool.execute(INSERT_SQL, insertParams(id, req.body, req.user?.id));
@@ -120,6 +122,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const d = req.body;
   try {
+    const [cur] = await pool.execute('SELECT organisation, implementing_entity FROM indicators WHERE id = ?', [id]);
+    if (cur.length === 0) return res.status(404).json({ message: 'Indicator not found' });
+    if (!(await ensureOrgAccess(req, res, [cur[0].organisation, cur[0].implementing_entity]))) return;
+    if (req.user.role !== 'admin' && (d.organisation != null || d.implementing_entity != null) &&
+        !(await ensureOrgAccess(req, res, [d.organisation ?? cur[0].organisation, d.implementing_entity ?? cur[0].implementing_entity]))) return;
     await pool.execute(
       `UPDATE indicators SET
         name = COALESCE(?, name), description = COALESCE(?, description), unit = COALESCE(?, unit),

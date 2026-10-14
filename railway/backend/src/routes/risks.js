@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { ensureOrgAccess } = require('../lib/orgAccess');
 
 const router = express.Router();
 
@@ -84,6 +85,7 @@ const insertRisk = async (pool, body, userId) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
+  if (!(await ensureOrgAccess(req, res, [req.body.organisation ?? req.body.organization]))) return;
   try {
     const risk = await insertRisk(pool, req.body, req.user.id);
     res.status(201).json(risk);
@@ -118,6 +120,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
   const f = buildFields(req.body);
   const setClause = [...Object.keys(f).map((k) => `${k} = ?`), 'modified_by = ?'].join(', ');
   try {
+    const [cur] = await pool.execute('SELECT organisation FROM risks WHERE id = ?', [id]);
+    if (cur.length === 0) return res.status(404).json({ message: 'Risk not found' });
+    if (!(await ensureOrgAccess(req, res, [cur[0].organisation]))) return;
+    if (!(await ensureOrgAccess(req, res, [f.organisation ?? cur[0].organisation]))) return;
     await pool.execute(
       `UPDATE risks SET ${setClause} WHERE id = ?`,
       [...Object.values(f), req.user.id, id]
