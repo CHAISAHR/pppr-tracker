@@ -9,9 +9,10 @@ export const CapacityExcelTemplate = () => {
       {
         "Event Name": "Example training event",
         "Event Date": "2026-03-15",
-        "Focus Area": "Climate adaptation",
-        "Sector": "Agriculture",
+        "Focus Area": "Workforce",
+        "Department": "DOH",
         "Participant Name": "Jane Doe",
+        "Email": "jane@example.org",
         "Competency": "Data Analysis",
         "Score Before": 3,
         "Score After": 5,
@@ -19,9 +20,10 @@ export const CapacityExcelTemplate = () => {
       {
         "Event Name": "Example training event",
         "Event Date": "2026-03-15",
-        "Focus Area": "Climate adaptation",
-        "Sector": "Agriculture",
+        "Focus Area": "Workforce",
+        "Department": "DOH",
         "Participant Name": "Jane Doe",
+        "Email": "jane@example.org",
         "Competency": "Report Writing",
         "Score Before": 2,
         "Score After": 4,
@@ -30,8 +32,8 @@ export const CapacityExcelTemplate = () => {
 
     const ws = XLSX.utils.json_to_sheet(sample);
     ws["!cols"] = [
-      { wch: 30 }, { wch: 12 }, { wch: 25 }, { wch: 20 },
-      { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 12 },
+      { wch: 30 }, { wch: 12 }, { wch: 15 }, { wch: 12 },
+      { wch: 25 }, { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 12 },
     ];
 
     const instructions = [
@@ -43,9 +45,10 @@ export const CapacityExcelTemplate = () => {
       ["Columns:"],
       ["Event Name", "Name of the event"],
       ["Event Date", "YYYY-MM-DD format"],
-      ["Focus Area", "Thematic focus area of the event"],
-      ["Sector", "Sector (e.g. Agriculture, Health, Education)"],
+      ["Focus Area", "One of: Workforce, Labs, Surveillance"],
+      ["Department", "One of: DOA, DOH, DFFE"],
       ["Participant Name", "Full name of the participant"],
+      ["Email", "Participant's email address"],
       ["Competency", "The skill / competency being assessed"],
       ["Score Before", "Numeric score before the training"],
       ["Score After", "Numeric score after the training"],
