@@ -27,6 +27,7 @@ const Meetings = () => {
   const [reportOpen, setReportOpen] = useState(false);
   const { user, isAdmin, canEditOrg } = useAuth();
   const canEditMeeting = (m: Meeting) => canEditOrg(m.implementingEntities, m.deliveryPartners);
+  const [view, setView] = useState<"cards" | "table">("cards");
 
   const loadMeetings = async () => {
     try {
