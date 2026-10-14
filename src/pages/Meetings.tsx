@@ -108,6 +108,21 @@ const Meetings = () => {
     new Date(sortKey(a)).getTime() - new Date(sortKey(b)).getTime()
   );
 
+  const { sorted: tableMeetings, SortHead } = useTableSort<Meeting>(meetings, {
+    initialKey: "date",
+    initialDir: "asc",
+    getters: {
+      date: (m) => sortKey(m),
+      focusArea: (m) => m.focusArea,
+      quarter: (m) => m.quarter,
+      format: (m) => m.format,
+      implementingEntities: (m) => m.implementingEntities.join(", "),
+      deliveryPartners: (m) => m.deliveryPartners.join(", "),
+      report: (m) => reportStatus(m),
+      attendees: (m) => totalAttendees(m.reportBack) ?? "",
+    },
+  });
+
   return (
     <div className="min-h-full bg-background">
       <div className="container mx-auto py-8 px-4 sm:px-6 space-y-6">
