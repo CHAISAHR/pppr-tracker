@@ -989,6 +989,51 @@ class ApiService {
     return response.json();
   }
 
+  // ---- Deletion requests: general users ask, admins approve (deletes) or reject ----
+  async requestDeletion(data: { recordType: 'project' | 'indicator' | 'risk' | 'meeting'; recordId: string; recordLabel: string; reason: string }): Promise<void> {
+    if (MOCK_MODE) {
+      const all = JSON.parse(localStorage.getItem('mock_deletion_requests') || '[]');
+      if (all.some((r: any) => r.recordType === data.recordType && r.recordId === data.recordId)) {
+        throw new Error('A deletion request for this record is already pending');
+      }
+      const me = JSON.parse(localStorage.getItem('mock_current_user') || '{}');
+      all.unshift({ ...data, id: crypto.randomUUID(), requestedByName: me.name, organisation: me.organization, status: 'pending', requestedAt: new Date().toISOString() });
+      localStorage.setItem('mock_deletion_requests', JSON.stringify(all));
+      return;
+    }
+    const response = await fetch(`${BASE_URL}/deletion-requests`, {
+      method: 'POST', headers: this.getAuthHeaders(), body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to submit deletion request');
+    }
+  }
+
+  async getDeletionRequests(): Promise<any[]> {
+    if (MOCK_MODE) return JSON.parse(localStorage.getItem('mock_deletion_requests') || '[]');
+    const response = await fetch(`${BASE_URL}/deletion-requests`, { headers: this.getAuthHeaders() });
+    if (!response.ok) throw new Error('Failed to fetch deletion requests');
+    return response.json();
+  }
+
+  async reviewDeletionRequest(id: string, action: 'approve' | 'reject'): Promise<void> {
+    if (MOCK_MODE) {
+      const all = JSON.parse(localStorage.getItem('mock_deletion_requests') || '[]');
+      const req = all.find((r: any) => r.id === id);
+      if (req && action === 'approve') {
+        const del = { project: this.deleteProject, indicator: this.deleteIndicator, risk: this.deleteRisk, meeting: this.deleteMeeting }[req.recordType as string];
+        if (del) await del.call(this, req.recordId);
+      }
+      localStorage.setItem('mock_deletion_requests', JSON.stringify(all.filter((r: any) => r.id !== id)));
+      return;
+    }
+    const response = await fetch(`${BASE_URL}/deletion-requests/${id}`, {
+      method: 'PUT', headers: this.getAuthHeaders(), body: JSON.stringify({ action }),
+    });
+    if (!response.ok) throw new Error('Failed to review deletion request');
+  }
+
   async deleteRisk(id: string): Promise<void> {
     if (MOCK_MODE) {
       const stored = localStorage.getItem('mock_risks');
