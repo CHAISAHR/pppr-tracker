@@ -51,7 +51,7 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
   const handleEditClick = (project: Project, e: React.MouseEvent) => {
     e.stopPropagation();
     if (readOnly) return;
-    const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
+    const deliveryPartners = [project.deliveryPartner, project.implementingEntity];
     if (canEditProject(deliveryPartners)) {
       setEditingProject(project);
     }
@@ -138,7 +138,7 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
         canUpdate={
           !readOnly &&
           !!viewingProject &&
-          canEditProject(viewingProject.deliveryPartner.split(';').map((p) => p.trim()))
+          canEditProject([viewingProject.deliveryPartner, viewingProject.implementingEntity])
         }
         onUpdate={() => {
           if (!viewingProject) return;

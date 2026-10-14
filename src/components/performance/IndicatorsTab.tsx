@@ -71,7 +71,7 @@ interface IndicatorsTabProps {
 }
 
 export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, canEditOrg } = useAuth();
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(null);
@@ -421,9 +421,11 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
                   {user && (
                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => setEditingIndicator(ind)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
+                        {canEditOrg(ind.organisation, ind.implementing_entity) && (
+                          <Button variant="ghost" size="sm" onClick={() => setEditingIndicator(ind)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        )}
                         {isAdmin() && (
                           <Button variant="ghost" size="sm" onClick={() => handleDelete(ind.id)}>
                             <Trash2 className="h-4 w-4 text-destructive" />

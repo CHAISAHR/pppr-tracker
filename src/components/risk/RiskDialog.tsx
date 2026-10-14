@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import { Risk, RISK_STATUSES, scoreLevel } from "./risk-types";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Props {
   risk?: Risk | null;
@@ -39,6 +40,8 @@ export const RiskDialog = ({ risk, open, onOpenChange, onSave, trigger }: Props)
 
   const [form, setForm] = useState<Risk>(empty);
   const [saving, setSaving] = useState(false);
+  const { user, isAdmin } = useAuth();
+  const lockedOrg = !isAdmin() ? user?.organization || "" : null;
   const [orgs, setOrgs] = useState<string[]>([]);
 
   useEffect(() => {
@@ -50,7 +53,7 @@ export const RiskDialog = ({ risk, open, onOpenChange, onSave, trigger }: Props)
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen) setForm(risk ? { ...empty, ...risk } : { ...empty });
+    if (isOpen) setForm(risk ? { ...empty, ...risk } : { ...empty, organisation: lockedOrg ?? "" });
   }, [isOpen, risk]);
 
 
@@ -92,9 +95,10 @@ export const RiskDialog = ({ risk, open, onOpenChange, onSave, trigger }: Props)
             </div>
             <div className="space-y-2">
               <Label>Organisation</Label>
-              <Select value={form.organisation || ""} onValueChange={(v) => set("organisation", v)}>
+              <Select value={form.organisation || ""} onValueChange={(v) => set("organisation", v)} disabled={lockedOrg !== null}>
                 <SelectTrigger><SelectValue placeholder="Select organisation" /></SelectTrigger>
                 <SelectContent>
+                  {form.organisation && !orgs.includes(form.organisation) && <SelectItem value={form.organisation}>{form.organisation}</SelectItem>}
                   {orgs.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                 </SelectContent>
               </Select>

@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { YearlyPerformanceEditor, parseYearly, serializeYearly } from "./yearlyPerformance";
 import { DataLinksEditor } from "@/components/DataLinksEditor";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AddIndicatorDialogProps {
   open: boolean;
@@ -37,6 +38,8 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicatorDialogProps) {
   const [loading, setLoading] = useState(false);
+  const { user, isAdmin } = useAuth();
+  const lockedOrg = !isAdmin() ? user?.organization || "" : null;
   const [formData, setFormData] = useState(initialFormData);
   const [yearly, setYearly] = useState(parseYearly(null));
 
@@ -57,7 +60,7 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
         indicator_definition: formData.indicator_definition || null,
         naphs: formData.naphs || null,
         responsibility: formData.responsibility || null,
-        organisation: formData.organisation || null,
+        organisation: (lockedOrg ?? formData.organisation) || null,
         cost_usd: formData.cost_usd ? Number(formData.cost_usd) : null,
         implementing_entity: formData.implementing_entity || null,
         comments: formData.comments || null,
@@ -173,7 +176,7 @@ export function AddIndicatorDialog({ open, onOpenChange, onSuccess }: AddIndicat
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Delivery Partner</Label>
-                <Input value={formData.organisation} onChange={e => update("organisation", e.target.value)} placeholder="e.g., UNDP" />
+                <Input value={lockedOrg ?? formData.organisation} disabled={lockedOrg !== null} onChange={e => update("organisation", e.target.value)} placeholder="e.g., UNDP" />
               </div>
               <div className="space-y-2">
                 <Label>Implementing Entity</Label>

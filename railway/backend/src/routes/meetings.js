@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { ensureOrgAccess } = require('../lib/orgAccess');
 
 const router = express.Router();
 
@@ -96,6 +97,7 @@ const insertMeeting = async (pool, body, userId) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   const pool = req.app.locals.pool;
+  if (!(await ensureOrgAccess(req, res, [req.body.implementingEntities, req.body.deliveryPartners]))) return;
   try {
     const meeting = await insertMeeting(pool, req.body, req.user.id);
     res.status(201).json(meeting);
@@ -106,7 +108,7 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 // Bulk insert used by the Excel upload — one round-trip per row in a single request.
-router.post('/bulk', authenticateToken, async (req, res) => {
+router.post('/bulk', authenticateToken, requireAdmin, async (req, res) => {
   const pool = req.app.locals.pool;
   const items = Array.isArray(req.body) ? req.body : req.body?.meetings;
   if (!Array.isArray(items)) {
@@ -131,6 +133,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
   const f = buildFields(req.body);
   const setClause = Object.keys(f).map((k) => `${k} = ?`).join(', ');
   try {
+    const [cur] = await pool.execute('SELECT implementing_entities, delivery_partners FROM meetings WHERE id = ?', [id]);
+    if (cur.length === 0) return res.status(404).json({ message: 'Meeting not found' });
+    if (!(await ensureOrgAccess(req, res, [cur[0].implementing_entities, cur[0].delivery_partners]))) return;
+    if (!(await ensureOrgAccess(req, res, [req.body.implementingEntities, req.body.deliveryPartners]))) return;
     await pool.execute(
       `UPDATE meetings SET ${setClause} WHERE id = ?`,
       [...Object.values(f), id]
