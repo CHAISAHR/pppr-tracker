@@ -22,6 +22,7 @@ export interface CapacityRow {
   focus_area: string | null;
   sector: string | null;
   participant_name: string;
+  email: string | null;
   competency: string;
   pre_score: number | null;
   post_score: number | null;
@@ -31,8 +32,12 @@ export interface CapacityRow {
 
 export interface ParticipantRecord {
   participantName: string;
+  email: string | null;
   scores: Record<string, { id: string; pre: number | null; post: number | null }>;
 }
+
+export const FOCUS_AREA_OPTIONS = ["Workforce", "Labs", "Surveillance"] as const;
+export const DEPARTMENT_OPTIONS = ["DOA", "DOH", "DFFE"] as const;
 
 export interface EventCapacity {
   eventId: string | null;
@@ -114,8 +119,10 @@ export function groupByEvent(rows: CapacityRow[] = cache): EventCapacity[] {
     if (!evt.competencies.includes(row.competency)) evt.competencies.push(row.competency);
     let participant = evt.participants.find(p => p.participantName === row.participant_name);
     if (!participant) {
-      participant = { participantName: row.participant_name, scores: {} };
+      participant = { participantName: row.participant_name, email: row.email ?? null, scores: {} };
       evt.participants.push(participant);
+    } else if (!participant.email && row.email) {
+      participant.email = row.email;
     }
     participant.scores[row.competency] = {
       id: row.id,
@@ -139,6 +146,7 @@ export interface SaveInput {
   competencies: string[];
   participants: Array<{
     participantName: string;
+    email?: string | null;
     preScores: Record<string, number | null>;
     postScores: Record<string, number | null>;
   }>;
@@ -205,6 +213,7 @@ export async function saveEventCapacity(
         focus_area: input.focusArea,
         sector: input.sector,
         participant_name: name,
+        email: p.email?.trim() || null,
         competency,
         pre_score: pre ?? null,
         post_score: post ?? null,
@@ -232,6 +241,7 @@ export async function importCapacityRows(
     focus_area: r.focus_area ?? null,
     sector: r.sector ?? null,
     participant_name: r.participant_name ?? '',
+    email: r.email ?? null,
     competency: r.competency ?? '',
     pre_score: r.pre_score ?? null,
     post_score: r.post_score ?? null,

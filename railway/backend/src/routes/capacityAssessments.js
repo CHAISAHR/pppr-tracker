@@ -11,7 +11,7 @@ router.get('/', authenticateToken, async (req, res) => {
   try {
     const [rows] = await pool.execute(
       `SELECT id, event_id, event_focus_area, event_date, focus_area, sector,
-              participant_name, competency, pre_score, post_score, created_at, updated_at
+              participant_name, email, competency, pre_score, post_score, created_at, updated_at
        FROM capacity_assessments
        ORDER BY event_date DESC, participant_name ASC`
     );
@@ -37,8 +37,8 @@ router.post('/', authenticateToken, async (req, res) => {
       await pool.execute(
         `INSERT INTO capacity_assessments
          (id, event_id, event_focus_area, event_date, focus_area, sector,
-          participant_name, competency, pre_score, post_score)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          participant_name, email, competency, pre_score, post_score)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           id,
           r.event_id || null,
@@ -47,6 +47,7 @@ router.post('/', authenticateToken, async (req, res) => {
           r.focus_area || null,
           r.sector || null,
           r.participant_name || '',
+          r.email || null,
           r.competency || '',
           r.pre_score ?? null,
           r.post_score ?? null,

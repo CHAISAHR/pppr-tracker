@@ -240,6 +240,7 @@ CREATE TABLE IF NOT EXISTS capacity_assessments (
   focus_area VARCHAR(255) NULL,
   sector VARCHAR(255) NULL,
   participant_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NULL,
   competency VARCHAR(255) NOT NULL,
   pre_score INT NULL,
   post_score INT NULL,

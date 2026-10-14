@@ -13,12 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { saveEventCapacity, type EventCapacity } from "@/lib/capacity";
+import { saveEventCapacity, FOCUS_AREA_OPTIONS, DEPARTMENT_OPTIONS, type EventCapacity } from "@/lib/capacity";
 import type { Meeting } from "../MeetingDetailsDialog";
 
 interface ParticipantDraft {
   key: string;
   participantName: string;
+  email: string;
   preScores: Record<string, string>;
   postScores: Record<string, string>;
 }
@@ -42,6 +43,7 @@ const clamp = (v: string): number | null => {
 const newParticipant = (): ParticipantDraft => ({
   key: crypto.randomUUID(),
   participantName: "",
+  email: "",
   preScores: {},
   postScores: {},
 });
@@ -84,6 +86,7 @@ export const CapacityRecordDialog = ({
           return {
             key: crypto.randomUUID(),
             participantName: p.participantName,
+            email: p.email ?? "",
             preScores,
             postScores,
           };
@@ -146,6 +149,7 @@ export const CapacityRecordDialog = ({
       .filter((p) => p.participantName.trim())
       .map((p) => ({
         participantName: p.participantName.trim(),
+        email: p.email.trim() || null,
         preScores: Object.fromEntries(
           competencies.map((c) => [c, clamp(p.preScores[c] ?? "")]),
         ),
@@ -251,21 +255,29 @@ export const CapacityRecordDialog = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="capacity-focus-area">Focus Area</Label>
-              <Input
-                id="capacity-focus-area"
-                placeholder="e.g. Climate adaptation"
-                value={focusArea}
-                onChange={(e) => setFocusArea(e.target.value)}
-              />
+              <Select value={focusArea} onValueChange={setFocusArea}>
+                <SelectTrigger id="capacity-focus-area">
+                  <SelectValue placeholder="e.g. Workforce" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FOCUS_AREA_OPTIONS.map((o) => (
+                    <SelectItem key={o} value={o}>{o}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="capacity-sector">Sector</Label>
-              <Input
-                id="capacity-sector"
-                placeholder="e.g. Agriculture"
-                value={sector}
-                onChange={(e) => setSector(e.target.value)}
-              />
+              <Label htmlFor="capacity-department">Department</Label>
+              <Select value={sector} onValueChange={setSector}>
+                <SelectTrigger id="capacity-department">
+                  <SelectValue placeholder="e.g. DOA" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DEPARTMENT_OPTIONS.map((o) => (
+                    <SelectItem key={o} value={o}>{o}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -313,6 +325,21 @@ export const CapacityRecordDialog = ({
                           )
                         }
                         placeholder="Jane Doe"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <Label className="text-xs">Email address</Label>
+                      <Input
+                        type="email"
+                        value={p.email}
+                        onChange={(e) =>
+                          setParticipants((prev) =>
+                            prev.map((x) =>
+                              x.key === p.key ? { ...x, email: e.target.value } : x,
+                            ),
+                          )
+                        }
+                        placeholder="jane@example.org"
                       />
                     </div>
                     <Button
