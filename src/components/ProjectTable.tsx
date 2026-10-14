@@ -14,6 +14,7 @@ import { Edit2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { EditProjectDialog } from "./EditProjectDialog";
 import { ProjectDetailsDialog } from "./ProjectDetailsDialog";
+import { RequestDeletionButton } from "@/components/RequestDeletionButton";
 import { useAuth } from "@/contexts/AuthContext";
 
 export type Status = "Completed" | "In Progress" | "Not Yet Started";
@@ -45,7 +46,7 @@ interface ProjectTableProps {
 export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [viewingProject, setViewingProject] = useState<Project | null>(null);
-  const { canEditProject } = useAuth();
+  const { canEditProject, isAdmin } = useAuth();
   const { sorted: sortedProjects, SortHead } = useTableSort<Project>(projects);
 
   const handleEditClick = (project: Project, e: React.MouseEvent) => {
@@ -108,10 +109,9 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
                   <TableCell className="text-muted-foreground">{project.modifiedAt ? new Date(project.modifiedAt).toLocaleString() : '-'}</TableCell>
                   <TableCell>
                     {!readOnly && (() => {
-                      const deliveryPartners = project.deliveryPartner.split(';').map(p => p.trim());
-                      const canEdit = canEditProject(deliveryPartners);
-                      
+                      const canEdit = canEditProject([project.deliveryPartner, project.implementingEntity]);
                       return (
+                        <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -121,6 +121,11 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
+                        {!isAdmin() && (
+                          <RequestDeletionButton recordType="project" recordId={project.id}
+                            recordLabel={`${project.activityId} ${project.subActivityId ? "/ " + project.subActivityId : ""} – ${project.activityDescription || ""}`.trim()} />
+                        )}
+                        </div>
                       );
                     })()}
                   </TableCell>
