@@ -13,7 +13,10 @@ interface AuthContextType {
   canEditOrg: (...values: unknown[]) => boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Reuse one context object across hot reloads so editing this file can't split
+// provider and consumers onto different contexts (blank "useAuth must be used..." screen).
+const g = globalThis as unknown as { __authContext?: React.Context<AuthContextType | undefined> };
+const AuthContext = g.__authContext ?? (g.__authContext = createContext<AuthContextType | undefined>(undefined));
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
