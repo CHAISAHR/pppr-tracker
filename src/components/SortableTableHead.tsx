@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { TableHead } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
@@ -52,7 +52,7 @@ export interface UseTableSortResult<T> {
   sortDir: SortDir;
   toggleSort: (key: string) => void;
   /** Drop-in replacement for <TableHead> — adds a click handler and a sort arrow. */
-  SortHead: (props: SortHeadProps) => ReactNode;
+  SortHead: (props: SortHeadProps) => JSX.Element;
 }
 
 /**
