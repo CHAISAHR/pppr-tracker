@@ -113,18 +113,26 @@ export const RiskDialog = ({ risk, open, onOpenChange, onSave, trigger }: Props)
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Likelihood (1-5)</Label>
+              <Label className="flex items-center gap-2">
+                Likelihood
+                <span className="text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-1.5 py-0.5">scale 1–10</span>
+              </Label>
               <Select value={form.likelihood?.toString() || ""} onValueChange={(v) => set("likelihood", Number(v))}>
                 <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
-                <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
+                <SelectContent>{[1,2,3,4,5,6,7,8,9,10].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">1 = very unlikely · 10 = almost certain</p>
             </div>
             <div className="space-y-2">
-              <Label>Impact (1-5)</Label>
+              <Label className="flex items-center gap-2">
+                Impact
+                <span className="text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-1.5 py-0.5">scale 1–10</span>
+              </Label>
               <Select value={form.impact?.toString() || ""} onValueChange={(v) => set("impact", Number(v))}>
                 <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
-                <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
+                <SelectContent>{[1,2,3,4,5,6,7,8,9,10].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">1 = negligible · 10 = severe</p>
             </div>
             <div className="space-y-2">
               <Label>Risk Score</Label>
