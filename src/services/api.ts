@@ -135,6 +135,7 @@ class ApiService {
   async logout(): Promise<void> {
     if (MOCK_MODE) {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('mock_current_user');
       return;
     }
 
