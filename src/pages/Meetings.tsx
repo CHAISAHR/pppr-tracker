@@ -213,7 +213,7 @@ const Meetings = () => {
                     {user && reportStatus(meeting) !== "Upcoming" && (
                       <Button
                         size="sm"
-                        variant={meeting.reportBack?.submittedAt ? "ghost" : "default"}
+                        variant={meeting.reportBack?.submittedAt ? "ghost" : "soft"}
                         className="h-7 gap-1.5 text-xs"
                         onClick={(e) => { e.stopPropagation(); setReportMeeting(meeting); setReportOpen(true); }}
                       >
