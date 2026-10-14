@@ -186,12 +186,12 @@ function ReportWorkspace({ report, onBack, admin, userName, organisation }: { re
                   <div>
                     <p className="font-medium text-foreground">{q.question}</p>
                     {q.hint && <p className="text-xs text-muted-foreground mt-1">{q.hint}</p>}
-                    <p className="text-xs text-muted-foreground mt-2"><span className="font-medium">Person responsible:</span> {q.responsible}</p>
+                    {q.id === "q1" ? <p className="text-xs text-muted-foreground mt-2">Person responsible</p> : q.id !== "q2" && q.id !== "q3" && q.id !== "q4" && q.id !== "q5" && q.id !== "q6" ? <p className="text-xs text-muted-foreground mt-2"><span className="font-medium">Person responsible:</span> {q.responsible}</p> : <p className="text-xs text-muted-foreground mt-2" />}
                   </div>
                   <div className="space-y-3">
                     {q.select !== "none" && (
                       <div className="space-y-1.5">
-                        <Label className="text-xs">Select</Label>
+                        <Label className="text-xs">9b: What is the likelihood of meeting this quarter's milestone?</Label>
                         <Select value={answers[q.id]?.select || undefined} onValueChange={(v) => setA(q.id, { select: v })} disabled={readOnly}>
                           <SelectTrigger><SelectValue placeholder="Choose a response" /></SelectTrigger>
                           <SelectContent>{optionsFor(q.select).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
@@ -265,7 +265,7 @@ function ReportWorkspace({ report, onBack, admin, userName, organisation }: { re
         {!admin && !organisation && <p className="text-sm text-destructive">Your account has no organisation, so you can't submit a response.</p>}
         {admin ? (
           <Tabs defaultValue="consolidated">
-            <TabsList><TabsTrigger value="consolidated">Consolidated report</TabsTrigger><TabsTrigger value="mine">Our organisation's response</TabsTrigger></TabsList>
+            <TabsList><TabsTrigger value="consolidated">Consolidated report</TabsTrigger><TabsTrigger value="mine">Individual responses</TabsTrigger></TabsList>
             <TabsContent value="consolidated" className="mt-4">{consolidated}</TabsContent>
             <TabsContent value="mine" className="mt-4">{form}</TabsContent>
           </Tabs>
