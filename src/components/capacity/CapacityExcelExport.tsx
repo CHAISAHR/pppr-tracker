@@ -17,7 +17,10 @@ export const CapacityExcelExport = ({ rows }: Props) => {
     const data = rows.map((r) => ({
       "Event": r.event_focus_area,
       "Event Date": r.event_date ?? "",
+      "Focus Area": r.focus_area ?? "",
+      "Department": r.sector ?? "",
       "Participant": r.participant_name,
+      "Email": r.email ?? "",
       "Competency": r.competency,
       "Score Before": r.pre_score ?? "",
       "Score After": r.post_score ?? "",
@@ -26,8 +29,8 @@ export const CapacityExcelExport = ({ rows }: Props) => {
     }));
     const ws = XLSX.utils.json_to_sheet(data);
     ws["!cols"] = [
-      { wch: 30 }, { wch: 12 }, { wch: 25 }, { wch: 20 },
-      { wch: 12 }, { wch: 12 }, { wch: 10 },
+      { wch: 30 }, { wch: 12 }, { wch: 15 }, { wch: 12 }, { wch: 25 },
+      { wch: 25 }, { wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 10 },
     ];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Capacity");

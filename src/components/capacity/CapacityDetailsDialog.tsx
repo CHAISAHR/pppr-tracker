@@ -40,6 +40,12 @@ export const CapacityDetailsDialog = ({ record, open, onOpenChange }: Props) => 
               <Users className="h-3.5 w-3.5" />
               {record.participants.length} participant{record.participants.length === 1 ? "" : "s"}
             </span>
+            {record.focusArea && (
+              <Badge variant="outline" className="text-[11px] font-normal">{record.focusArea}</Badge>
+            )}
+            {record.sector && (
+              <Badge variant="outline" className="text-[11px] font-normal">{record.sector}</Badge>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -95,7 +101,12 @@ export const CapacityDetailsDialog = ({ record, open, onOpenChange }: Props) => 
             <div className="space-y-2">
               {record.participants.map((p) => (
                 <div key={p.participantName} className="border rounded-md p-3">
-                  <p className="font-medium text-sm mb-2">{p.participantName}</p>
+                  <p className="font-medium text-sm mb-2">
+                    {p.participantName}
+                    {p.email && (
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">{p.email}</span>
+                    )}
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
                     {record.competencies.map((c) => {
                       const s = p.scores[c];
