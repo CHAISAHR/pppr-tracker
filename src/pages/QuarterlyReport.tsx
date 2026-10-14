@@ -191,7 +191,7 @@ function ReportWorkspace({ report, onBack, admin, userName, organisation }: { re
                   <div className="space-y-3">
                     {q.select !== "none" && (
                       <div className="space-y-1.5">
-                        <Label className="text-xs">9b: What is the likelihood of meeting this quarter's milestone?</Label>
+                        <Label className="text-xs">What is the likelihood of meeting this quarter's milestone?</Label>
                         <Select value={answers[q.id]?.select || undefined} onValueChange={(v) => setA(q.id, { select: v })} disabled={readOnly}>
                           <SelectTrigger><SelectValue placeholder="Choose a response" /></SelectTrigger>
                           <SelectContent>{optionsFor(q.select).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
