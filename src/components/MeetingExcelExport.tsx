@@ -37,8 +37,6 @@ export const MeetingExcelExport = ({ meetings }: MeetingExcelExportProps) => {
       "Female": meeting.reportBack?.female ?? "",
       "Male": meeting.reportBack?.male ?? "",
       "Other / Prefer not to say": meeting.reportBack?.other ?? "",
-      "Youth": meeting.reportBack?.youth ?? "",
-      "People with Disabilities": meeting.reportBack?.disability ?? "",
       "Key Outcomes": meeting.reportBack?.outcomes || "",
       "Challenges": meeting.reportBack?.challenges || "",
       "Next Steps": meeting.reportBack?.nextSteps || "",
