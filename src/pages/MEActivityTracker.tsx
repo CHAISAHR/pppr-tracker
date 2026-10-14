@@ -155,9 +155,9 @@ const MEActivityTracker = () => {
                 <TableBody>
                   {loading ? (
                     <TableRow><TableCell colSpan={23} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
-                  ) : filtered.length === 0 ? (
+                  ) : sortedRows.length === 0 ? (
                     <TableRow><TableCell colSpan={23} className="text-center py-8 text-muted-foreground">No records found</TableCell></TableRow>
-                  ) : filtered.map((r) => (
+                  ) : sortedRows.map((r) => (
                     <TableRow key={r.id}>
                       <TableCell className="text-sm whitespace-pre-wrap">{r.activity || "—"}</TableCell>
                       <TableCell className="text-sm">{r.implementingEntity || "—"}</TableCell>

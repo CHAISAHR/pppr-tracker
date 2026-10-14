@@ -186,9 +186,9 @@ const RiskRegister = () => {
                 <TableBody>
                   {loading ? (
                     <TableRow><TableCell colSpan={11} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
-                  ) : filtered.length === 0 ? (
+                  ) : sortedRisks.length === 0 ? (
                     <TableRow><TableCell colSpan={11} className="text-center py-8 text-muted-foreground">No risks found</TableCell></TableRow>
-                  ) : filtered.map((r) => {
+                  ) : sortedRisks.map((r) => {
                     const score = (r.likelihood || 0) * (r.impact || 0) || null;
                     const level = scoreLevel(score);
                     return (

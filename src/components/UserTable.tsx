@@ -12,6 +12,7 @@ import { Edit2, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EditUserDialog } from "./EditUserDialog";
 import { User } from "@/services/api";
+import { useTableSort } from "@/components/SortableTableHead";
 
 interface UserTableProps {
   users: User[];
@@ -21,6 +22,7 @@ interface UserTableProps {
 
 export const UserTable = ({ users, onUpdateUser, onDeleteUser }: UserTableProps) => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const { sorted: sortedUsers, SortHead } = useTableSort<User>(users);
 
   return (
     <>
@@ -28,10 +30,10 @@ export const UserTable = ({ users, onUpdateUser, onDeleteUser }: UserTableProps)
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 hover:bg-muted/50">
-              <TableHead className="font-semibold">Name</TableHead>
-              <TableHead className="font-semibold">Email</TableHead>
-              <TableHead className="font-semibold">Role</TableHead>
-              <TableHead className="font-semibold">Organization</TableHead>
+              <SortHead sortKey="name" className="font-semibold">Name</SortHead>
+              <SortHead sortKey="email" className="font-semibold">Email</SortHead>
+              <SortHead sortKey="role" className="font-semibold">Role</SortHead>
+              <SortHead sortKey="organization" className="font-semibold">Organization</SortHead>
               <TableHead className="font-semibold">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -43,7 +45,7 @@ export const UserTable = ({ users, onUpdateUser, onDeleteUser }: UserTableProps)
                 </TableCell>
               </TableRow>
             ) : (
-              users.map((user) => (
+              sortedUsers.map((user) => (
                 <TableRow 
                   key={user.id} 
                   className="hover:bg-primary/5 transition-all duration-200"
