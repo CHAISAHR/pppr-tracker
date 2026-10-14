@@ -15,6 +15,7 @@ const orgLogosRoutes = require('./routes/orgLogos');
 const risksRoutes = require('./routes/risks');
 const quarterlyReportsRoutes = require('./routes/quarterlyReports');
 const meActivitiesRoutes = require('./routes/meActivities');
+const deletionRequestsRoutes = require('./routes/deletionRequests');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,6 +50,7 @@ app.use('/api/org-logos', orgLogosRoutes);
 app.use('/api/risks', risksRoutes);
 app.use('/api/quarterly-reports', quarterlyReportsRoutes);
 app.use('/api/me-activities', meActivitiesRoutes);
+app.use('/api/deletion-requests', deletionRequestsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
