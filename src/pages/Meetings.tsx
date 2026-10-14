@@ -211,7 +211,7 @@ const Meetings = () => {
                         <span className="flex items-center gap-1"><UserCheck className="h-3.5 w-3.5" />{totalAttendees(meeting.reportBack)} attendees</span>
                       )}
                     </div>
-                    {user && reportStatus(meeting) !== "Upcoming" && (
+                    {canEditMeeting(meeting) && reportStatus(meeting) !== "Upcoming" && (
                       <Button
                         size="sm"
                         variant={meeting.reportBack?.submittedAt ? "ghost" : "soft"}
