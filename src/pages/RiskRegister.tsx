@@ -166,6 +166,10 @@ const RiskRegister = () => {
               </Select>
             </div>
 
+            <p className="text-xs text-muted-foreground">
+              Likelihood and Impact are each rated <span className="font-semibold text-primary">1–10</span> — the score is Likelihood × Impact, so it runs from 1 to 100.
+            </p>
+
             <div className="rounded-md border overflow-hidden">
               <Table>
                 <TableHeader>
