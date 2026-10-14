@@ -42,20 +42,20 @@ class ApiService {
 
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
     if (MOCK_MODE) {
-      // Mock login for testing
-      // Dev-only mock — roles are NOT derived from the email. Default to
-      // the least-privileged role; switch a test account to admin via the
-      // backend (or the Users page) once the real API is wired up.
+      // Dev-preview-only mock (MOCK_MODE is never on in production builds).
+      // Emails containing "admin" get the admin role so admin screens can be tested.
+      const isAdminEmail = credentials.email.toLowerCase().includes('admin');
       const mockUser: User = {
-        id: '1',
+        id: isAdminEmail ? 'mock-admin' : '1',
         email: credentials.email,
-        name: 'Dev User',
-        role: 'user',
+        name: isAdminEmail ? 'Admin User' : 'Dev User',
+        role: isAdminEmail ? 'admin' : 'user',
         organization: 'Test Organization'
       };
 
       const mockToken = 'mock-token-' + Date.now();
       localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('mock_current_user', JSON.stringify(mockUser));
       
       // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -135,6 +135,7 @@ class ApiService {
   async logout(): Promise<void> {
     if (MOCK_MODE) {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('mock_current_user');
       return;
     }
 
@@ -149,7 +150,10 @@ class ApiService {
     if (MOCK_MODE) {
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('No auth token');
-      // Dev-only mock — role is NOT derived from the token or email.
+      const stored = localStorage.getItem('mock_current_user');
+      if (stored) {
+        try { return JSON.parse(stored) as User; } catch { /* fall through */ }
+      }
       return {
         id: '1',
         email: 'user@test.com',
@@ -157,6 +161,7 @@ class ApiService {
         role: 'user',
         organization: 'Test Organization'
       };
+      
 
     }
 
