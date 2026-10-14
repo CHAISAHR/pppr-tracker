@@ -1,5 +1,5 @@
 import { summarizeComments } from "@/lib/comments";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { useTableSort } from "@/components/SortableTableHead";
 import { Edit2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { EditProjectDialog } from "./EditProjectDialog";
@@ -45,43 +45,8 @@ interface ProjectTableProps {
 export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: ProjectTableProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [viewingProject, setViewingProject] = useState<Project | null>(null);
-  const [sortKey, setSortKey] = useState<"modifiedBy" | "modifiedAt" | null>(null);
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const { canEditProject } = useAuth();
-
-  const toggleSort = (key: "modifiedBy" | "modifiedAt") => {
-    if (sortKey === key) {
-      setSortDir(sortDir === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-  };
-
-  const sortedProjects = useMemo(() => {
-    if (!sortKey) return projects;
-    const copy = [...projects];
-    copy.sort((a, b) => {
-      const av = a[sortKey] || "";
-      const bv = b[sortKey] || "";
-      if (sortKey === "modifiedAt") {
-        const at = av ? new Date(av).getTime() : 0;
-        const bt = bv ? new Date(bv).getTime() : 0;
-        return sortDir === "asc" ? at - bt : bt - at;
-      }
-      return sortDir === "asc"
-        ? String(av).localeCompare(String(bv))
-        : String(bv).localeCompare(String(av));
-    });
-    return copy;
-  }, [projects, sortKey, sortDir]);
-
-  const SortIcon = ({ k }: { k: "modifiedBy" | "modifiedAt" }) => {
-    if (sortKey !== k) return <ArrowUpDown className="h-3 w-3 inline ml-1 opacity-50" />;
-    return sortDir === "asc"
-      ? <ArrowUp className="h-3 w-3 inline ml-1" />
-      : <ArrowDown className="h-3 w-3 inline ml-1" />;
-  };
+  const { sorted: sortedProjects, SortHead } = useTableSort<Project>(projects);
 
   const handleEditClick = (project: Project, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -98,28 +63,18 @@ export const ProjectTable = ({ projects, onUpdateProject, readOnly = false }: Pr
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold">Activity ID</TableHead>
-              <TableHead className="font-semibold">Activity Description</TableHead>
-              <TableHead className="font-semibold">Sub-Activity ID</TableHead>
-              <TableHead className="font-semibold">Sub-Activity Description</TableHead>
-              <TableHead className="font-semibold">Implementing Entity</TableHead>
-              <TableHead className="font-semibold">Delivery Partner</TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="font-semibold">Start Date</TableHead>
-              <TableHead className="font-semibold">End Date</TableHead>
-              <TableHead className="font-semibold">Comments</TableHead>
-              <TableHead
-                className="font-semibold cursor-pointer select-none hover:text-primary"
-                onClick={() => toggleSort("modifiedBy")}
-              >
-                Modified By<SortIcon k="modifiedBy" />
-              </TableHead>
-              <TableHead
-                className="font-semibold cursor-pointer select-none hover:text-primary"
-                onClick={() => toggleSort("modifiedAt")}
-              >
-                Modified Date<SortIcon k="modifiedAt" />
-              </TableHead>
+              <SortHead sortKey="activityId" className="font-semibold">Activity ID</SortHead>
+              <SortHead sortKey="activityDescription" className="font-semibold">Activity Description</SortHead>
+              <SortHead sortKey="subActivityId" className="font-semibold">Sub-Activity ID</SortHead>
+              <SortHead sortKey="subActivityDescription" className="font-semibold">Sub-Activity Description</SortHead>
+              <SortHead sortKey="implementingEntity" className="font-semibold">Implementing Entity</SortHead>
+              <SortHead sortKey="deliveryPartner" className="font-semibold">Delivery Partner</SortHead>
+              <SortHead sortKey="status" className="font-semibold">Status</SortHead>
+              <SortHead sortKey="startDate" className="font-semibold">Start Date</SortHead>
+              <SortHead sortKey="endDate" className="font-semibold">End Date</SortHead>
+              <SortHead sortKey="comments" className="font-semibold">Comments</SortHead>
+              <SortHead sortKey="modifiedBy" className="font-semibold">Modified By</SortHead>
+              <SortHead sortKey="modifiedAt" className="font-semibold">Modified Date</SortHead>
               {!readOnly && <TableHead className="font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
