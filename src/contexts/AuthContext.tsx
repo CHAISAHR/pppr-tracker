@@ -9,6 +9,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isAdmin: () => boolean;
   canEditProject: (deliveryPartners: string[]) => boolean;
+  /** Admins edit everything; others only records naming their organisation. */
+  canEditOrg: (...values: unknown[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,13 +58,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAdmin = () => user?.role === 'admin';
 
-  const canEditProject = (_deliveryPartners: string[]) => {
-    // Any authenticated user can edit Activity Tracker / Indicator Tracker records.
-    return !!user;
+  const canEditOrg = (...values: unknown[]) => {
+    if (!user) return false;
+    if (user.role === 'admin') return true;
+    const org = (user.organization || '').trim().toLowerCase();
+    if (!org) return false;
+    const flat = (v: unknown): string[] =>
+      v == null ? [] : Array.isArray(v) ? v.flatMap(flat) : String(v).split(/[;,]/).map((s) => s.trim().toLowerCase());
+    return values.flatMap(flat).includes(org);
   };
 
+  const canEditProject = (orgs: string[]) => canEditOrg(orgs);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin, canEditProject }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin, canEditProject, canEditOrg }}>
       {children}
     </AuthContext.Provider>
   );
