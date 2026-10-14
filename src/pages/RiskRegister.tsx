@@ -131,6 +131,7 @@ const RiskRegister = () => {
             {user && <RiskDialog onSave={handleAdd} />}
             {isAdmin() && (
               <>
+                <RiskExcelExport risks={sortedRisks} />
                 <RiskExcelTemplate />
                 <RiskExcelUpload onUpload={handleBulk} />
               </>
