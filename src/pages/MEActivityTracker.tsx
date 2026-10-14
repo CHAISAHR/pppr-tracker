@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useTableSort } from "@/components/SortableTableHead";
 import { ClipboardList, Edit, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
@@ -81,6 +82,8 @@ const MEActivityTracker = () => {
     });
   }, [rows, search, statusFilter]);
 
+  const { sorted: sortedRows, SortHead } = useTableSort<MEActivity>(filtered);
+
   return (
     <div className="min-h-full bg-background">
       <div className="container mx-auto py-8 px-4 sm:px-6 space-y-6">
@@ -124,28 +127,28 @@ const MEActivityTracker = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="min-w-[200px]">Activity</TableHead>
-                    <TableHead className="min-w-[160px]">Implementing Entity</TableHead>
-                    <TableHead className="min-w-[160px]">Delivery Partner</TableHead>
-                    <TableHead className="min-w-[140px]">Responsible</TableHead>
-                    <TableHead className="min-w-[200px]">Key Project Activity</TableHead>
-                    <TableHead className="w-24">Sub-Act #</TableHead>
-                    <TableHead className="min-w-[200px]">Sub-Activities</TableHead>
-                    <TableHead className="min-w-[180px]">Inputs / Resources</TableHead>
-                    <TableHead className="w-20">Task #</TableHead>
-                    <TableHead className="min-w-[180px]">Task</TableHead>
-                    <TableHead className="w-36">Status</TableHead>
-                    <TableHead className="w-28">Start</TableHead>
-                    <TableHead className="w-28">End</TableHead>
-                    <TableHead className="min-w-[180px]">Outputs</TableHead>
-                    <TableHead className="min-w-[180px]">Indicator</TableHead>
-                    <TableHead className="w-24">Baseline</TableHead>
-                    <TableHead className="w-24">Target</TableHead>
-                    <TableHead className="w-24">Achieved</TableHead>
-                    <TableHead className="w-24">Variance</TableHead>
-                    <TableHead className="min-w-[180px]">Means of Verification</TableHead>
-                    <TableHead className="min-w-[200px]">Delivery Partner Responsible</TableHead>
-                    <TableHead className="min-w-[180px]">Comments</TableHead>
+                    <SortHead sortKey="activity" className="min-w-[200px]">Activity</SortHead>
+                    <SortHead sortKey="implementingEntity" className="min-w-[160px]">Implementing Entity</SortHead>
+                    <SortHead sortKey="deliveryPartner" className="min-w-[160px]">Delivery Partner</SortHead>
+                    <SortHead sortKey="responsible" className="min-w-[140px]">Responsible</SortHead>
+                    <SortHead sortKey="keyProjectActivity" className="min-w-[200px]">Key Project Activity</SortHead>
+                    <SortHead sortKey="subActivityNo" className="w-24">Sub-Act #</SortHead>
+                    <SortHead sortKey="subActivities" className="min-w-[200px]">Sub-Activities</SortHead>
+                    <SortHead sortKey="inputsResources" className="min-w-[180px]">Inputs / Resources</SortHead>
+                    <SortHead sortKey="taskNo" className="w-20">Task #</SortHead>
+                    <SortHead sortKey="task" className="min-w-[180px]">Task</SortHead>
+                    <SortHead sortKey="status" className="w-36">Status</SortHead>
+                    <SortHead sortKey="startDate" className="w-28">Start</SortHead>
+                    <SortHead sortKey="endDate" className="w-28">End</SortHead>
+                    <SortHead sortKey="outputs" className="min-w-[180px]">Outputs</SortHead>
+                    <SortHead sortKey="indicator" className="min-w-[180px]">Indicator</SortHead>
+                    <SortHead sortKey="baseline" className="w-24">Baseline</SortHead>
+                    <SortHead sortKey="target" className="w-24">Target</SortHead>
+                    <SortHead sortKey="achieved" className="w-24">Achieved</SortHead>
+                    <SortHead sortKey="variance" className="w-24">Variance</SortHead>
+                    <SortHead sortKey="meansOfVerification" className="min-w-[180px]">Means of Verification</SortHead>
+                    <SortHead sortKey="deliveryPartnerResponsible" className="min-w-[200px]">Delivery Partner Responsible</SortHead>
+                    <SortHead sortKey="comments" className="min-w-[180px]">Comments</SortHead>
                     <TableHead className="w-24 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>

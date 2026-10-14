@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useTableSort } from "@/components/SortableTableHead";
 import { ShieldAlert, Edit, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/services/api";
@@ -98,6 +99,8 @@ const RiskRegister = () => {
     });
   }, [risks, search, statusFilter]);
 
+  const { sorted: sortedRisks, SortHead } = useTableSort<Risk>(filtered);
+
   const stats = useMemo(() => {
     const counts = { total: risks.length, critical: 0, high: 0, medium: 0, low: 0 };
     risks.forEach((r) => {
@@ -167,16 +170,16 @@ const RiskRegister = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-24">Risk ID</TableHead>
-                    <TableHead className="w-40">Organisation</TableHead>
-                    <TableHead className="min-w-[240px]">Description</TableHead>
-                    <TableHead className="w-20 text-center">L</TableHead>
-                    <TableHead className="w-20 text-center">I</TableHead>
-                    <TableHead className="w-28 text-center">Score</TableHead>
-                    <TableHead className="min-w-[200px]">Mitigation</TableHead>
-                    <TableHead className="w-40">Owner</TableHead>
-                    <TableHead className="w-32">Status</TableHead>
-                    <TableHead className="w-32">Identified</TableHead>
+                    <SortHead sortKey="riskId" className="w-24">Risk ID</SortHead>
+                    <SortHead sortKey="organisation" className="w-40">Organisation</SortHead>
+                    <SortHead sortKey="description" className="min-w-[240px]">Description</SortHead>
+                    <SortHead sortKey="likelihood" className="w-20 text-center">L</SortHead>
+                    <SortHead sortKey="impact" className="w-20 text-center">I</SortHead>
+                    <SortHead sortKey="riskScore" className="w-28 text-center">Score</SortHead>
+                    <SortHead sortKey="mitigation" className="min-w-[200px]">Mitigation</SortHead>
+                    <SortHead sortKey="owner" className="w-40">Owner</SortHead>
+                    <SortHead sortKey="status" className="w-32">Status</SortHead>
+                    <SortHead sortKey="dateIdentified" className="w-32">Identified</SortHead>
                     <TableHead className="w-28 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
