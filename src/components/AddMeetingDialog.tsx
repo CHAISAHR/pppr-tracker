@@ -58,7 +58,8 @@ const emptyForm: MeetingForm = {
 export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
+  const lockedOrg = !isAdmin() ? user?.organization || "" : null;
 
   const handleAdd = () => {
     const meeting: Meeting = {
@@ -70,7 +71,11 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       meetingDateTo: form.meetingDateTo || undefined,
       focusArea: form.focusArea,
       implementingEntities: form.implementingEntities.split(';').map(e => e.trim()).filter(Boolean),
-      deliveryPartners: form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean),
+      deliveryPartners: (() => {
+        const list = form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean);
+        if (lockedOrg && !list.some(p => p.toLowerCase() === lockedOrg.toLowerCase())) list.unshift(lockedOrg);
+        return list;
+      })(),
       keyObjectives: form.keyObjectives,
       format: form.format,
       links: form.links || undefined,
@@ -224,7 +229,8 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="add-deliveryPartners">Delivery Partners (separate with ;)</Label>
-              <Input id="add-deliveryPartners" placeholder="Partner 1; Partner 2" value={form.deliveryPartners} onChange={(e) => setForm({ ...form, deliveryPartners: e.target.value })} />
+              {lockedOrg && <p className="text-xs text-muted-foreground">Your organisation ({lockedOrg}) is added automatically.</p>}
+              <Input id="add-deliveryPartners" placeholder={lockedOrg ? "Other partners (optional)" : "Partner 1; Partner 2"} value={form.deliveryPartners} onChange={(e) => setForm({ ...form, deliveryPartners: e.target.value })} />
             </div>
           </div>
 

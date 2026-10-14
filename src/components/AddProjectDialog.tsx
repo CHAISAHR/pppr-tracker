@@ -18,7 +18,9 @@ interface AddProjectDialogProps {
 }
 
 export const AddProjectDialog = ({ open, onOpenChange, onAdd }: AddProjectDialogProps) => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  // General users can only add records for their own organisation.
+  const lockedOrg = !isAdmin() ? user?.organization || "" : null;
   const [formData, setFormData] = useState({
     activityId: "",
     activityDescription: "",
@@ -41,7 +43,7 @@ export const AddProjectDialog = ({ open, onOpenChange, onAdd }: AddProjectDialog
       return;
     }
 
-    onAdd(formData);
+    onAdd(lockedOrg !== null ? { ...formData, deliveryPartner: lockedOrg } : formData);
     toast.success("Project added successfully");
     onOpenChange(false);
     
@@ -124,7 +126,10 @@ export const AddProjectDialog = ({ open, onOpenChange, onAdd }: AddProjectDialog
               <Label htmlFor="deliveryPartner">Delivery Partner</Label>
               <Input
                 id="deliveryPartner"
-                value={formData.deliveryPartner}
+                value={lockedOrg ?? formData.deliveryPartner}
+                readOnly={lockedOrg !== null}
+                disabled={lockedOrg !== null}
+                title={lockedOrg !== null ? "Set to your organisation" : undefined}
                 onChange={(e) => setFormData({ ...formData, deliveryPartner: e.target.value })}
                 placeholder="Partner name"
               />
