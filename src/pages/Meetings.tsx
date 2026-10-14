@@ -22,7 +22,8 @@ const Meetings = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [reportMeeting, setReportMeeting] = useState<Meeting | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, canEditOrg } = useAuth();
+  const canEditMeeting = (m: Meeting) => canEditOrg(m.implementingEntities, m.deliveryPartners);
 
   const loadMeetings = async () => {
     try {
@@ -153,7 +154,7 @@ const Meetings = () => {
                         <CardTitle className="text-lg group-hover:text-primary transition-colors truncate">
                           {meeting.focusArea}
                         </CardTitle>
-                        {user && (
+                        {canEditMeeting(meeting) && (
                           <Button
                             variant="ghost"
                             size="sm"

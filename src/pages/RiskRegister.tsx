@@ -16,7 +16,7 @@ import { RiskExcelTemplate, RiskExcelUpload } from "@/components/risk/RiskExcel"
 import { RiskExcelExport } from "@/components/risk/RiskExcelExport";
 
 const RiskRegister = () => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, canEditOrg } = useAuth();
   const [risks, setRisks] = useState<Risk[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Risk | null>(null);
@@ -228,7 +228,7 @@ const RiskRegister = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">
-                            {user && (
+                            {canEditOrg(r.organisation) && (
                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEditing(r); setEditOpen(true); }}>
                                 <Edit className="h-3.5 w-3.5" />
                               </Button>
