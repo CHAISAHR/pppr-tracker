@@ -16,6 +16,7 @@ export default {
       colors: {
         "table-header": "hsl(var(--table-header))",
         "table-header-foreground": "hsl(var(--table-header-foreground))",
+        "card-border": "hsl(var(--card-border))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
