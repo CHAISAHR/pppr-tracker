@@ -39,6 +39,7 @@
 
     --table-header: 158 42% 93%;
     --table-header-foreground: 158 90% 16%;
+    --card-border: 158 45% 80%;
 
     --border: 220 13% 90%;
     --input: 220 13% 90%;
@@ -104,6 +105,7 @@
 
     --table-header: 158 35% 13%;
     --table-header-foreground: 158 45% 78%;
+    --card-border: 158 35% 26%;
 
     --border: 220 12% 17%;
     --input: 220 12% 17%;

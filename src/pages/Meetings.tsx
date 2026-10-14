@@ -129,7 +129,7 @@ const Meetings = () => {
         </div>
 
         {sortedMeetings.length === 0 ? (
-          <Card className="border-dashed">
+          <Card className="border-dashed border-card-border">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
               <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mb-4">
                 <Calendar className="h-7 w-7 text-muted-foreground" />
@@ -143,7 +143,7 @@ const Meetings = () => {
             {sortedMeetings.map((meeting) => (
               <Card
                 key={meeting.id}
-                className="group hover:shadow-md transition-all duration-200 cursor-pointer border-border/60 hover:border-primary/30"
+                className="group hover:shadow-md transition-all duration-200 cursor-pointer border border-card-border hover:border-primary/45"
                 onClick={() => handleMeetingClick(meeting)}
               >
                 <CardHeader className="pb-3">
@@ -203,7 +203,7 @@ const Meetings = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between gap-2 pt-2 mt-1 border-t border-border/60">
+                  <div className="flex items-center justify-between gap-2 pt-2 mt-1 border-t border-card-border/70">
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <ReportStatusBadge status={reportStatus(meeting)} />
                       {totalAttendees(meeting.reportBack) != null && (
