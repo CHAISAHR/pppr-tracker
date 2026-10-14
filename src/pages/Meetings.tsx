@@ -180,6 +180,91 @@ const Meetings = () => {
               <p className="text-sm text-muted-foreground max-w-sm">Click "Add Event" to schedule your first event.</p>
             </CardContent>
           </Card>
+        ) : view === "table" ? (
+          <Card className="border border-card-border overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <SortHead sortKey="focusArea">Event</SortHead>
+                    <SortHead sortKey="date">Date</SortHead>
+                    <SortHead sortKey="quarter">Quarter</SortHead>
+                    <SortHead sortKey="format">Format</SortHead>
+                    <SortHead sortKey="implementingEntities">Implementing Entities</SortHead>
+                    <SortHead sortKey="deliveryPartners">Delivery Partners</SortHead>
+                    <SortHead sortKey="report">Report</SortHead>
+                    <SortHead sortKey="attendees">Attendees</SortHead>
+                    <SortHead sortKey="actions" static className="text-right">Actions</SortHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tableMeetings.map((meeting) => (
+                    <TableRow
+                      key={meeting.id}
+                      className="cursor-pointer"
+                      onClick={() => handleMeetingClick(meeting)}
+                    >
+                      <TableCell className="font-medium max-w-[220px]">
+                        <span className="line-clamp-2">{meeting.focusArea}</span>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{formatMeetingDateRange(meeting)}</TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{meeting.quarter}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={meeting.format === "Virtual" ? "secondary" : meeting.format === "Hybrid" ? "outline" : "default"}
+                          className="text-xs"
+                        >
+                          {meeting.format}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[200px]">
+                        <span className="line-clamp-2 text-sm">{meeting.implementingEntities.join(", ")}</span>
+                      </TableCell>
+                      <TableCell className="max-w-[200px]">
+                        <span className="line-clamp-2 text-sm">{meeting.deliveryPartners.join(", ")}</span>
+                      </TableCell>
+                      <TableCell>
+                        <ReportStatusBadge status={reportStatus(meeting)} />
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {totalAttendees(meeting.reportBack) ?? "—"}
+                      </TableCell>
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-1">
+                          {canEditMeeting(meeting) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => handleEditClick(meeting, e)}
+                              className="h-7 w-7 p-0"
+                              title="Edit event"
+                            >
+                              <Edit className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                          {canEditMeeting(meeting) && reportStatus(meeting) !== "Upcoming" && (
+                            <Button
+                              size="sm"
+                              variant={meeting.reportBack?.submittedAt ? "ghost" : "soft"}
+                              className="h-7 gap-1.5 text-xs"
+                              onClick={(e) => { e.stopPropagation(); setReportMeeting(meeting); setReportOpen(true); }}
+                            >
+                              <ClipboardCheck className="h-3.5 w-3.5" />
+                              {meeting.reportBack?.submittedAt ? "Edit Report" : "Submit Report Back"}
+                            </Button>
+                          )}
+                          {user && !isAdmin() && (
+                            <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.focusArea}
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive" />
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
             {sortedMeetings.map((meeting) => (
