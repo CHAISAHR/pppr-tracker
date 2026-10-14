@@ -2,6 +2,7 @@ import { YEARS, yearCols, parseYearly, achievement } from "./yearlyPerformance";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/services/api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useTableSort } from "@/components/SortableTableHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -145,6 +146,8 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
       return true;
     });
   }, [indicators, searchText, filterCountry, filterWorkstream, filterIndicatorType, filterActivityId, filterDeliveryPartner, filterImplementingEntity, filterYear, filterActivity]);
+
+  const { sorted: sortedIndicators, SortHead } = useTableSort<Indicator>(filteredIndicators);
 
   const hasActiveFilters = searchText || filterCountry !== "all" || filterWorkstream !== "all" || filterIndicatorType !== "all" || filterActivityId !== "all" || filterDeliveryPartner !== "all" || filterImplementingEntity !== "all" || filterYear !== "all" || filterActivity !== "all";
 
@@ -366,34 +369,34 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Country</TableHead>
-              <TableHead>Activity ID</TableHead>
-              <TableHead>Activity</TableHead>
-              <TableHead>Long-term Outcome</TableHead>
-              <TableHead>Core Indicator</TableHead>
-              <TableHead>Workstream</TableHead>
-              <TableHead>Indicator Type</TableHead>
-              <TableHead>Indicator Name</TableHead>
-              <TableHead>Indicator Definition</TableHead>
-              <TableHead>NAPHS</TableHead>
-              <TableHead>Responsibility</TableHead>
-              <TableHead>Delivery Partner</TableHead>
-              <TableHead>Implementing Entity</TableHead>
-              <TableHead>Data Source</TableHead>
-              <TableHead>Budget US$</TableHead>
-              <TableHead>Annual Perf.</TableHead>
+              <SortHead sortKey="country">Country</SortHead>
+              <SortHead sortKey="activity_id">Activity ID</SortHead>
+              <SortHead sortKey="activity">Activity</SortHead>
+              <SortHead sortKey="long_term_outcome">Long-term Outcome</SortHead>
+              <SortHead sortKey="core_indicators">Core Indicator</SortHead>
+              <SortHead sortKey="workstream">Workstream</SortHead>
+              <SortHead sortKey="indicator_type">Indicator Type</SortHead>
+              <SortHead sortKey="name">Indicator Name</SortHead>
+              <SortHead sortKey="indicator_definition">Indicator Definition</SortHead>
+              <SortHead sortKey="naphs">NAPHS</SortHead>
+              <SortHead sortKey="responsibility">Responsibility</SortHead>
+              <SortHead sortKey="organisation">Delivery Partner</SortHead>
+              <SortHead sortKey="implementing_entity">Implementing Entity</SortHead>
+              <SortHead sortKey="data_source">Data Source</SortHead>
+              <SortHead sortKey="cost_usd">Budget US$</SortHead>
+              <SortHead sortKey="annual_performance">Annual Perf.</SortHead>
               {user && <TableHead className="text-right">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredIndicators.length === 0 ? (
+            {sortedIndicators.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={18} className="text-center py-8 text-muted-foreground">
                   No indicators match the current filters.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredIndicators.map((ind) => (
+              sortedIndicators.map((ind) => (
                 <TableRow
                   key={ind.id}
                   className="cursor-pointer hover:bg-muted/50"

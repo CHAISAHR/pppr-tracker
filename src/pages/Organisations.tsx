@@ -28,6 +28,7 @@ import { Building2, Plus, Edit2, Trash2, Upload, X } from "lucide-react";
 import { getLogo, setLogo, removeLogo, fileToDataUrl, loadLogos } from "@/lib/orgLogos";
 import { OrganisationExcelTemplate } from "@/components/OrganisationExcelTemplate";
 import { OrganisationExcelUpload } from "@/components/OrganisationExcelUpload";
+import { useTableSort } from "@/components/SortableTableHead";
 
 interface Organisation {
   id: string | null;
@@ -38,10 +39,15 @@ interface Organisation {
   count?: number;
 }
 
+const orgTypeText = (o: Organisation) => (o.types ?? []).join(", ");
+
 const Organisations = () => {
   const { isAdmin } = useAuth();
   const { toast } = useToast();
   const [organisations, setOrganisations] = useState<Organisation[]>([]);
+  const { sorted: sortedOrganisations, SortHead } = useTableSort<Organisation>(organisations, {
+    getters: { types: orgTypeText },
+  });
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [editOrg, setEditOrg] = useState<Organisation | null>(null);
@@ -214,14 +220,14 @@ const Organisations = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-16">Logo</TableHead>
-                  <TableHead>Organisation Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Type</TableHead>
+                  <SortHead sortKey="name">Organisation Name</SortHead>
+                  <SortHead sortKey="description">Description</SortHead>
+                  <SortHead sortKey="types">Type</SortHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {organisations.map((org, index) => {
+                {sortedOrganisations.map((org, index) => {
                   // logoTick forces re-render when logos change
                   void logoTick;
                   const logo = getLogo(org.name);
