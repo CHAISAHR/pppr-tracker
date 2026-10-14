@@ -6,6 +6,7 @@ import { Calendar, Users, Building2, Edit, ClipboardCheck, UserCheck } from "luc
 import { ReportBackDialog, ReportStatusBadge, reportStatus, totalAttendees } from "@/components/ReportBack";
 import { MeetingDetailsDialog, type Meeting, formatMeetingDateRange } from "@/components/MeetingDetailsDialog";
 import { EditMeetingDialog } from "@/components/EditMeetingDialog";
+import { RequestDeletionButton } from "@/components/RequestDeletionButton";
 import { AddMeetingDialog } from "@/components/AddMeetingDialog";
 import { MeetingExcelTemplate } from "@/components/MeetingExcelTemplate";
 import { MeetingExcelUpload } from "@/components/MeetingExcelUpload";
@@ -163,6 +164,10 @@ const Meetings = () => {
                           >
                             <Edit className="h-3.5 w-3.5" />
                           </Button>
+                        )}
+                        {user && !isAdmin() && (
+                          <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.focusArea}
+                            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-muted-foreground hover:text-destructive" />
                         )}
                       </div>
                       <CardDescription className="flex items-center gap-3 text-xs">

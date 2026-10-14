@@ -10,6 +10,7 @@ import { Pencil, Trash2, Loader2, Download, Search, X, SlidersHorizontal } from 
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { EditIndicatorDialog } from "./EditIndicatorDialog";
+import { RequestDeletionButton } from "@/components/RequestDeletionButton";
 import { IndicatorDetailsDialog } from "./IndicatorDetailsDialog";
 import * as XLSX from "xlsx";
 
@@ -426,10 +427,12 @@ export function IndicatorsTab({ onUpdate }: IndicatorsTabProps) {
                             <Pencil className="h-4 w-4" />
                           </Button>
                         )}
-                        {isAdmin() && (
+                        {isAdmin() ? (
                           <Button variant="ghost" size="sm" onClick={() => handleDelete(ind.id)}>
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
+                        ) : (
+                          <RequestDeletionButton recordType="indicator" recordId={ind.id} recordLabel={ind.name} />
                         )}
                       </div>
                     </TableCell>

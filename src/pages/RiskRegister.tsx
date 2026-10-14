@@ -14,6 +14,7 @@ import { Risk, RISK_STATUSES, scoreLevel } from "@/components/risk/risk-types";
 import { RiskDialog } from "@/components/risk/RiskDialog";
 import { RiskExcelTemplate, RiskExcelUpload } from "@/components/risk/RiskExcel";
 import { RiskExcelExport } from "@/components/risk/RiskExcelExport";
+import { RequestDeletionButton } from "@/components/RequestDeletionButton";
 
 const RiskRegister = () => {
   const { user, isAdmin, canEditOrg } = useAuth();
@@ -233,10 +234,12 @@ const RiskRegister = () => {
                                 <Edit className="h-3.5 w-3.5" />
                               </Button>
                             )}
-                            {isAdmin() && (
+                            {isAdmin() ? (
                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" onClick={() => handleDelete(r.id)}>
                                 <Trash2 className="h-3.5 w-3.5" />
                               </Button>
+                            ) : (
+                              <RequestDeletionButton recordType="risk" recordId={r.id} recordLabel={`${r.riskId || ""} ${r.description || ""}`.trim()} />
                             )}
                           </div>
                         </TableCell>

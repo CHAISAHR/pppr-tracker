@@ -15,6 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/services/api";
 import { Settings, Plus, Edit2, Trash2, Activity, TrendingUp, Calendar, Search } from "lucide-react";
 import { UserRequestsPanel } from "@/components/UserRequestsPanel";
+import { DeletionRequestsPanel } from "@/components/DeletionRequestsPanel";
 
 // ============= Activities Admin Tab =============
 function ActivitiesAdmin() {
@@ -569,6 +570,7 @@ export default function Administration() {
       </div>
 
       <UserRequestsPanel />
+      <DeletionRequestsPanel />
 
 
 
