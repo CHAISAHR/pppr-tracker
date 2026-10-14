@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Risk, RISK_STATUSES, scoreLevel } from "@/components/risk/risk-types";
 import { RiskDialog } from "@/components/risk/RiskDialog";
 import { RiskExcelTemplate, RiskExcelUpload } from "@/components/risk/RiskExcel";
+import { RiskExcelExport } from "@/components/risk/RiskExcelExport";
 
 const RiskRegister = () => {
   const { user, isAdmin } = useAuth();
@@ -130,6 +131,7 @@ const RiskRegister = () => {
             {user && <RiskDialog onSave={handleAdd} />}
             {isAdmin() && (
               <>
+                <RiskExcelExport risks={sortedRisks} />
                 <RiskExcelTemplate />
                 <RiskExcelUpload onUpload={handleBulk} />
               </>
