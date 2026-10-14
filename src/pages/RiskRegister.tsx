@@ -166,6 +166,10 @@ const RiskRegister = () => {
               </Select>
             </div>
 
+            <p className="text-xs text-muted-foreground">
+              Likelihood and Impact are each rated <span className="font-semibold text-primary">1–10</span> — the score is Likelihood × Impact, so it runs from 1 to 100.
+            </p>
+
             <div className="rounded-md border overflow-hidden">
               <Table>
                 <TableHeader>
@@ -173,8 +177,18 @@ const RiskRegister = () => {
                     <SortHead sortKey="riskId" className="w-24">Risk ID</SortHead>
                     <SortHead sortKey="organisation" className="w-40">Organisation</SortHead>
                     <SortHead sortKey="description" className="min-w-[240px]">Description</SortHead>
-                    <SortHead sortKey="likelihood" className="w-20 text-center">L</SortHead>
-                    <SortHead sortKey="impact" className="w-20 text-center">I</SortHead>
+                    <SortHead sortKey="likelihood" className="w-28 text-center">
+                      <span className="inline-flex flex-col items-center leading-tight">
+                        <span>Likelihood</span>
+                        <span className="text-[10px] font-semibold text-primary">scale 1–10</span>
+                      </span>
+                    </SortHead>
+                    <SortHead sortKey="impact" className="w-28 text-center">
+                      <span className="inline-flex flex-col items-center leading-tight">
+                        <span>Impact</span>
+                        <span className="text-[10px] font-semibold text-primary">scale 1–10</span>
+                      </span>
+                    </SortHead>
                     <SortHead sortKey="riskScore" className="w-28 text-center">Score</SortHead>
                     <SortHead sortKey="mitigation" className="min-w-[200px]">Mitigation</SortHead>
                     <SortHead sortKey="owner" className="w-40">Owner</SortHead>
