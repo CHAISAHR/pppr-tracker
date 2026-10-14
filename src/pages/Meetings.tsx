@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, Building2, Edit, ClipboardCheck, UserCheck } from "lucide-react";
+import { Calendar, Users, Building2, Edit, ClipboardCheck, UserCheck, LayoutGrid, Table2 } from "lucide-react";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { useTableSort } from "@/components/SortableTableHead";
 import { ReportBackDialog, ReportStatusBadge, reportStatus, totalAttendees } from "@/components/ReportBack";
 import { MeetingDetailsDialog, type Meeting, formatMeetingDateRange } from "@/components/MeetingDetailsDialog";
 import { EditMeetingDialog } from "@/components/EditMeetingDialog";
@@ -25,6 +27,7 @@ const Meetings = () => {
   const [reportOpen, setReportOpen] = useState(false);
   const { user, isAdmin, canEditOrg } = useAuth();
   const canEditMeeting = (m: Meeting) => canEditOrg(m.implementingEntities, m.deliveryPartners);
+  const [view, setView] = useState<"cards" | "table">("cards");
 
   const loadMeetings = async () => {
     try {
@@ -105,6 +108,21 @@ const Meetings = () => {
     new Date(sortKey(a)).getTime() - new Date(sortKey(b)).getTime()
   );
 
+  const { sorted: tableMeetings, SortHead } = useTableSort<Meeting>(meetings, {
+    initialKey: "date",
+    initialDir: "asc",
+    getters: {
+      date: (m) => sortKey(m),
+      focusArea: (m) => m.focusArea,
+      quarter: (m) => m.quarter,
+      format: (m) => m.format,
+      implementingEntities: (m) => m.implementingEntities.join(", "),
+      deliveryPartners: (m) => m.deliveryPartners.join(", "),
+      report: (m) => reportStatus(m),
+      attendees: (m) => totalAttendees(m.reportBack) ?? "",
+    },
+  });
+
   return (
     <div className="min-h-full bg-background">
       <div className="container mx-auto py-8 px-4 sm:px-6 space-y-6">
@@ -118,7 +136,29 @@ const Meetings = () => {
               <p className="text-sm text-muted-foreground mt-0.5">View and manage your scheduled events</p>
             </div>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0 items-center">
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              <Button
+                variant={view === "cards" ? "soft" : "ghost"}
+                size="sm"
+                className="h-9 rounded-none gap-1.5"
+                onClick={() => setView("cards")}
+                title="Card view"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Cards
+              </Button>
+              <Button
+                variant={view === "table" ? "soft" : "ghost"}
+                size="sm"
+                className="h-9 rounded-none gap-1.5"
+                onClick={() => setView("table")}
+                title="Table view"
+              >
+                <Table2 className="h-4 w-4" />
+                Table
+              </Button>
+            </div>
             {user && <AddMeetingDialog onAdd={handleAddMeeting} />}
             {isAdmin() && (
               <>
@@ -139,6 +179,91 @@ const Meetings = () => {
               <h3 className="text-lg font-semibold text-foreground mb-1">No events scheduled</h3>
               <p className="text-sm text-muted-foreground max-w-sm">Click "Add Event" to schedule your first event.</p>
             </CardContent>
+          </Card>
+        ) : view === "table" ? (
+          <Card className="border border-card-border overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <SortHead sortKey="focusArea">Event</SortHead>
+                    <SortHead sortKey="date">Date</SortHead>
+                    <SortHead sortKey="quarter">Quarter</SortHead>
+                    <SortHead sortKey="format">Format</SortHead>
+                    <SortHead sortKey="implementingEntities">Implementing Entities</SortHead>
+                    <SortHead sortKey="deliveryPartners">Delivery Partners</SortHead>
+                    <SortHead sortKey="report">Report</SortHead>
+                    <SortHead sortKey="attendees">Attendees</SortHead>
+                    <SortHead sortKey="actions" static className="text-right">Actions</SortHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tableMeetings.map((meeting) => (
+                    <TableRow
+                      key={meeting.id}
+                      className="cursor-pointer"
+                      onClick={() => handleMeetingClick(meeting)}
+                    >
+                      <TableCell className="font-medium max-w-[220px]">
+                        <span className="line-clamp-2">{meeting.focusArea}</span>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{formatMeetingDateRange(meeting)}</TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{meeting.quarter}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={meeting.format === "Virtual" ? "secondary" : meeting.format === "Hybrid" ? "outline" : "default"}
+                          className="text-xs"
+                        >
+                          {meeting.format}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[200px]">
+                        <span className="line-clamp-2 text-sm">{meeting.implementingEntities.join(", ")}</span>
+                      </TableCell>
+                      <TableCell className="max-w-[200px]">
+                        <span className="line-clamp-2 text-sm">{meeting.deliveryPartners.join(", ")}</span>
+                      </TableCell>
+                      <TableCell>
+                        <ReportStatusBadge status={reportStatus(meeting)} />
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {totalAttendees(meeting.reportBack) ?? "—"}
+                      </TableCell>
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-1">
+                          {canEditMeeting(meeting) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => handleEditClick(meeting, e)}
+                              className="h-7 w-7 p-0"
+                              title="Edit event"
+                            >
+                              <Edit className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                          {canEditMeeting(meeting) && reportStatus(meeting) !== "Upcoming" && (
+                            <Button
+                              size="sm"
+                              variant={meeting.reportBack?.submittedAt ? "ghost" : "soft"}
+                              className="h-7 gap-1.5 text-xs"
+                              onClick={(e) => { e.stopPropagation(); setReportMeeting(meeting); setReportOpen(true); }}
+                            >
+                              <ClipboardCheck className="h-3.5 w-3.5" />
+                              {meeting.reportBack?.submittedAt ? "Edit Report" : "Submit Report Back"}
+                            </Button>
+                          )}
+                          {user && !isAdmin() && (
+                            <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.focusArea}
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive" />
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
