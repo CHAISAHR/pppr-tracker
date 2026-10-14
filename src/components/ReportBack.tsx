@@ -16,8 +16,6 @@ export interface ReportBack {
   female?: number | null;
   male?: number | null;
   other?: number | null;
-  youth?: number | null;
-  disability?: number | null;
   engagement?: number | null;
   engagementNotes?: string;
   trainerPerformance?: number | null;
@@ -178,10 +176,6 @@ export const ReportBackDialog = ({ meeting, open, onOpenChange, onSave, isAdmin,
             {mismatch && (
               <p className="text-xs text-destructive">Gender split adds up to {sum}, which differs from the total.</p>
             )}
-            <div className="grid grid-cols-2 gap-3">
-              {field("youth", "Youth (optional)")}
-              {field("disability", "People with disabilities (optional)")}
-            </div>
           </section>
 
           <section className="space-y-4 rounded-xl border border-border bg-card p-4">
@@ -294,8 +288,6 @@ export const ReportBackView = ({ meeting }: { meeting: Meeting }) => {
                     <span className={`h-2 w-2 rounded-full ${p.cls}`} />{p.label}: {p.v}
                   </span>
                 ))}
-                {r.youth != null && <span>Youth: {r.youth}</span>}
-                {r.disability != null && <span>With disabilities: {r.disability}</span>}
               </div>
             </div>
           )}
