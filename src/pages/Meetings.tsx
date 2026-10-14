@@ -136,7 +136,29 @@ const Meetings = () => {
               <p className="text-sm text-muted-foreground mt-0.5">View and manage your scheduled events</p>
             </div>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0 items-center">
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              <Button
+                variant={view === "cards" ? "soft" : "ghost"}
+                size="sm"
+                className="h-9 rounded-none gap-1.5"
+                onClick={() => setView("cards")}
+                title="Card view"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Cards
+              </Button>
+              <Button
+                variant={view === "table" ? "soft" : "ghost"}
+                size="sm"
+                className="h-9 rounded-none gap-1.5"
+                onClick={() => setView("table")}
+                title="Table view"
+              >
+                <Table2 className="h-4 w-4" />
+                Table
+              </Button>
+            </div>
             {user && <AddMeetingDialog onAdd={handleAddMeeting} />}
             {isAdmin() && (
               <>
