@@ -1,0 +1,8 @@
+.dashboard-gender-male { background: hsl(var(--chart-blue)); }
+.dashboard-gender-female { background: hsl(var(--chart-pink)); }
+.dashboard-gender-other { background: hsl(var(--chart-gold)); }
+.dashboard-gender-unspecified { background: hsl(var(--muted-foreground)); }
+.dashboard-progress { appearance: none; border: 0; border-radius: 8px; overflow: hidden; background: hsl(var(--secondary)); }
+.dashboard-progress::-webkit-progress-bar { background: hsl(var(--secondary)); border-radius: 8px; }
+.dashboard-progress::-webkit-progress-value { background: hsl(var(--primary)); border-radius: 8px; }
+.dashboard-progress::-moz-progress-bar { background: hsl(var(--primary)); border-radius: 8px; }
