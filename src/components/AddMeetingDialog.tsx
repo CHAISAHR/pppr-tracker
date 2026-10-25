@@ -122,10 +122,6 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="add-quarter">Quarter</Label>
-                <Input id="add-quarter" placeholder="Q1 2025" value={form.quarter} onChange={(e) => setForm({ ...form, quarter: e.target.value })} />
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="add-focusArea">Focus Area</Label>
                 <Select value={form.focusAreaCategory} onValueChange={(value: string) => setForm({ ...form, focusAreaCategory: value })}>
                   <SelectTrigger id="add-focusArea"><SelectValue placeholder="Select focus area" /></SelectTrigger>
@@ -136,18 +132,17 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="add-format">Format</Label>
-              <Select value={form.format} onValueChange={(value: string) => setForm({ ...form, format: value as Meeting["format"] })}>
-                <SelectTrigger id="add-format"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Virtual">Virtual</SelectItem>
-                  <SelectItem value="Hybrid">Hybrid</SelectItem>
-                  <SelectItem value="In-Person">In-Person</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="space-y-2">
+                <Label htmlFor="add-format">Format</Label>
+                <Select value={form.format} onValueChange={(value: string) => setForm({ ...form, format: value as Meeting["format"] })}>
+                  <SelectTrigger id="add-format"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Virtual">Virtual</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
+                    <SelectItem value="In-Person">In-Person</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -155,7 +150,11 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
               <Textarea id="add-keyObjectives" placeholder="Enter the key objectives for this meeting" value={form.keyObjectives} onChange={(e) => setForm({ ...form, keyObjectives: e.target.value })} rows={3} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="add-quarter">Quarter</Label>
+                <Input id="add-quarter" placeholder="Q1 2025" value={form.quarter} onChange={(e) => setForm({ ...form, quarter: e.target.value })} />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="add-meetingDateFrom">Date From</Label>
                 <Input id="add-meetingDateFrom" type="date" value={form.meetingDateFrom} onChange={(e) => setForm({ ...form, meetingDateFrom: e.target.value })} />
