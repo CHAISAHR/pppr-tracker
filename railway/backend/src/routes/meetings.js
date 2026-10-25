@@ -23,8 +23,11 @@ const mapRow = (r) => ({
   quarter: r.quarter || '',
   meetingDateFrom: r.meeting_date_from || undefined,
   meetingDateTo: r.meeting_date_to || undefined,
-  focusArea: r.focus_area || '',
-  focusAreaCategory: r.focus_area_category || '',
+  // Event Title lives in the `title` column; Focus Area is the dropdown.
+  // Rows saved before the 2026-10-25 migration kept the title in focus_area —
+  // fall back to it when it isn't a valid dropdown value.
+  eventTitle: r.title || (r.focus_area && !FOCUS_AREAS.includes(r.focus_area) ? r.focus_area : ''),
+  focusArea: FOCUS_AREAS.includes(r.focus_area) ? r.focus_area : '',
   implementingEntities: parseJson(r.implementing_entities, []) || [],
   deliveryPartners: parseJson(r.delivery_partners, []) || [],
   keyObjectives: r.key_objectives || '',
@@ -51,8 +54,17 @@ const buildFields = (body) => {
     quarter: body.quarter ?? null,
     meeting_date_from: dateFrom || null,
     meeting_date_to: dateTo || null,
-    focus_area: body.focusArea ?? null,
-    focus_area_category: body.focusAreaCategory ?? null,
+    // Event Title → `title` column; Focus Area dropdown → `focus_area` column.
+    // Older clients sent the title as `focusArea`; detect and re-route.
+    const legacyPayload = body.eventTitle === undefined && body.title === undefined;
+    const f = {
+    activity_id: body.activityId ?? null,
+    sub_activity_id: body.subActivityId ?? null,
+    quarter: body.quarter ?? null,
+    meeting_date_from: dateFrom || null,
+    meeting_date_to: dateTo || null,
+    title: legacyPayload ? (body.focusArea ?? null) : (body.eventTitle ?? null),
+    focus_area: legacyPayload ? (body.focusAreaCategory ?? null) : (body.focusArea ?? null),
     implementing_entities: JSON.stringify(body.implementingEntities || []),
     delivery_partners: JSON.stringify(body.deliveryPartners || []),
     key_objectives: body.keyObjectives ?? null,
