@@ -57,7 +57,7 @@ export default function Dashboard() {
   const bars = [...metrics.performance].filter(r => r.attendees > 0).sort((a, b) => b.attendees - a.attendees).slice(0, 5);
   const recent = [
     ...metrics.activities.map(r => ({ title: r.activity_description || r.activityDescription || r.name || r.activity_id || 'Activity', type: 'Activity', date: r.modified_date || r.modifiedDate || r.updated_at || r.created_at, route: '/activity-tracker' })),
-    ...metrics.events.filter(r => reportBack(r).submittedAt).map(r => ({ title: r.focusArea || r.focus_area || r.title || 'Event report back', type: 'Report back', date: reportBack(r).submittedAt, route: '/meetings' })),
+    ...metrics.events.filter(r => reportBack(r).submittedAt).map(r => ({ title: r.eventTitle || r.title || 'Event report back', type: 'Report back', date: reportBack(r).submittedAt, route: '/meetings' })),
     ...metrics.indicators.map(r => ({ title: r.name || 'Indicator', type: 'Indicator', date: r.updated_at || r.created_at, route: '/performance' })),
   ].filter(r => r.date && !Number.isNaN(new Date(r.date).getTime())).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
   const kpis = [

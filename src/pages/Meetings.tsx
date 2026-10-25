@@ -113,7 +113,7 @@ const Meetings = () => {
     initialDir: "asc",
     getters: {
       date: (m) => sortKey(m),
-      focusArea: (m) => m.focusArea,
+      eventTitle: (m) => m.eventTitle,
       quarter: (m) => m.quarter,
       format: (m) => m.format,
       implementingEntities: (m) => m.implementingEntities.join(", "),
@@ -186,7 +186,7 @@ const Meetings = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <SortHead sortKey="focusArea">Event</SortHead>
+                    <SortHead sortKey="eventTitle">Event</SortHead>
                     <SortHead sortKey="date">Date</SortHead>
                     <SortHead sortKey="quarter">Quarter</SortHead>
                     <SortHead sortKey="format">Format</SortHead>
@@ -205,7 +205,7 @@ const Meetings = () => {
                       onClick={() => handleMeetingClick(meeting)}
                     >
                       <TableCell className="font-medium max-w-[220px]">
-                        <span className="line-clamp-2">{meeting.focusArea}</span>
+                        <span className="line-clamp-2">{meeting.eventTitle}</span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-sm">{formatMeetingDateRange(meeting)}</TableCell>
                       <TableCell className="whitespace-nowrap text-sm">{meeting.quarter}</TableCell>
@@ -254,7 +254,7 @@ const Meetings = () => {
                             </Button>
                           )}
                           {user && !isAdmin() && (
-                            <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.focusArea}
+                            <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.eventTitle}
                               className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive" />
                           )}
                         </div>
@@ -278,7 +278,7 @@ const Meetings = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">
                         <CardTitle className="text-lg group-hover:text-primary transition-colors truncate">
-                          {meeting.focusArea}
+                          {meeting.eventTitle}
                         </CardTitle>
                         {canEditMeeting(meeting) && (
                           <Button
@@ -291,7 +291,7 @@ const Meetings = () => {
                           </Button>
                         )}
                         {user && !isAdmin() && (
-                          <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.focusArea}
+                          <RequestDeletionButton recordType="meeting" recordId={meeting.id} recordLabel={meeting.eventTitle}
                             className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-muted-foreground hover:text-destructive" />
                         )}
                       </div>
@@ -301,8 +301,8 @@ const Meetings = () => {
                           {formatMeetingDateRange(meeting)}
                         </span>
                         <span className="font-medium text-foreground/60">{meeting.quarter}</span>
-                        {meeting.focusAreaCategory && (
-                          <span className="font-medium text-foreground/60">{meeting.focusAreaCategory}</span>
+                        {meeting.focusArea && (
+                          <span className="font-medium text-foreground/60">{meeting.focusArea}</span>
                         )}
                       </CardDescription>
                     </div>
