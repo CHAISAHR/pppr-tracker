@@ -89,15 +89,21 @@ const runQueryTolerant = async (pool, sql, values) => {
   try {
     return await pool.execute(sql, values);
   } catch (e) {
-    if (e && e.code === 'ER_BAD_FIELD_ERROR' && sql.includes('focus_area_category')) {
-      const cleaned = sql
-        .replace(/,\s*focus_area_category \= \?/i, '')
-        .replace(/focus_area_category \= \?,\s*/i, '')
-        .replace(/,\s*focus_area_category/i, '')
-        .replace(/focus_area_category,\s*/i, '');
-      const idx = sql.split(',').findIndex((c) => c.includes('focus_area_category'));
-      const cleanedValues = idx >= 0 ? values.filter((_, i) => i !== idx) : values;
-      return pool.execute(cleaned, cleanedValues);
+    if (e && e.code === 'ER_BAD_FIELD_ERROR' && /\bfocus_area_category\b/i.test(sql)) {
+      const parts = sql.split(',');
+      const idx = parts.findIndex((c) => /\bfocus_area_category\b/i.test(c));
+      if (idx === -1) throw e;
+      // INSERT: the column name token maps 1:1 to the value position.
+      // UPDATE: the token is "focus_area_category = ?"; just drop it.
+      const cleanedParts = parts.filter((_, i) => i !== idx || !/=/.test(c));
+      const cleanedSql = cleanedParts
+        .join(',')
+        .replace(/\bfocus_area_category\s*=\s*\?\s*,?\s*/i, '');
+      let cleanedValues = values;
+      if (/columns/i.test('') || /VALUES/i.test(sql)) {
+        cleanedValues = values.filter((_, i) => i !== idx);
+      }
+      return pool.execute(cleanedSql, cleanedValues);
     }
     throw e;
   }
