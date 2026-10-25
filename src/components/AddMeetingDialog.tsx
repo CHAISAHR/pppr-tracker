@@ -115,24 +115,27 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
               <ActivityIdPicker prefix="add" activityId={form.activityId} subActivityId={form.subActivityId} onChange={(v) => setForm({ ...form, ...v })} />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="add-eventTitle">Event Title</Label>
+              <Input id="add-eventTitle" placeholder="Project Kickoff Meeting" value={form.focusArea} onChange={(e) => setForm({ ...form, focusArea: e.target.value })} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="add-quarter">Quarter</Label>
                 <Input id="add-quarter" placeholder="Q1 2025" value={form.quarter} onChange={(e) => setForm({ ...form, quarter: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="add-meetingDateFrom">Date From</Label>
-                <Input id="add-meetingDateFrom" type="date" value={form.meetingDateFrom} onChange={(e) => setForm({ ...form, meetingDateFrom: e.target.value })} />
+                <Label htmlFor="add-focusArea">Focus Area</Label>
+                <Select value={form.focusAreaCategory} onValueChange={(value: string) => setForm({ ...form, focusAreaCategory: value })}>
+                  <SelectTrigger id="add-focusArea"><SelectValue placeholder="Select focus area" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Workforce">Workforce</SelectItem>
+                    <SelectItem value="Labs">Labs</SelectItem>
+                    <SelectItem value="Surveillance">Surveillance</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="add-meetingDateTo">Date To</Label>
-                <Input id="add-meetingDateTo" type="date" value={form.meetingDateTo} onChange={(e) => setForm({ ...form, meetingDateTo: e.target.value })} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="add-focusArea">Focus Area</Label>
-              <Input id="add-focusArea" placeholder="Project Kickoff Meeting" value={form.focusArea} onChange={(e) => setForm({ ...form, focusArea: e.target.value })} />
             </div>
 
             <div className="space-y-2">
@@ -150,6 +153,17 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
             <div className="space-y-2">
               <Label htmlFor="add-keyObjectives">Key Objectives</Label>
               <Textarea id="add-keyObjectives" placeholder="Enter the key objectives for this meeting" value={form.keyObjectives} onChange={(e) => setForm({ ...form, keyObjectives: e.target.value })} rows={3} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="add-meetingDateFrom">Date From</Label>
+                <Input id="add-meetingDateFrom" type="date" value={form.meetingDateFrom} onChange={(e) => setForm({ ...form, meetingDateFrom: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-meetingDateTo">Date To</Label>
+                <Input id="add-meetingDateTo" type="date" value={form.meetingDateTo} onChange={(e) => setForm({ ...form, meetingDateTo: e.target.value })} />
+              </div>
             </div>
 
 
