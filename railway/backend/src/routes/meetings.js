@@ -100,7 +100,7 @@ const runQueryTolerant = async (pool, sql, values) => {
         .join(',')
         .replace(/\bfocus_area_category\s*=\s*\?\s*,?\s*/i, '');
       let cleanedValues = values;
-      if (/columns/i.test('') || /VALUES/i.test(sql)) {
+      if (/VALUES/i.test(sql)) {
         cleanedValues = values.filter((_, i) => i !== idx);
       }
       return pool.execute(cleanedSql, cleanedValues);
