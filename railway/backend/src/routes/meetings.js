@@ -48,16 +48,10 @@ const mapRow = (r) => ({
 const buildFields = (body) => {
   const dateFrom = body.meetingDateFrom ?? body.meeting_date_from ?? body.date ?? null;
   const dateTo = body.meetingDateTo ?? body.meeting_date_to ?? null;
+  // Event Title → `title` column; Focus Area dropdown → `focus_area` column.
+  // Older clients sent the title as `focusArea`; detect and re-route.
+  const legacyPayload = body.eventTitle === undefined && body.title === undefined;
   const f = {
-    activity_id: body.activityId ?? null,
-    sub_activity_id: body.subActivityId ?? null,
-    quarter: body.quarter ?? null,
-    meeting_date_from: dateFrom || null,
-    meeting_date_to: dateTo || null,
-    // Event Title → `title` column; Focus Area dropdown → `focus_area` column.
-    // Older clients sent the title as `focusArea`; detect and re-route.
-    const legacyPayload = body.eventTitle === undefined && body.title === undefined;
-    const f = {
     activity_id: body.activityId ?? null,
     sub_activity_id: body.subActivityId ?? null,
     quarter: body.quarter ?? null,
