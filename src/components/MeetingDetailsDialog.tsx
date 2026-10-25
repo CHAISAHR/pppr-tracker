@@ -23,9 +23,9 @@ export interface Meeting {
   meetingDate?: string;
   meetingDateFrom?: string;
   meetingDateTo?: string;
-  focusArea: string;
+  eventTitle: string;
   /** Dropdown: Workforce / Labs / Surveillance */
-  focusAreaCategory?: string;
+  focusArea: string;
   implementingEntities: string[];
   deliveryPartners: string[];
   keyObjectives: string;
@@ -76,7 +76,7 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
         <DialogHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <DialogTitle className="text-2xl">{meeting.focusArea}</DialogTitle>
+              <DialogTitle className="text-2xl">{meeting.eventTitle}</DialogTitle>
               <DialogDescription className="mt-2">
                 {meeting.quarter}
               </DialogDescription>
@@ -101,7 +101,7 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
 
           <div className="text-sm">
             <span className="font-medium text-muted-foreground">Focus Area:</span>
-            <p>{meeting.focusAreaCategory || "—"}</p>
+            <p>{meeting.focusArea || "—"}</p>
           </div>
 
           <Separator />
