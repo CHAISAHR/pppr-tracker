@@ -28,7 +28,7 @@ export default function Dashboard() {
   const admin = isAdmin();
   const [organisation, setOrganisation] = useState('all');
   const [year, setYear] = useState('1');
-  const [sort, setSort] = useState<{ key: string; desc: boolean }>({ key: 'activities', desc: true });
+  const [sort, setSort] = useState<{ key: string; desc: boolean }>({ key: 'date', desc: true });
   const query = useQuery({
     queryKey: ['programme-dashboard', user?.id, admin],
     queryFn: async () => {
@@ -49,9 +49,9 @@ export default function Dashboard() {
   });
   const metrics = useMemo(() => dashboardMetrics(query.data?.data || emptyDashboard, organisation), [query.data, organisation]);
   const failed = (key: string) => query.data?.errors.includes(key) || false;
-  const rows = [...metrics.performance].sort((a, b) => {
+  const rows = [...metrics.eventRows].sort((a, b) => {
     const av = a[sort.key as keyof typeof a], bv = b[sort.key as keyof typeof b];
-    const result = typeof av === 'string' ? av.localeCompare(String(bv)) : Number(av || 0) - Number(bv || 0);
+    const result = sort.key === 'date' ? new Date(String(av || 0)).getTime() - new Date(String(bv || 0)).getTime() : typeof av === 'string' ? av.localeCompare(String(bv)) : Number(av || 0) - Number(bv || 0);
     return sort.desc ? -result : result;
   });
   const bars = [...metrics.performance].filter(r => r.attendees > 0).sort((a, b) => b.attendees - a.attendees).slice(0, 5);
@@ -103,8 +103,8 @@ export default function Dashboard() {
           </DashboardPanel>
         </div>
         <div className="grid gap-5 xl:grid-cols-[1.7fr_1fr]">
-          <DashboardPanel title="Organisation Performance" action={<span className="text-xs text-muted-foreground">{rows.length} organisations</span>}>
-            {rows.length ? <Table className="min-w-[600px]"><TableHeader><TableRow>{sortHeader('name', 'Organisation')}{sortHeader('activities', 'Activities')}{sortHeader('events', 'Events')}{sortHeader('attendees', 'Attendances')}{sortHeader('completion', 'Completion')}</TableRow></TableHeader><TableBody>{rows.map(r => <TableRow key={r.name}><TableCell className="max-w-60 break-words py-3 text-xs font-medium">{r.name}</TableCell><TableCell className="py-3 text-xs">{failed('activities') ? '—' : r.activities}</TableCell><TableCell className="py-3 text-xs">{failed('events') ? '—' : r.events}</TableCell><TableCell className="py-3 text-xs">{failed('events') ? '—' : format(r.attendees)}</TableCell><TableCell className="py-3"><div className="flex items-center gap-3"><span className="w-12 text-xs">{failed('activities') ? '—' : percent(r.completion)}</span><progress className="dashboard-progress h-2 w-20" max={100} value={r.completion || 0} aria-label={`${r.name} activity completion`} /></div></TableCell></TableRow>)}</TableBody></Table> : <Empty text="No organisation records yet" />}
+          <DashboardPanel title="Event Performance" action={<span className="text-xs text-muted-foreground">Avg engagement {metrics.avgEngagement?.toFixed(1) ?? '—'}/5 · Avg trainer {metrics.avgTrainer?.toFixed(1) ?? '—'}/5</span>}>
+            {failed('events') ? <Empty text="Events unavailable" /> : rows.length ? <div className="max-h-80 overflow-auto"><Table className="min-w-[640px]"><TableHeader><TableRow>{sortHeader('name', 'Event')}{sortHeader('date', 'Date')}{sortHeader('attendees', 'Attendances')}{sortHeader('engagement', 'Engagement')}{sortHeader('trainer', 'Trainer')}{sortHeader('status', 'Report')}</TableRow></TableHeader><TableBody>{rows.map((r, i) => <TableRow key={r.id || i} className="cursor-pointer" onClick={() => navigate('/meetings')}><TableCell className="max-w-60 break-words py-3 text-xs"><span className="font-medium">{r.name}</span>{r.orgs && <p className="mt-0.5 text-[11px] text-muted-foreground">{r.orgs}</p>}</TableCell><TableCell className="whitespace-nowrap py-3 text-xs">{dateLabel(r.date)}</TableCell><TableCell className="py-3 text-xs">{format(r.attendees)}</TableCell><TableCell className="py-3 text-xs">{r.engagement ? `${r.engagement}/5` : '—'}</TableCell><TableCell className="py-3 text-xs">{r.trainer ? `${r.trainer}/5` : '—'}</TableCell><TableCell className={`py-3 text-xs font-medium ${r.status === 'Due' ? 'text-destructive' : r.status === 'Upcoming' ? 'text-muted-foreground' : 'text-primary'}`}>{r.status}</TableCell></TableRow>)}</TableBody></Table></div> : <Empty text="No events yet" />}
           </DashboardPanel>
           <DashboardPanel title="Quick Actions">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{[
