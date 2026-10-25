@@ -79,7 +79,12 @@ export const MeetingExcelUpload = ({ onUpload }: MeetingExcelUploadProps) => {
           quarter: String(row["Quarter"] || row["quarter"] || ""),
           meetingDateFrom: dateFrom || undefined,
           meetingDateTo: dateTo || undefined,
-          focusArea: String(row["Focus Area"] || row["focus_area"] || ""),
+          // Old files put the event title in "Focus Area"; new files have "Event Title".
+          focusArea: String(row["Event Title"] || row["event_title"] || row["Focus Area"] || row["focus_area"] || ""),
+          focusAreaCategory: String(
+            row["Focus Area Category"] || row["focus_area_category"] ||
+            (row["Event Title"] != null || row["event_title"] != null ? row["Focus Area"] || row["focus_area"] || "" : ""),
+          ),
           implementingEntities: implementingEntities,
           deliveryPartners: deliveryPartners,
           keyObjectives: String(row["Key Objectives"] || row["key_objectives"] || ""),

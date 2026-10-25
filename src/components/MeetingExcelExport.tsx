@@ -19,10 +19,11 @@ export const MeetingExcelExport = ({ meetings }: MeetingExcelExportProps) => {
     const excelData = meetings.map(meeting => ({
       "Activity ID": meeting.activityId || "",
       "Sub-Activity ID": meeting.subActivityId || "",
+      "Event Title": meeting.focusArea,
       "Quarter": meeting.quarter,
       "Date From": meeting.meetingDateFrom || meeting.meetingDate || "",
       "Date To": meeting.meetingDateTo || "",
-      "Focus Area": meeting.focusArea,
+      "Focus Area": meeting.focusAreaCategory || "",
       "Format": meeting.format,
       "Implementing Entities": meeting.implementingEntities.join("; "),
       "Delivery Partners": meeting.deliveryPartners.join("; "),

@@ -301,6 +301,9 @@ const Meetings = () => {
                           {formatMeetingDateRange(meeting)}
                         </span>
                         <span className="font-medium text-foreground/60">{meeting.quarter}</span>
+                        {meeting.focusAreaCategory && (
+                          <span className="font-medium text-foreground/60">{meeting.focusAreaCategory}</span>
+                        )}
                       </CardDescription>
                     </div>
                     <Badge 
