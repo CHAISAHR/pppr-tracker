@@ -25,6 +25,7 @@ const emptyMeeting: Meeting = {
   meetingDateFrom: "",
   meetingDateTo: "",
   focusArea: "",
+  focusAreaCategory: "",
   implementingEntities: [],
   deliveryPartners: [],
   keyObjectives: "",
@@ -80,24 +81,27 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
             <ActivityIdPicker prefix="edit" activityId={formData.activityId} subActivityId={formData.subActivityId} onChange={(v) => setFormData({ ...formData, ...v })} />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="edit-eventTitle">Event Title</Label>
+            <Input id="edit-eventTitle" placeholder="Project Kickoff Meeting" value={formData.focusArea} onChange={(e) => setFormData({ ...formData, focusArea: e.target.value })} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="edit-quarter">Quarter</Label>
               <Input id="edit-quarter" placeholder="Q1 2025" value={formData.quarter} onChange={(e) => setFormData({ ...formData, quarter: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-meetingDateFrom">Date From</Label>
-              <Input id="edit-meetingDateFrom" type="date" value={formData.meetingDateFrom || ""} onChange={(e) => setFormData({ ...formData, meetingDateFrom: e.target.value })} />
+              <Label htmlFor="edit-focusArea">Focus Area</Label>
+              <Select value={formData.focusAreaCategory || ""} onValueChange={(value: string) => setFormData({ ...formData, focusAreaCategory: value })}>
+                <SelectTrigger id="edit-focusArea"><SelectValue placeholder="Select focus area" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Workforce">Workforce</SelectItem>
+                  <SelectItem value="Labs">Labs</SelectItem>
+                  <SelectItem value="Surveillance">Surveillance</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-meetingDateTo">Date To</Label>
-              <Input id="edit-meetingDateTo" type="date" value={formData.meetingDateTo || ""} onChange={(e) => setFormData({ ...formData, meetingDateTo: e.target.value })} />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="edit-focusArea">Focus Area</Label>
-            <Input id="edit-focusArea" placeholder="Project Kickoff Meeting" value={formData.focusArea} onChange={(e) => setFormData({ ...formData, focusArea: e.target.value })} />
           </div>
 
           <div className="space-y-2">
@@ -115,6 +119,17 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
           <div className="space-y-2">
             <Label htmlFor="edit-keyObjectives">Key Objectives</Label>
             <Textarea id="edit-keyObjectives" placeholder="Enter the key objectives for this meeting" value={formData.keyObjectives} onChange={(e) => setFormData({ ...formData, keyObjectives: e.target.value })} rows={3} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-meetingDateFrom">Date From</Label>
+              <Input id="edit-meetingDateFrom" type="date" value={formData.meetingDateFrom || ""} onChange={(e) => setFormData({ ...formData, meetingDateFrom: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-meetingDateTo">Date To</Label>
+              <Input id="edit-meetingDateTo" type="date" value={formData.meetingDateTo || ""} onChange={(e) => setFormData({ ...formData, meetingDateTo: e.target.value })} />
+            </div>
           </div>
 
 
