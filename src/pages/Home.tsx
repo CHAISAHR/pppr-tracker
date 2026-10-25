@@ -15,6 +15,7 @@ const CATEGORY_ORDER: { label: string; match: string[] }[] = [
   { label: "Government Departments", match: ["government", "government department", "government departments"] },
   { label: "Implementing Entities", match: ["implementing entity", "implementing entities"] },
   { label: "Delivery Partners", match: ["delivery partner", "delivery partners"] },
+  { label: "Project funded by", match: ["project funded by"] },
 ];
 const OTHER_LABEL = "Other Partners";
 

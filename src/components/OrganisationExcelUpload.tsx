@@ -9,7 +9,7 @@ interface OrganisationExcelUploadProps {
   onComplete: () => void;
 }
 
-const ALLOWED_TYPES = ["Funder", "Implementing Entity", "Delivery Partner"];
+const ALLOWED_TYPES = ["Funder", "Government", "Implementing Entity", "Delivery Partner", "Project funded by"];
 
 export const OrganisationExcelUpload = ({ onComplete }: OrganisationExcelUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
