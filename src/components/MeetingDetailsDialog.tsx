@@ -24,6 +24,8 @@ export interface Meeting {
   meetingDateFrom?: string;
   meetingDateTo?: string;
   focusArea: string;
+  /** Dropdown: Workforce / Labs / Surveillance */
+  focusAreaCategory?: string;
   implementingEntities: string[];
   deliveryPartners: string[];
   keyObjectives: string;
