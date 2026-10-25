@@ -24,8 +24,8 @@ const emptyMeeting: Meeting = {
   quarter: "",
   meetingDateFrom: "",
   meetingDateTo: "",
+  eventTitle: "",
   focusArea: "",
-  focusAreaCategory: "",
   implementingEntities: [],
   deliveryPartners: [],
   keyObjectives: "",
@@ -83,13 +83,13 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
 
           <div className="space-y-2">
             <Label htmlFor="edit-eventTitle">Event Title</Label>
-            <Input id="edit-eventTitle" placeholder="Project Kickoff Meeting" value={formData.focusArea} onChange={(e) => setFormData({ ...formData, focusArea: e.target.value })} />
+            <Input id="edit-eventTitle" placeholder="Project Kickoff Meeting" value={formData.eventTitle} onChange={(e) => setFormData({ ...formData, eventTitle: e.target.value })} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="edit-focusArea">Focus Area</Label>
-              <Select value={formData.focusAreaCategory || ""} onValueChange={(value: string) => setFormData({ ...formData, focusAreaCategory: value })}>
+              <Select value={formData.focusArea || ""} onValueChange={(value: string) => setFormData({ ...formData, focusArea: value })}>
                 <SelectTrigger id="edit-focusArea"><SelectValue placeholder="Select focus area" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Workforce">Workforce</SelectItem>
