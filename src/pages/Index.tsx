@@ -321,7 +321,7 @@ const Index = () => {
                 Activity Tracker
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Track and manage all project activities
+                Track and manage all your project activities
               </p>
             </div>
           </div>
