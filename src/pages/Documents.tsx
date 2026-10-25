@@ -26,7 +26,7 @@ const parseAttachments = (m: Meeting): DocRow[] => {
       const label = maybeUrl ? labelOrUrl : labelOrUrl;
       return {
         meetingId: m.id,
-        focusArea: m.focusArea,
+        focusArea: m.eventTitle,
         meetingDate: m.meetingDate,
         quarter: m.quarter,
         label,

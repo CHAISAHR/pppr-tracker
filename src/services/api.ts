@@ -366,11 +366,25 @@ class ApiService {
     }
   }
 
+  // Legacy mock storage kept the event title in focusArea and the Focus Area
+  // dropdown in focusAreaCategory; normalize to the current shape.
+  normalizeMeeting(m: any): any {
+    const FOCUS = ['Workforce', 'Labs', 'Surveillance'];
+    const focus = FOCUS.includes(m?.focusArea) ? m.focusArea : '';
+    const legacyCategory = FOCUS.includes(m?.focusAreaCategory) ? m.focusAreaCategory : '';
+    return {
+      ...m,
+      eventTitle: m?.eventTitle || (!focus && m?.focusArea ? m.focusArea : ''),
+      focusArea: focus || legacyCategory || '',
+      focusAreaCategory: undefined,
+    };
+  }
+
   async getMeetings(): Promise<any[]> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
       const stored = localStorage.getItem('mock_meetings');
-      return stored ? JSON.parse(stored) : [];
+      return stored ? JSON.parse(stored).map((m: any) => this.normalizeMeeting(m)) : [];
     }
 
     const response = await fetch(`${BASE_URL}/meetings`, {
@@ -387,7 +401,7 @@ class ApiService {
   async createMeeting(data: any): Promise<any> {
     if (MOCK_MODE) {
       await new Promise(resolve => setTimeout(resolve, 300));
-      const meeting = { id: crypto.randomUUID(), ...data };
+      const meeting = this.normalizeMeeting({ id: crypto.randomUUID(), ...data });
       const stored = localStorage.getItem('mock_meetings');
       const meetings = stored ? JSON.parse(stored) : [];
       meetings.unshift(meeting);
@@ -415,7 +429,7 @@ class ApiService {
       const meetings = stored ? JSON.parse(stored) : [];
       const index = meetings.findIndex((m: any) => m.id === id);
       if (index !== -1) {
-        meetings[index] = { ...meetings[index], ...data };
+        meetings[index] = this.normalizeMeeting({ ...meetings[index], ...data });
         localStorage.setItem('mock_meetings', JSON.stringify(meetings));
         return meetings[index];
       }
@@ -457,7 +471,7 @@ class ApiService {
 
   async bulkCreateMeetings(meetings: any[]): Promise<{ inserted: any[]; errors: { row: number; message: string }[] }> {
     if (MOCK_MODE) {
-      const inserted = meetings.map(m => ({ id: crypto.randomUUID(), ...m }));
+      const inserted = meetings.map(m => this.normalizeMeeting({ id: crypto.randomUUID(), ...m }));
       const stored = localStorage.getItem('mock_meetings');
       const all = stored ? JSON.parse(stored) : [];
       localStorage.setItem('mock_meetings', JSON.stringify([...inserted, ...all]));

@@ -21,8 +21,8 @@ interface MeetingForm {
   quarter: string;
   meetingDateFrom: string;
   meetingDateTo: string;
+  eventTitle: string;
   focusArea: string;
-  focusAreaCategory: string;
   implementingEntities: string;
   deliveryPartners: string;
   keyObjectives: string;
@@ -43,8 +43,8 @@ const emptyForm: MeetingForm = {
   quarter: "",
   meetingDateFrom: "",
   meetingDateTo: "",
+  eventTitle: "",
   focusArea: "",
-  focusAreaCategory: "",
   implementingEntities: "",
   deliveryPartners: "",
   keyObjectives: "",
@@ -72,8 +72,8 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       quarter: form.quarter,
       meetingDateFrom: form.meetingDateFrom || undefined,
       meetingDateTo: form.meetingDateTo || undefined,
+      eventTitle: form.eventTitle,
       focusArea: form.focusArea,
-      focusAreaCategory: form.focusAreaCategory || undefined,
       implementingEntities: form.implementingEntities.split(';').map(e => e.trim()).filter(Boolean),
       deliveryPartners: (() => {
         const list = form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean);
@@ -117,13 +117,13 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="add-eventTitle">Event Title</Label>
-              <Input id="add-eventTitle" placeholder="Project Kickoff Meeting" value={form.focusArea} onChange={(e) => setForm({ ...form, focusArea: e.target.value })} />
+              <Input id="add-eventTitle" placeholder="Project Kickoff Meeting" value={form.eventTitle} onChange={(e) => setForm({ ...form, eventTitle: e.target.value })} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="add-focusArea">Focus Area</Label>
-                <Select value={form.focusAreaCategory} onValueChange={(value: string) => setForm({ ...form, focusAreaCategory: value })}>
+                <Select value={form.focusArea} onValueChange={(value: string) => setForm({ ...form, focusArea: value })}>
                   <SelectTrigger id="add-focusArea"><SelectValue placeholder="Select focus area" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Workforce">Workforce</SelectItem>

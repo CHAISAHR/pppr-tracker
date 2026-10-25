@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS meetings (
   quarter VARCHAR(50) NULL,
   meeting_date_from DATE NULL,
   meeting_date_to DATE NULL,
-  focus_area TEXT NULL, -- stores the Event Title
-  focus_area_category VARCHAR(255) NULL, -- dropdown: Workforce / Labs / Surveillance
+  focus_area TEXT NULL, -- dropdown: Workforce / Labs / Surveillance
+  focus_area_category VARCHAR(255) NULL, -- DEPRECATED: replaced by focus_area
   implementing_entities JSON NULL,
   delivery_partners JSON NULL,
   key_objectives TEXT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS meetings (
   attachments TEXT NULL,
   report_back TEXT NULL, -- JSON: attendance, gender split, outcomes, links, review
   -- legacy columns kept for backwards compatibility
-  title VARCHAR(255) NULL,
+  title VARCHAR(255) NULL, -- Event Title
   description TEXT,
   time VARCHAR(50),
   venue VARCHAR(255),

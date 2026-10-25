@@ -133,7 +133,7 @@ export const CapacityRecordDialog = ({
         return;
       }
       eventId = meeting.id;
-      eventName = meeting.focusArea;
+      eventName = meeting.eventTitle;
       date = meeting.meetingDateFrom || meeting.meetingDate || null;
     }
 
@@ -209,7 +209,7 @@ export const CapacityRecordDialog = ({
                   if (v && v !== "__custom__") {
                     const m = events.find((e) => e.id === v);
                     if (m) {
-                      setManualLabel(m.focusArea);
+                      setManualLabel(m.eventTitle);
                       setManualDate(m.meetingDateFrom || m.meetingDate || "");
                     }
                   }
@@ -222,7 +222,7 @@ export const CapacityRecordDialog = ({
                 <SelectContent>
                   {events.map((m) => (
                     <SelectItem key={m.id} value={m.id}>
-                      {m.focusArea}
+                      {m.eventTitle}
                       {(m.meetingDateFrom || m.meetingDate) ? ` — ${m.meetingDateFrom || m.meetingDate}` : ""}
                     </SelectItem>
                   ))}

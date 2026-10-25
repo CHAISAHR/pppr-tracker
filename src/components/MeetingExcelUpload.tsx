@@ -5,6 +5,17 @@ import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import type { Meeting } from "./MeetingDetailsDialog";
 
+const FOCUS_AREA_VALUES = ["Workforce", "Labs", "Surveillance"];
+
+// Event Title column holds the title; "Focus Area" only counts as a dropdown
+// value (older files put the event title in the Focus Area column).
+const splitTitleFocus = (row: any): { eventTitle: string; focusArea: string } => {
+  const title = String(row["Event Title"] || row["event_title"] || "");
+  const focus = String(row["Focus Area"] || row["focus_area"] || "");
+  const validFocus = FOCUS_AREA_VALUES.includes(focus) ? focus : "";
+  return { eventTitle: title || (validFocus ? "" : focus), focusArea: validFocus };
+};
+
 interface MeetingExcelUploadProps {
   onUpload: (meetings: Meeting[]) => void;
 }
@@ -79,12 +90,7 @@ export const MeetingExcelUpload = ({ onUpload }: MeetingExcelUploadProps) => {
           quarter: String(row["Quarter"] || row["quarter"] || ""),
           meetingDateFrom: dateFrom || undefined,
           meetingDateTo: dateTo || undefined,
-          // Old files put the event title in "Focus Area"; new files have "Event Title".
-          focusArea: String(row["Event Title"] || row["event_title"] || row["Focus Area"] || row["focus_area"] || ""),
-          focusAreaCategory: String(
-            row["Focus Area Category"] || row["focus_area_category"] ||
-            (row["Event Title"] != null || row["event_title"] != null ? row["Focus Area"] || row["focus_area"] || "" : ""),
-          ),
+          ...splitTitleFocus(row),
           implementingEntities: implementingEntities,
           deliveryPartners: deliveryPartners,
           keyObjectives: String(row["Key Objectives"] || row["key_objectives"] || ""),
