@@ -443,6 +443,7 @@ function TypeSelector({
     { value: "Government", label: "Government" },
     { value: "Implementing Entity", label: "Implementing Entity" },
     { value: "Delivery Partner", label: "Delivery Partner" },
+    { value: "Project funded by", label: "Project funded by" },
   ];
 
   const toggle = (value: string) => {

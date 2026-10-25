@@ -32,7 +32,7 @@ export const OrganisationExcelTemplate = () => {
         Field: "Types",
         Required: "No",
         Notes:
-          "Semicolon-separated. Allowed values: Funder, Government, Implementing Entity, Delivery Partner",
+          "Semicolon-separated. Allowed values: Funder, Government, Implementing Entity, Delivery Partner, Project funded by",
       },
     ];
     const notesSheet = XLSX.utils.json_to_sheet(notes);
