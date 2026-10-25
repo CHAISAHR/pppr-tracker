@@ -133,7 +133,7 @@ const Meetings = () => {
             </div>
             <div className="min-w-0">
               <h1 className="text-2xl font-bold text-foreground">Event Schedule</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">View and manage your scheduled events</p>
+
             </div>
           </div>
           <div className="flex gap-2 flex-shrink-0 items-center">
