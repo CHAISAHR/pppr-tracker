@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS meetings (
   quarter VARCHAR(50) NULL,
   meeting_date_from DATE NULL,
   meeting_date_to DATE NULL,
-  focus_area TEXT NULL,
+  focus_area TEXT NULL, -- stores the Event Title
+  focus_area_category VARCHAR(255) NULL, -- dropdown: Workforce / Labs / Surveillance
   implementing_entities JSON NULL,
   delivery_partners JSON NULL,
   key_objectives TEXT NULL,

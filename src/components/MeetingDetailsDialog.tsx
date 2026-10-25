@@ -24,6 +24,8 @@ export interface Meeting {
   meetingDateFrom?: string;
   meetingDateTo?: string;
   focusArea: string;
+  /** Dropdown: Workforce / Labs / Surveillance */
+  focusAreaCategory?: string;
   implementingEntities: string[];
   deliveryPartners: string[];
   keyObjectives: string;
@@ -95,6 +97,11 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
               <span className="font-medium text-muted-foreground">Sub-Activity ID:</span>
               <p>{meeting.subActivityId || "—"}</p>
             </div>
+          </div>
+
+          <div className="text-sm">
+            <span className="font-medium text-muted-foreground">Focus Area:</span>
+            <p>{meeting.focusAreaCategory || "—"}</p>
           </div>
 
           <Separator />

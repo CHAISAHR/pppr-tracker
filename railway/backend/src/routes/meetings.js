@@ -20,6 +20,7 @@ const mapRow = (r) => ({
   meetingDateFrom: r.meeting_date_from || undefined,
   meetingDateTo: r.meeting_date_to || undefined,
   focusArea: r.focus_area || '',
+  focusAreaCategory: r.focus_area_category || '',
   implementingEntities: parseJson(r.implementing_entities, []) || [],
   deliveryPartners: parseJson(r.delivery_partners, []) || [],
   keyObjectives: r.key_objectives || '',
@@ -47,6 +48,7 @@ const buildFields = (body) => {
     meeting_date_from: dateFrom || null,
     meeting_date_to: dateTo || null,
     focus_area: body.focusArea ?? null,
+    focus_area_category: body.focusAreaCategory ?? null,
     implementing_entities: JSON.stringify(body.implementingEntities || []),
     delivery_partners: JSON.stringify(body.deliveryPartners || []),
     key_objectives: body.keyObjectives ?? null,
@@ -81,13 +83,40 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// Runs an INSERT/UPDATE, dropping the focus_area_category column once if the
+// live database doesn't have it yet (migration not run) so saves still work.
+const runQueryTolerant = async (pool, sql, values) => {
+  try {
+    return await pool.execute(sql, values);
+  } catch (e) {
+    if (e && e.code === 'ER_BAD_FIELD_ERROR' && /\bfocus_area_category\b/i.test(sql)) {
+      const parts = sql.split(',');
+      const idx = parts.findIndex((c) => /\bfocus_area_category\b/i.test(c));
+      if (idx === -1) throw e;
+      // INSERT: the column name token maps 1:1 to the value position.
+      // UPDATE: the token is "focus_area_category = ?"; just drop it.
+      const cleanedParts = parts.filter((_, i) => i !== idx || !/=/.test(c));
+      const cleanedSql = cleanedParts
+        .join(',')
+        .replace(/\bfocus_area_category\s*=\s*\?\s*,?\s*/i, '');
+      let cleanedValues = values;
+      if (/VALUES/i.test(sql)) {
+        cleanedValues = values.filter((_, i) => i !== idx);
+      }
+      return pool.execute(cleanedSql, cleanedValues);
+    }
+    throw e;
+  }
+};
+
 const insertMeeting = async (pool, body, userId) => {
   const f = buildFields(body);
   const id = body.id || crypto.randomUUID();
   const cols = ['id', ...Object.keys(f), 'created_by'];
   const placeholders = cols.map(() => '?').join(', ');
   const values = [id, ...Object.values(f), userId];
-  await pool.execute(
+  await runQueryTolerant(
+    pool,
     `INSERT INTO meetings (${cols.join(', ')}) VALUES (${placeholders})`,
     values
   );

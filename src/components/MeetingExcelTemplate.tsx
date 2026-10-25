@@ -8,14 +8,17 @@ export const MeetingExcelTemplate = () => {
     // Create template data
     const templateData = [
       {
+        "Activity ID": "A-01",
+        "Sub-Activity ID": "A-01.1",
+        "Event Title": "Project Kickoff Meeting",
         "Quarter": "Q1 2025",
+        "Focus Area": "Workforce",
+        "Format": "Virtual",
+        "Key Objectives": "Define project scope and deliverables",
         "Date From": "2025-01-15",
         "Date To": "2025-01-16",
-        "Focus Area": "Project Kickoff Meeting",
         "Implementing Entities": "Entity 1; Entity 2; Entity 3",
         "Delivery Partners": "Partner 1; Partner 2",
-        "Key Objectives": "Define project scope and deliverables",
-        "Format": "Virtual",
       },
     ];
 
