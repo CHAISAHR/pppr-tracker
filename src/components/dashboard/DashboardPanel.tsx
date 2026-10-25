@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import './dashboard.css';
 
 export function DashboardPanel({ title, action, children, className = '' }: { title: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return <section className={`min-w-0 rounded-lg border border-card-border/60 bg-card p-5 shadow-xs ${className}`}>
