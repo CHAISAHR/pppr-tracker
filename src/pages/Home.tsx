@@ -164,10 +164,10 @@ export default function Home() {
           <div className="flex flex-col items-center text-center mb-10">
             <div className="inline-flex items-center gap-2 text-primary text-xs font-medium uppercase tracking-wider mb-3">
               <Building2 className="h-3.5 w-3.5" />
-              Our partners
+              PARTNERS
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-3">
-              Our partner network
+              PPPR partner network
             </h2>
           </div>
 
