@@ -22,6 +22,7 @@ interface MeetingForm {
   meetingDateFrom: string;
   meetingDateTo: string;
   focusArea: string;
+  focusAreaCategory: string;
   implementingEntities: string;
   deliveryPartners: string;
   keyObjectives: string;
@@ -43,6 +44,7 @@ const emptyForm: MeetingForm = {
   meetingDateFrom: "",
   meetingDateTo: "",
   focusArea: "",
+  focusAreaCategory: "",
   implementingEntities: "",
   deliveryPartners: "",
   keyObjectives: "",
@@ -71,6 +73,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
       meetingDateFrom: form.meetingDateFrom || undefined,
       meetingDateTo: form.meetingDateTo || undefined,
       focusArea: form.focusArea,
+      focusAreaCategory: form.focusAreaCategory || undefined,
       implementingEntities: form.implementingEntities.split(';').map(e => e.trim()).filter(Boolean),
       deliveryPartners: (() => {
         const list = form.deliveryPartners.split(';').map(e => e.trim()).filter(Boolean);

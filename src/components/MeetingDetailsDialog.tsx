@@ -99,6 +99,11 @@ export const MeetingDetailsDialog = ({ meeting, open, onOpenChange }: MeetingDet
             </div>
           </div>
 
+          <div className="text-sm">
+            <span className="font-medium text-muted-foreground">Focus Area:</span>
+            <p>{meeting.focusAreaCategory || "—"}</p>
+          </div>
+
           <Separator />
 
           <div className="flex items-center gap-2 text-sm">
