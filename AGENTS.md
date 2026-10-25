@@ -1,1 +1,2 @@
 - Quarterly Report questions live in `src/lib/quarterlyReport.ts` (not the DB); responses store answers as JSON keyed by question id, one row per organisation per report — keeps the form editable without migrations.
+- Dashboard aggregates existing API records client-side through a pure metrics module; do not add dashboard-specific storage or treat event attendance as unique beneficiaries.

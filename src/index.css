@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,6 +41,11 @@
     --table-header: 158 42% 93%;
     --table-header-foreground: 158 90% 16%;
     --card-border: 158 45% 80%;
+    --chart-blue: 204 82% 49%;
+    --chart-pink: 337 73% 50%;
+    --chart-gold: 43 94% 49%;
+    --chart-green: 158 73% 29%;
+    --chart-violet: 270 42% 49%;
 
     --border: 220 13% 90%;
     --input: 220 13% 90%;
@@ -112,6 +115,11 @@
     --table-header: 158 35% 13%;
     --table-header-foreground: 158 45% 78%;
     --card-border: 158 35% 26%;
+    --chart-blue: 204 80% 65%;
+    --chart-pink: 337 76% 68%;
+    --chart-gold: 43 90% 62%;
+    --chart-green: 158 55% 55%;
+    --chart-violet: 270 55% 70%;
 
     --border: 220 12% 17%;
     --input: 220 12% 17%;
