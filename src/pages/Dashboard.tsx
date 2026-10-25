@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Users, ClipboardList, CheckCircle2, AlertTriangle, RefreshCw, Download, ArrowUpRight, CalendarDays, Target, ClipboardCheck, ArrowDownUp, Building2 } from 'lucide-react';
+import { Users, ClipboardList, CheckCircle2, AlertTriangle, RefreshCw, ArrowUpRight, CalendarDays, Target, ClipboardCheck, ArrowDownUp, Building2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,6 @@ export default function Dashboard() {
   const [organisation, setOrganisation] = useState('all');
   const [year, setYear] = useState('1');
   const [sort, setSort] = useState<{ key: string; desc: boolean }>({ key: 'activities', desc: true });
-  const [exportError, setExportError] = useState('');
   const query = useQuery({
     queryKey: ['programme-dashboard', user?.id, admin],
     queryFn: async () => {
@@ -73,19 +72,6 @@ export default function Dashboard() {
     gold: 'bg-accent/10 border-accent/20 text-foreground',
     pink: 'bg-[hsl(var(--chart-pink)/0.07)] border-[hsl(var(--chart-pink)/0.16)] text-[hsl(var(--chart-pink))]',
   };
-  async function download() {
-    try {
-      setExportError('');
-      const XLSX = await import('xlsx');
-      const workbook = XLSX.utils.book_new();
-      const summary = kpis.map(k => ({ Metric: k.title, Value: k.value }));
-      summary.push({ Metric: 'Organisation filter', Value: organisation === 'all' ? 'All organisations' : organisation });
-      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(summary), 'Overview');
-      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(rows.map(r => ({ Organisation: r.name, Activities: r.activities, Completed: r.completed, Events: r.events, Attendances: r.attendees, 'Completion %': r.completion === null ? '' : Number(r.completion.toFixed(1)) }))), 'Organisation performance');
-      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(metrics.indicators.map(r => ({ Indicator: r.name, Year: year, Target: r[`target_year_${year}`] ?? '', 'Annual actual': parseYearly(r.yearly_performance)[year]?.annual || '', 'Achievement %': achievement(r[`target_year_${year}`], parseYearly(r.yearly_performance)[year]?.annual) }))), 'Indicators');
-      XLSX.writeFile(workbook, `Programme-Dashboard-${new Date().toISOString().slice(0, 10)}.xlsx`);
-    } catch { setExportError('The download could not be created. Please try again.'); }
-  }
   const refresh = () => { void query.refetch(); void quarterly.refetch(); };
   const open = (route: string) => <Button variant="ghost" size="sm" onClick={() => navigate(route)} className="h-7 px-1 text-primary">View all <ArrowUpRight className="h-3.5 w-3.5" /></Button>;
   const sortHeader = (key: string, label: string) => <TableHead><Button variant="ghost" size="sm" className="h-7 px-0 text-xs text-table-header-foreground" onClick={() => setSort({ key, desc: sort.key === key ? !sort.desc : false })}>{label}<ArrowDownUp className="h-3 w-3" /></Button></TableHead>;
@@ -97,12 +83,10 @@ export default function Dashboard() {
           <div className="flex h-10 items-center gap-2 rounded-md border border-border bg-card px-3 text-xs text-muted-foreground"><CalendarDays className="h-4 w-4 text-primary" />{dateLabel(new Date())}</div>
           <Select value={organisation} onValueChange={setOrganisation}><SelectTrigger aria-label="Filter by organisation" className="w-52 max-w-full bg-card"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All organisations</SelectItem>{metrics.orgNames.filter(n => n !== 'all').map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent></Select>
           <Button variant="outline" size="icon" title="Refresh dashboard" aria-label="Refresh dashboard" onClick={refresh} disabled={query.isFetching || quarterly.isFetching}><RefreshCw className={query.isFetching ? 'animate-spin' : ''} /></Button>
-          {admin && <Button variant="outline" size="sm" onClick={download} disabled={query.isLoading || !!query.data?.errors.length}><Download />Download</Button>}
         </div>
       </div>
       {query.isLoading ? <div role="status" className="flex min-h-72 items-center justify-center gap-3 text-muted-foreground"><RefreshCw className="h-5 w-5 animate-spin" />Loading dashboard…</div> : <>
         {!!query.data?.errors.length && <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">Could not load {query.data.errors.join(', ')}. Some figures are unavailable. <Button variant="link" onClick={refresh}>Retry</Button></div>}
-        {exportError && <p role="alert" className="text-sm text-destructive">{exportError}</p>}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{kpis.map(k => <div key={k.title} className={`flex min-w-0 items-start gap-4 rounded-lg border p-5 ${tones[k.tone]}`}><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-card/70"><k.icon className="h-6 w-6" /></div><div className="min-w-0"><h2 className="text-xs font-semibold">{k.title}</h2><p className="mt-1 text-3xl font-bold text-foreground">{k.value}</p><p className="mt-1.5 text-xs text-muted-foreground">{k.detail}</p></div></div>)}</div>
         <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
           <DashboardPanel title="Attendance by Gender">
