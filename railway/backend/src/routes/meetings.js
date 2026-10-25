@@ -5,6 +5,10 @@ const { ensureOrgAccess } = require('../lib/orgAccess');
 
 const router = express.Router();
 
+// Valid Focus Area dropdown values — used to tell a dropdown value apart from a
+// legacy event title written into focus_area before the 2026-10-25 migration.
+const FOCUS_AREAS = ['Workforce', 'Labs', 'Surveillance'];
+
 const parseJson = (v, fallback) => {
   if (v == null) return fallback;
   if (typeof v !== 'string') return v;
