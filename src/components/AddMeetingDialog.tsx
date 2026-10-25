@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import type { Meeting } from "./MeetingDetailsDialog";
 import { Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { ActivityIdPicker } from "./ActivityIdPicker";
 
 interface AddMeetingDialogProps {
   onAdd: (meeting: Meeting) => void;
@@ -108,14 +109,7 @@ export const AddMeetingDialog = ({ onAdd }: AddMeetingDialogProps) => {
 
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="add-activityId">Activity ID</Label>
-                <Input id="add-activityId" placeholder="ACT-001" value={form.activityId} onChange={(e) => setForm({ ...form, activityId: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="add-subActivityId">Sub-Activity ID</Label>
-                <Input id="add-subActivityId" placeholder="SUB-001" value={form.subActivityId} onChange={(e) => setForm({ ...form, subActivityId: e.target.value })} />
-              </div>
+              <ActivityIdPicker prefix="add" activityId={form.activityId} subActivityId={form.subActivityId} onChange={(v) => setForm({ ...form, ...v })} />
             </div>
 
             <div className="grid grid-cols-3 gap-4">
