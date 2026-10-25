@@ -64,7 +64,7 @@ export function dashboardMetrics(data: DashboardData, organisation = 'all', now 
     const date = e.meetingDateFrom || e.meeting_date_from || e.meetingDate || e.meetingDateTo || e.meeting_date_to || '';
     const end = e.meetingDateTo || e.meeting_date_to || date;
     const status = b.reviewed ? 'Reviewed' : b.submittedAt ? 'Submitted' : end && new Date(end) <= now ? 'Due' : 'Upcoming';
-    return { id: e.id, name: e.eventTitle || e.title || 'Event', date, orgs: recordOrgs(e).join(', '), attendees: eventAttendance(e), engagement: rating(b.engagement), trainer: rating(b.trainerPerformance), status };
+    return { id: e.id, name: e.eventTitle || e.title || 'Event', focusArea: String(e.focusArea || e.focus_area || '').trim(), date, orgs: recordOrgs(e).join(', '), attendees: eventAttendance(e), engagement: rating(b.engagement), trainer: rating(b.trainerPerformance), status };
   });
   const avg = (vals: (number | null)[]) => { const v = vals.filter((x): x is number => x !== null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
   const avgEngagement = avg(eventRows.map(r => r.engagement));

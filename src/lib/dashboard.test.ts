@@ -33,4 +33,14 @@ describe('dashboard metrics', () => {
   test('empty datasets have no fabricated completion percentage', () => {
     assert.equal(dashboardMetrics(emptyDashboard).completion, null);
   });
+  test('key stats rows carry event title and focus area', () => {
+    const result = dashboardMetrics({ ...emptyDashboard, events: [
+      { title: 'Lab Safety Induction', focus_area: 'Labs', meetingDateFrom: '2026-10-20', reportBack: { male: 8, female: 2 } },
+      { eventTitle: 'Workforce Planning', focusArea: 'Workforce', meetingDateFrom: '2026-10-20' },
+    ] });
+    assert.equal(result.eventRows[0].name, 'Lab Safety Induction');
+    assert.equal(result.eventRows[0].focusArea, 'Labs');
+    assert.equal(result.eventRows[0].attendees, 10);
+    assert.equal(result.eventRows[1].focusArea, 'Workforce');
+  });
 });
