@@ -83,13 +83,34 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// Runs an INSERT/UPDATE, dropping the focus_area_category column once if the
+// live database doesn't have it yet (migration not run) so saves still work.
+const runQueryTolerant = async (pool, sql, values) => {
+  try {
+    return await pool.execute(sql, values);
+  } catch (e) {
+    if (e && e.code === 'ER_BAD_FIELD_ERROR' && sql.includes('focus_area_category')) {
+      const cleaned = sql
+        .replace(/,\s*focus_area_category \= \?/i, '')
+        .replace(/focus_area_category \= \?,\s*/i, '')
+        .replace(/,\s*focus_area_category/i, '')
+        .replace(/focus_area_category,\s*/i, '');
+      const idx = sql.split(',').findIndex((c) => c.includes('focus_area_category'));
+      const cleanedValues = idx >= 0 ? values.filter((_, i) => i !== idx) : values;
+      return pool.execute(cleaned, cleanedValues);
+    }
+    throw e;
+  }
+};
+
 const insertMeeting = async (pool, body, userId) => {
   const f = buildFields(body);
   const id = body.id || crypto.randomUUID();
   const cols = ['id', ...Object.keys(f), 'created_by'];
   const placeholders = cols.map(() => '?').join(', ');
   const values = [id, ...Object.values(f), userId];
-  await pool.execute(
+  await runQueryTolerant(
+    pool,
     `INSERT INTO meetings (${cols.join(', ')}) VALUES (${placeholders})`,
     values
   );
