@@ -88,10 +88,6 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-quarter">Quarter</Label>
-              <Input id="edit-quarter" placeholder="Q1 2025" value={formData.quarter} onChange={(e) => setFormData({ ...formData, quarter: e.target.value })} />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="edit-focusArea">Focus Area</Label>
               <Select value={formData.focusAreaCategory || ""} onValueChange={(value: string) => setFormData({ ...formData, focusAreaCategory: value })}>
                 <SelectTrigger id="edit-focusArea"><SelectValue placeholder="Select focus area" /></SelectTrigger>
@@ -102,18 +98,17 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="edit-format">Format</Label>
-            <Select value={formData.format} onValueChange={(value: "Virtual" | "Hybrid" | "In-Person") => setFormData({ ...formData, format: value })}>
-              <SelectTrigger id="edit-format"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Virtual">Virtual</SelectItem>
-                <SelectItem value="Hybrid">Hybrid</SelectItem>
-                <SelectItem value="In-Person">In-Person</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <Label htmlFor="edit-format">Format</Label>
+              <Select value={formData.format} onValueChange={(value: "Virtual" | "Hybrid" | "In-Person") => setFormData({ ...formData, format: value })}>
+                <SelectTrigger id="edit-format"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Virtual">Virtual</SelectItem>
+                  <SelectItem value="Hybrid">Hybrid</SelectItem>
+                  <SelectItem value="In-Person">In-Person</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -121,7 +116,11 @@ export const EditMeetingDialog = ({ meeting, open, onOpenChange, onSave }: EditM
             <Textarea id="edit-keyObjectives" placeholder="Enter the key objectives for this meeting" value={formData.keyObjectives} onChange={(e) => setFormData({ ...formData, keyObjectives: e.target.value })} rows={3} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-quarter">Quarter</Label>
+              <Input id="edit-quarter" placeholder="Q1 2025" value={formData.quarter} onChange={(e) => setFormData({ ...formData, quarter: e.target.value })} />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="edit-meetingDateFrom">Date From</Label>
               <Input id="edit-meetingDateFrom" type="date" value={formData.meetingDateFrom || ""} onChange={(e) => setFormData({ ...formData, meetingDateFrom: e.target.value })} />
