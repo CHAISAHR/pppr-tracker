@@ -385,7 +385,7 @@ function MeetingsAdmin() {
   const { toast } = useToast();
 
   const [form, setForm] = useState({
-    quarter: "", meetingDate: "", focusArea: "", implementingEntities: "",
+    quarter: "", meetingDate: "", eventTitle: "", implementingEntities: "",
     deliveryPartners: "", keyObjectives: "", format: "Virtual",
     organizerName: "", organizerEmail: "", organizerPhone: "",
     preSurveyLink: "", postSurveyLink: ""
@@ -403,14 +403,14 @@ function MeetingsAdmin() {
 
   const openCreate = () => {
     setEditingItem(null);
-    setForm({ quarter: "", meetingDate: "", focusArea: "", implementingEntities: "", deliveryPartners: "", keyObjectives: "", format: "Virtual", organizerName: "", organizerEmail: "", organizerPhone: "", preSurveyLink: "", postSurveyLink: "" });
+    setForm({ quarter: "", meetingDate: "", eventTitle: "", implementingEntities: "", deliveryPartners: "", keyObjectives: "", format: "Virtual", organizerName: "", organizerEmail: "", organizerPhone: "", preSurveyLink: "", postSurveyLink: "" });
     setDialogOpen(true);
   };
 
   const openEdit = (item: any) => {
     setEditingItem(item);
     setForm({
-      quarter: item.quarter || "", meetingDate: item.meetingDate || "", focusArea: item.focusArea || "",
+      quarter: item.quarter || "", meetingDate: item.meetingDate || "", eventTitle: item.eventTitle || "",
       implementingEntities: Array.isArray(item.implementingEntities) ? item.implementingEntities.join(", ") : item.implementingEntities || "",
       deliveryPartners: Array.isArray(item.deliveryPartners) ? item.deliveryPartners.join(", ") : item.deliveryPartners || "",
       keyObjectives: item.keyObjectives || "", format: item.format || "Virtual",
@@ -451,7 +451,7 @@ function MeetingsAdmin() {
   };
 
   const filtered = meetings.filter(m =>
-    !search || [m.focusArea, m.quarter, m.format].some(v => String(v || "").toLowerCase().includes(search.toLowerCase()))
+    !search || [m.eventTitle, m.quarter, m.format].some(v => String(v || "").toLowerCase().includes(search.toLowerCase()))
   );
 
   if (loading) return <div className="flex justify-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
@@ -485,7 +485,7 @@ function MeetingsAdmin() {
               <TableRow key={item.id} className="hover:bg-primary/5">
                 <TableCell>{item.quarter || "-"}</TableCell>
                 <TableCell>{item.meetingDate ? new Date(item.meetingDate).toLocaleDateString() : "-"}</TableCell>
-                <TableCell className="font-medium max-w-[200px] truncate">{item.focusArea}</TableCell>
+                <TableCell className="font-medium max-w-[200px] truncate">{item.eventTitle}</TableCell>
                 <TableCell><Badge variant={item.format === "Virtual" ? "secondary" : "default"}>{item.format}</Badge></TableCell>
                 <TableCell>{item.organizerName || "-"}</TableCell>
                 <TableCell>
@@ -510,7 +510,7 @@ function MeetingsAdmin() {
             <div className="grid grid-cols-2 gap-4 p-1">
               <div><Label>Quarter</Label><Input value={form.quarter} onChange={e => setForm({...form, quarter: e.target.value})} placeholder="e.g. Q1 2025" /></div>
               <div><Label>Meeting Date</Label><Input type="date" value={form.meetingDate} onChange={e => setForm({...form, meetingDate: e.target.value})} /></div>
-              <div className="col-span-2"><Label>Focus Area</Label><Input value={form.focusArea} onChange={e => setForm({...form, focusArea: e.target.value})} /></div>
+              <div className="col-span-2"><Label>Event Title</Label><Input value={form.eventTitle} onChange={e => setForm({...form, eventTitle: e.target.value})} /></div>
               <div className="col-span-2"><Label>Implementing Entities (comma-separated)</Label><Input value={form.implementingEntities} onChange={e => setForm({...form, implementingEntities: e.target.value})} /></div>
               <div className="col-span-2"><Label>Delivery Partners (comma-separated)</Label><Input value={form.deliveryPartners} onChange={e => setForm({...form, deliveryPartners: e.target.value})} /></div>
               <div className="col-span-2"><Label>Key Objectives</Label><Textarea value={form.keyObjectives} onChange={e => setForm({...form, keyObjectives: e.target.value})} /></div>
